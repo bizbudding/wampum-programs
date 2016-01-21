@@ -2,6 +2,7 @@
 /*
 Plugin Name: Wampum
 Plugin URI: http://bizbudding.com
+Plugin Type: Piklist
 Description: The core Wampum plugin
 Version: 1.0.0
 Author: Mike Hemberger
@@ -15,6 +16,24 @@ if ( !defined( 'ABSPATH' ) ) exit;
 define( 'WAMPUM_CORE_DIR', dirname( __FILE__ ) );
 define( 'WAMPUM_INCLUDES_DIR', WAMPUM_CORE_DIR . '/includes/' );
 define( 'WAMPUM_PLUGIN_NAME', dirname( plugin_basename( __FILE__ ) ) );
+
+/**
+ * Check if Piklist is installed
+ *
+ * @since  1.0.0
+ */
+add_action('init', 'wampum_piklist_checker');
+function wampum_piklist_checker() {
+	if ( ! is_admin() ) {
+		return;
+	}
+	// Include Piklist checker file
+	include_once( WAMPUM_INCLUDES_DIR . 'vendor/class-piklist-checker.php');
+
+	if ( ! piklist_checker::check(__FILE__) ) {
+		return;
+	}
+}
 
 require_once( WAMPUM_INCLUDES_DIR . 'vendor/extended-cpts.php' );
 require_once( WAMPUM_INCLUDES_DIR . 'vendor/extended-taxos.php' );
