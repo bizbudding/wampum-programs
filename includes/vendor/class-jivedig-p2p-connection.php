@@ -75,7 +75,7 @@ if ( ! class_exists( 'JiveDig_Connections' ) )  {
 		 *
 		 * @since  1.0.0
 		 *
-		 * @return voide
+		 * @return void
 		 */
 		public function register_p2p_connection() {
 			p2p_register_connection_type( array(
