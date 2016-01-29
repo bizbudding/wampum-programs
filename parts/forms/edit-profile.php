@@ -74,6 +74,8 @@ piklist('field', array(
   ),
 ));
 
+  echo '<h2>Random h2</h2>';
+
   piklist('field', array(
     'type' => 'password'
     ,'scope' => 'user'

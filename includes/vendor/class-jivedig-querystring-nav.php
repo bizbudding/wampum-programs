@@ -1,6 +1,6 @@
 <?php
 /**
- * Create a nav menu using query strings on the same page to load alternate content
+ * Create an inner nav menu using query strings on the same page to load alternate content
  *
  * @package   JiveDig_Query_String_Nav
  * @author    Mike Hemberger
@@ -12,7 +12,7 @@
 
 if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 	/**
-	 * P2P Connections.
+	 * Query String Menu
 	 *
 	 * When using in a plugin, create a new class that extends this one and just overrides the properties.
 	 *
@@ -28,7 +28,7 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		 *
 		 * @type string
 		 */
-		protected $slug = 'profile-menu';
+		protected $slug = 'menu-name';
 
 		/**
 		 * Associative array of menu item items ['slug'] => 'Name'
@@ -37,7 +37,10 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		 *
 		 * @type array
 		 */
-		protected $items = array();
+		protected $items = array(
+					'about' => 'About',
+					'edit'  => 'Edit Profile',
+				);
 
 
 		/**
@@ -49,10 +52,25 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		 */
 		protected $genesis = true;
 
+		/**
+		 * Display the menu
+		 *
+		 * @since  1.0.0
+		 *
+		 * @return mixed
+		 */
 		public function menu() {
 			echo $this->get_menu( $this->items );
 		}
 
+		/**
+		 * Build the menu and menu items
+		 *
+		 * @since  1.0.0
+		 *
+		 * @param  array  	  $items  menu item slugs and names
+		 * @return mixed|void
+		 */
 		protected function get_menu( $items ) {
 			// Bail if no menu items or not an array
 			if ( ! $items && ! is_array($items) ) {
@@ -85,7 +103,49 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		}
 
 		/**
-		 * Check if on a specifi tab in your template
+		 * Get the class names for the unordered list
+		 *
+		 * @since  1.0.0
+		 *
+		 * @return string
+		 */
+		protected function get_ul_classes() {
+			if ( true === $this->genesis ) {
+				return 'menu genesis-nav-menu';
+			} else {
+				return 'menu';
+			}
+		}
+
+		/**
+		 * Get a sanitized version of the slug
+		 *
+		 * @since  1.0.0
+		 *
+		 * @return string
+		 */
+		protected function get_menu_name() {
+			return $this->sanitize_slug( $this->slug );
+		}
+
+		/**
+		 * Get a lowercase and sanitized version of the slug
+		 * Converts spaces to dashes
+		 *
+		 * @since  1.0.0
+		 *
+		 * @uses   sanitize_title()
+		 *
+		 * @param  string $slug
+		 *
+		 * @return string
+		 */
+		protected function sanitize_slug( $slug ) {
+			return sanitize_title( strtolower( $slug ) );
+		}
+
+		/**
+		 * Check if on a specific tab in your menu/template
 		 *
 		 * @since  1.0.0
 		 *
@@ -99,27 +159,5 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 			}
 			return false;
 		}
-
-		protected function get_ul_classes() {
-			if ( true === $this->genesis ) {
-				return 'menu genesis-nav-menu';
-			} else {
-				return 'menu';
-			}
-		}
-
-		protected function get_menu_name() {
-			return $this->sanitize_slug( $this->slug );
-		}
-
-		/**
-		 * Uses default WP function
-		 * @param  [type] $slug [description]
-		 * @return [type]       [description]
-		 */
-		protected function sanitize_slug( $slug ) {
-			return sanitize_title( strtolower( $slug ) );
-		}
-
 	}
 }
