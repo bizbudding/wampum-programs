@@ -43,8 +43,6 @@ function wampum_require() {
 		'class-wampum',
 		'class-wampum-template-loader',
 		'class-profile-nav',
-		'actions',
-		// 'post-types',
 	);
 	foreach ( $files as $file ) {
 		require WAMPUM_INCLUDES_DIR . $file . '.php';
