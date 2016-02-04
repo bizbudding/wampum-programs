@@ -159,7 +159,7 @@ class Wampum {
 	    ), array(
 	        'singular' => 'Lesson',
 	        'plural'   => 'Lessons',
-	        'slug'     => 'topics'
+	        'slug'     => 'lessons'
 	    ) );
 
 	    // Resources
