@@ -14,7 +14,7 @@ function wampum_save_some_new_resources_yo( $fields ) {
 
 		// Create new post
 		$data = array(
-			'post_type'		=> 'w_resource',
+			'post_type'		=> 'wampum_resource',
 			'post_status'	=> 'publish',
 			'post_title'	=> sanitize_text_field($resource['post_title']),
 			'post_content'	=> sanitize_text_field($resource['post_content']),
@@ -23,7 +23,7 @@ function wampum_save_some_new_resources_yo( $fields ) {
 
 		if ( ! is_wp_error( $post_id ) ) {
 			// Connect new post to topic
-			$connection_id = p2p_type( 'resources_to_topics' )->connect( $post_id, $topic_id, array(
+			$connection_id = p2p_type( 'resources_to_lessons' )->connect( $post_id, $topic_id, array(
 			    'date' => current_time('mysql')
 			));
 		}

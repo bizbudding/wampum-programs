@@ -1,11 +1,11 @@
 <?php
 /**
- * Meal Planner
+ * Profile Nav Menu
  *
- * @package   Meal_Planner
- * @author    Gary Jones
- * @link      http://example.com/meal-planner
- * @copyright 2013 Gary Jones
+ * @package   Wampum_Profile_Nav
+ * @author    Mike Hemberger
+ * @link      https://bizbudding.com
+ * @copyright 2016 Mike Hemberger
  * @license   GPL-2.0+
  */
 
@@ -15,8 +15,8 @@
  *
  * Only need to specify class properties here.
  *
- * @package Meal_Planner
- * @author  Gary Jones
+ * @package Wampum_Profile_Nav
+ * @author  Mike Hemberger
  */
 class Wampum_Profile_Nav extends JiveDig_Query_String_Nav {
 

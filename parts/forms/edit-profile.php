@@ -22,14 +22,14 @@ Message: User Profile Saved.
 
 /**
  * The shortcode for this form is:
- * [piklist_form form="edit-profile" add_on="piklist-demos"]
+ * [piklist_form form="edit-profile" add_on="wampum"]
  */
 
 // piklist('field', array(
 //   'type'       => 'text',
 //   'scope'      => 'user', // user_login is in the wp_users table, so scope is: user
 //   'field'      => 'user_login',
-//   'label'      => __('User login', 'piklist-demo'),
+//   'label'      => __('User login', 'wampum'),
 //   'attributes' => array(
 //     'autocomplete'  => 'off',
 //     'wrapper_class' => 'user_login'
@@ -44,7 +44,7 @@ piklist('field', array(
       'type'       => 'password',
       'scope'      => 'user',
       'field'      => 'user_pass',
-      'label'      => __('New Password', 'piklist-demo'),
+      'label'      => __('New Password', 'wampum'),
       'columns'    => '6',
       'value'      => false, // Setting to false forces no value to show in form.,
       'attributes' => array(
@@ -56,7 +56,7 @@ piklist('field', array(
       'type'     => 'password',
       'scope'    => 'user',
       'field'    => 'user_pass_repeat',
-      'label'    => __('Repeat New Password', 'piklist-demo'),
+      'label'    => __('Repeat New Password', 'wampum'),
       'columns'  => '6',
       'value'    => false, // Setting to false forces no value to show in form.
       'validate' => array(
@@ -80,7 +80,7 @@ piklist('field', array(
     'type' => 'password'
     ,'scope' => 'user'
     ,'field' => 'user_pass'
-    ,'label' => __('New Password', 'piklist-demo')
+    ,'label' => __('New Password', 'wampum')
     ,'position' => 'start'
     ,'columns' => '6'
     ,'value' => false // Setting to false forces no value to show in form.
@@ -94,7 +94,7 @@ piklist('field', array(
     'type' => 'password'
     ,'scope' => 'user'
     ,'field' => 'user_pass_repeat'
-    ,'label' => __('Repeat New Password', 'piklist-demo')
+    ,'label' => __('Repeat New Password', 'wampum')
     ,'position' => 'end'
     ,'columns' => '6'
     ,'value' => false // Setting to false forces no value to show in form.
@@ -118,7 +118,7 @@ piklist('field', array(
     array(
       'type'       => 'text',
       'field'      => 'first_name',
-      'label'      => __('First name', 'piklist-demo'),
+      'label'      => __('First name', 'wampum'),
       'columns'    => '6',
       'attributes' => array(
         'wrapper_class' => 'first_name',
@@ -127,7 +127,7 @@ piklist('field', array(
     array(
       'type'       => 'text',
       'field'      => 'last_name',
-      'label'      => __('Last name', 'piklist-demo'),
+      'label'      => __('Last name', 'wampum'),
       'columns'    => '6',
       'attributes' => array(
         'wrapper_class' => 'last_name'
@@ -140,7 +140,7 @@ piklist('field', array(
 //   'type'       => 'text',
 //   'scope'      => 'user_meta',
 //   'field'      => 'first_name',
-//   'label'      => __('First name', 'piklist-demo'),
+//   'label'      => __('First name', 'wampum'),
 //   'attributes' => array(
 //     'wrapper_class' => 'first_name',
 //   ),
@@ -150,7 +150,7 @@ piklist('field', array(
 //   'type'       => 'text',
 //   'scope'      => 'user_meta',
 //   'field'      => 'last_name',
-//   'label'      => __('Last name', 'piklist-demo'),
+//   'label'      => __('Last name', 'wampum'),
 //   'attributes' => array(
 //     'wrapper_class' => 'last_name'
 //   ),
@@ -160,7 +160,7 @@ piklist('field', array(
   'type' => 'text',
   'scope' => 'user',
   'field' => 'display_name',
-  'label' => __('Display name', 'piklist-demo'),
+  'label' => __('Display name', 'wampum'),
   'attributes' => array(
     'wrapper_class' => 'display_name'
   ),
@@ -176,7 +176,7 @@ piklist('field', array(
   'type'     => 'text',
   'scope'    => 'user',
   'field'    => 'user_email',
-  'label'    => __('Email', 'piklist-demo'),
+  'label'    => __('Email', 'wampum'),
   'required' => true,
   'validate' => array(
     array(
@@ -198,7 +198,7 @@ piklist('field', array(
   'type'     => 'text',
   'scope'    => 'user',
   'field'    => 'user_url',
-  'label'    => __('Website', 'piklist-demo'),
+  'label'    => __('Website', 'wampum'),
   'validate' => array(
     array(
       'type' => 'url',
@@ -213,7 +213,7 @@ piklist('field', array(
   'type'       => 'textarea',
   'scope'      => 'user_meta',
   'field'      => 'description',
-  'label'      => __('Short Bio', 'piklist-demo'),
+  'label'      => __('Short Bio', 'wampum'),
   'attributes' => array(
     'rows'          => '4',
     'wrapper_class' => 'description'

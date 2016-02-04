@@ -12,5 +12,5 @@ Order: 1
 piklist('field', array(
 	'type'	=> 'file',
 	'field'	=> 'resource_file',
-	'label'	=> 'Upload a file for this resource',
+	'label'	=> __('Upload a file for this resource', 'wampum'),
 ));

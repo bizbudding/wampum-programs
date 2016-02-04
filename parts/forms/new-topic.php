@@ -33,7 +33,7 @@ piklist('field', array(
     'type'  => 'hidden',
     'scope' => 'post',
     'field' => 'post_type',
-    'value' => 'w_topic',
+    'value' => 'wampum_lesson',
 ));
 
 // Status

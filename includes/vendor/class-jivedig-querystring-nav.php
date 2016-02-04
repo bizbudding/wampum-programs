@@ -144,6 +144,18 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 			return sanitize_title( strtolower( $slug ) );
 		}
 
+		public function get_content() {
+			// Get our menu items array
+			$items = $this->items;
+
+			foreach( $items as $key => $value ) {
+
+				if ( $this->is_tab($key) ) {
+
+				}
+			}
+		}
+
 		/**
 		 * Check if on a specific tab in your menu/template
 		 *

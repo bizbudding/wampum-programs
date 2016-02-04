@@ -23,11 +23,11 @@
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) { die; }
 
-if ( ! defined( 'WAMPUM_CORE_DIR' ) ) {
-	define( 'WAMPUM_CORE_DIR', dirname( __FILE__ ) );
+if ( ! defined( 'WAMPUM_PLUGIN_DIR' ) ) {
+	define( 'WAMPUM_PLUGIN_DIR', dirname( __FILE__ ) );
 }
 if ( ! defined( 'WAMPUM_INCLUDES_DIR' ) ) {
-	define( 'WAMPUM_INCLUDES_DIR', WAMPUM_CORE_DIR . '/includes/' );
+	define( 'WAMPUM_INCLUDES_DIR', WAMPUM_PLUGIN_DIR . '/includes/' );
 }
 if ( ! defined( 'WAMPUM_BASENAME' ) ) {
 	define( 'WAMPUM_BASENAME', dirname( plugin_basename( __FILE__ ) ) );
@@ -35,19 +35,27 @@ if ( ! defined( 'WAMPUM_BASENAME' ) ) {
 
 function wampum_require() {
 	$files = array(
-		'class-wampum',
+		'vendor/class-gamajo-template-loader',
 		'vendor/class-piklist-checker',
 		'vendor/class-jivedig-querystring-nav',
 		'vendor/extended-cpts',
 		'vendor/extended-taxos',
+		'class-wampum',
+		'class-wampum-template-loader',
 		'class-profile-nav',
 		'actions',
-		'post-types',
+		// 'post-types',
 	);
 	foreach ( $files as $file ) {
 		require WAMPUM_INCLUDES_DIR . $file . '.php';
 	}
 }
 wampum_require();
-$wampum = new Wampum();
+
+// Instantiate dependent classes
+$wampum_template_loader = new Wampum_Template_Loader();
+
+$wampum = new Wampum(
+	$wampum_template_loader
+);
 $wampum->run();
