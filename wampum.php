@@ -1,25 +1,61 @@
 <?php
-/*
-Plugin Name: Wampum
-Plugin URI: http://bizbudding.com
-Description: The core Wampum plugin
-Version: 1.0.0
-Author: Mike Hemberger
-Author URI: http://bizbudding.com
-*/
+/**
+ * @package   Wampum
+ * @author    Mike Hemberger <mike@bizbudding.com>
+ * @license   GPL-2.0+
+ * @link      http://bizbudding.com.com
+ * @copyright 2016 The Stiz Media, LLC
+ *
+ * @wordpress-plugin
+ * Plugin Name:       Wampum
+ * Plugin URI:        TBD
+ * Plugin Type: 	  Piklist
+ * Description: 	  The core Wampum plugin
+ * Author:            Mike Hemberger
+ * Author URI:        http://bizbudding.com
+ * Text Domain:       wampum
+ * License:           GPL-2.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Version:           1.0.0
+ * Gitlab URI:		  TBD
+ */
 
-// Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;
+// If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) { die; }
 
-// Define plugin directory constants
-define( 'WAMPUM_CORE_DIR', dirname( __FILE__ ) );
-define( 'WAMPUM_INCLUDES_DIR', WAMPUM_CORE_DIR . '/includes/' );
-define( 'WAMPUM_PLUGIN_NAME', dirname( plugin_basename( __FILE__ ) ) );
+if ( ! defined( 'WAMPUM_PLUGIN_DIR' ) ) {
+	define( 'WAMPUM_PLUGIN_DIR', dirname( __FILE__ ) );
+}
+if ( ! defined( 'WAMPUM_INCLUDES_DIR' ) ) {
+	define( 'WAMPUM_INCLUDES_DIR', WAMPUM_PLUGIN_DIR . '/includes/' );
+}
+if ( ! defined( 'WAMPUM_BASENAME' ) ) {
+	define( 'WAMPUM_BASENAME', dirname( plugin_basename( __FILE__ ) ) );
+}
 
-require_once( WAMPUM_INCLUDES_DIR . 'vendor/extended-cpts.php' );
-require_once( WAMPUM_INCLUDES_DIR . 'vendor/extended-taxos.php' );
-// if ( ! function_exists( 'p2p_register_connection_type' ) ) {
-	// require_once( WAMPUM_INCLUDES_DIR . 'vendor/wp-lib-posts-to-posts/autoload.php' );
-// }
-require_once( WAMPUM_INCLUDES_DIR . 'post-types.php' );
-require_once( WAMPUM_INCLUDES_DIR . 'post-types.php' );
+function wampum_require() {
+	$files = array(
+		'vendor/class-gamajo-template-loader',
+		'vendor/class-piklist-checker',
+		'vendor/class-jivedig-querystring-nav',
+		'vendor/extended-cpts',
+		'vendor/extended-taxos',
+		'class-wampum',
+		'class-wampum-template-loader',
+		'class-profile-nav',
+		'actions',
+		// 'post-types',
+	);
+	foreach ( $files as $file ) {
+		require WAMPUM_INCLUDES_DIR . $file . '.php';
+	}
+}
+wampum_require();
+
+// Instantiate dependent classes
+$wampum_template_loader = new Wampum_Template_Loader();
+
+$wampum = new Wampum(
+	$wampum_template_loader
+);
+$wampum->run();

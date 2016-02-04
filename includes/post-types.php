@@ -8,11 +8,11 @@ if ( !defined( 'ABSPATH' ) ) exit;
  *
  * This function is referenced during activate in the main plugin file
  */
-add_action( 'init', 'carrierclinic_register_post_types', 0 );
-function carrierclinic_register_post_types() {
+// add_action( 'init', 'wampum_register_post_types', 0 );
+function wampum_register_post_types() {
 
     // Programs
-    register_extended_post_type( 'w_program', array(
+    register_extended_post_type( 'wampum_program', array(
 		'enter_title_here'	=> 'Enter Program Name',
 		'menu_icon'			=> 'dashicons-feedback',
 		'supports'			=> array('title','editor','genesis-cpt-archives-settings'),
@@ -27,19 +27,19 @@ function carrierclinic_register_post_types() {
         'slug'     => 'programs'
     ) );
 
-    // Topics
-    register_extended_post_type( 'w_topic', array(
-        'enter_title_here' => 'Enter Topic Name',
+    // Lessons
+    register_extended_post_type( 'wampum_lesson', array(
+        'enter_title_here' => 'Enter Lesson Name',
         'menu_icon'        => 'dashicons-feedback',
         'supports'         => array('title','editor','genesis-cpt-archives-settings'),
     ), array(
-        'singular' => 'Topic',
-        'plural'   => 'Topics',
+        'singular' => 'Lesson',
+        'plural'   => 'Lessons',
         'slug'     => 'topics'
     ) );
 
     // Resources
-    register_extended_post_type( 'w_resource', array(
+    register_extended_post_type( 'wampum_resource', array(
         'enter_title_here' => 'Enter Resource Name',
         'menu_icon'        => 'dashicons-feedback',
         'supports'         => array('title','editor','genesis-cpt-archives-settings'),
@@ -58,13 +58,13 @@ function carrierclinic_register_post_types() {
 
 }
 
-add_action( 'p2p_init', 'wampum_p2p_connection_types' );
+// add_action( 'p2p_init', 'wampum_p2p_connection_types' );
 function wampum_p2p_connection_types() {
 
     p2p_register_connection_type( array(
         'name'            => 'topics_to_programs',
-        'from'            => 'w_topic',
-        'to'              => 'w_program',
+        'from'            => 'wampum_lesson',
+        'to'              => 'wampum_program',
         'can_create_post' => false,
         'sortable'        => 'any',
         'admin_box'       => array(
@@ -76,17 +76,17 @@ function wampum_p2p_connection_types() {
         'reciprocal'     => true,
         'title'          => array(
             'from' => __( 'Programs', 'wampum' ),
-            'to'   => __( 'Topics', 'wampum' )
+            'to'   => __( 'Lessons', 'wampum' )
         ),
         'from_labels' => array(
-            'singular_name' => __( 'Topics', 'wampum' ),
+            'singular_name' => __( 'Lessons', 'wampum' ),
         ),
     ) );
 
     p2p_register_connection_type( array(
         'name'            => 'resources_to_topics',
-        'from'            => 'w_resource',
-        'to'              => 'w_topic',
+        'from'            => 'wampum_resource',
+        'to'              => 'wampum_lesson',
         'can_create_post' => false,
         'sortable'        => 'any',
         'admin_box'       => array(
@@ -97,8 +97,8 @@ function wampum_p2p_connection_types() {
         'admin_dropdown' => true,
         'reciprocal'     => true,
         'title'          => array(
-            'from' => __( 'Topics', 'wampum' ),
-            'to'   => __( 'Topic Resources', 'wampum' )
+            'from' => __( 'Lessons', 'wampum' ),
+            'to'   => __( 'Lesson Resources', 'wampum' )
         ),
         'from_labels' => array(
             'singular_name' => __( 'Resources', 'wampum' ),
