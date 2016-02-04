@@ -16,7 +16,7 @@
  * Text Domain:       wampum
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:           0.0.11
+ * Version:           0.0.12
  * Gitlab URI:		  https://gitlab.com/jivedig/wampum
  */
 
@@ -35,8 +35,9 @@ if ( ! defined( 'WAMPUM_BASENAME' ) ) {
 
 function wampum_require() {
 	$files = array(
+		// 'vendor/class-piklist-checker',
+		'vendor/class-tgm-plugin-activation',
 		'vendor/class-gamajo-template-loader',
-		'vendor/class-piklist-checker',
 		'vendor/class-jivedig-querystring-nav',
 		'vendor/extended-cpts',
 		'vendor/extended-taxos',
