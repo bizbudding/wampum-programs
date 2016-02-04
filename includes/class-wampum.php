@@ -1,10 +1,10 @@
 <?php
 /**
- * CPT Archive Toolbar for Genesis
+ * Wampum
  *
  * @package   Wampum
  * @author    Mike Hemberger <mike@thestizmedia.com.com>
- * @link      https://github.com/JiveDig/cptast-genesis/
+ * @link      https://github.com/JiveDig/wampum/
  * @copyright 2016 Mike Hemberger
  * @license   GPL-2.0+
  */
@@ -17,12 +17,13 @@
 class Wampum {
 
 	public function run() {
-		if ( 'genesis' !== basename( get_template_directory() ) ) {
-			// add_action( 'admin_init', array( $this, 'deactivate' ) );
-			// return;
-		}
 		// add_action( 'init', array( $this, 'check_piklist' ) );
 		add_action( 'tgmpa_register', array( $this, 'dependencies' ) );
+		// Bail if Posts to Posts or Piklist are not active
+		if ( ! ( function_exists( 'p2p_register_connection_type' ) || class_exists('Piklist') ) ) {
+			add_action( 'admin_init', array( $this, 'deactivate' ) );
+			return;
+		}
 		add_action( 'init', array( $this, 'register_post_types') );
 		add_action( 'init', array( $this, 'register_p2p_connections') );
 		add_action( 'piklist_save_field-connect_resource_to_lesson', array( $this, 'create_and_connect_resource_to_lesson' ), 10, 1 );
@@ -35,7 +36,7 @@ class Wampum {
 	 */
 	public function deactivate() {
 		deactivate_plugins( WAMPUM_BASENAME );
-		add_action( 'admin_notices', array( $this, 'error_message' ) );
+		// add_action( 'admin_notices', array( $this, 'error_message' ) );
 	}
 
 	/**
@@ -45,7 +46,7 @@ class Wampum {
 	 */
 	public function error_message() {
 
-		$error = sprintf( __( 'Sorry, Wampum works only with the Genesis Framework. It has been deactivated.', 'cptast-genesis' ) );
+		$error = sprintf( __( 'Wampum dependent plugins are not installed. Wampum has been deactivated.', 'wampum' ) );
 
 		echo '<div class="error"><p>' . esc_attr( $error ) . '</p></div>';
 
@@ -123,7 +124,7 @@ class Wampum {
 	 * @since TODO
 	 */
 	public function load_textdomain() {
-		// load_plugin_textdomain( 'cptast-genesis', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		// load_plugin_textdomain( 'wampum', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
 	/**

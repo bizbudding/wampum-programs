@@ -1,7 +1,7 @@
 <?php
 /*
 Title: Add Resource
-Post Type: w_topic
+Post Type: wampum_lesson
 Capability: edit_posts
 Context: normal
 Priority: default
