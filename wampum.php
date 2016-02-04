@@ -1,10 +1,10 @@
 <?php
 /**
  * @package   Wampum
- * @author    Mike Hemberger <mike@bizbudding.com>
+ * @author    BizBudding, INC <mike@bizbudding.com>
  * @license   GPL-2.0+
  * @link      http://bizbudding.com.com
- * @copyright 2016 The Stiz Media, LLC
+ * @copyright 2016 BizBudding, INC
  *
  * @wordpress-plugin
  * Plugin Name:       Wampum
