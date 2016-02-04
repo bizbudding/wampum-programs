@@ -29,6 +29,9 @@ if ( ! defined( 'WAMPUM_PLUGIN_DIR' ) ) {
 if ( ! defined( 'WAMPUM_INCLUDES_DIR' ) ) {
 	define( 'WAMPUM_INCLUDES_DIR', WAMPUM_PLUGIN_DIR . '/includes/' );
 }
+if ( ! defined( 'WAMPUM_PLUGIN_URI' ) ) {
+	define( 'WAMPUM_PLUGIN_URI', plugin_dir_url( __FILE__ ) );
+}
 if ( ! defined( 'WAMPUM_BASENAME' ) ) {
 	define( 'WAMPUM_BASENAME', dirname( plugin_basename( __FILE__ ) ) );
 }
@@ -42,6 +45,7 @@ function wampum_require() {
 		'vendor/extended-cpts',
 		'vendor/extended-taxos',
 		'class-wampum',
+		'class-wampum-connection',
 		'class-wampum-template-loader',
 		'class-profile-nav',
 	);
@@ -52,9 +56,11 @@ function wampum_require() {
 wampum_require();
 
 // Instantiate dependent classes
+$wampum_connection = new Wampum_Connection();
 $wampum_template_loader = new Wampum_Template_Loader();
 
 $wampum = new Wampum(
+	$wampum_connection,
 	$wampum_template_loader
 );
 $wampum->run();

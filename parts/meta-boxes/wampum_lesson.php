@@ -22,6 +22,26 @@ piklist('field', array(
   'value' => get_the_ID(),
 ));
 
+piklist('field', array(
+  'type'  => 'select',
+  'scope' => 'post_meta',
+  'field' => 'existing_resources',
+  'template' => 'field',
+  'label'       => __('Add Existing Resources', 'wampum'),
+  'description' => __('Add resources now, or you can always attach resources later.', 'wampum'),
+  'choices' => array(
+      'one' => 'One',
+      'two' => 'Two',
+  ),
+  // 'columns' => '12',
+  'attributes' => array(
+      'columns' => '12',
+      'class' => 'wampum-select2',
+      'multiple' => 'multiple',
+      'width' => '100%',
+  ),
+));
+
 // Resources
 piklist('field', array(
   'type'     => 'group',

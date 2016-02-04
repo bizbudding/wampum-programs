@@ -3,7 +3,7 @@
  * Wampum
  *
  * @package   Wampum
- * @author    Mike Hemberger <mike@thestizmedia.com.com>
+ * @author    Mike Hemberger <mike@bizbudding.com.com>
  * @link      https://github.com/JiveDig/wampum/
  * @copyright 2016 Mike Hemberger
  * @license   GPL-2.0+
@@ -26,7 +26,6 @@ class Wampum {
 		}
 		add_action( 'init', array( $this, 'register_post_types') );
 		add_action( 'init', array( $this, 'register_p2p_connections') );
-		add_action( 'piklist_save_field-connect_resource_to_lesson', array( $this, 'create_and_connect_resource_to_lesson' ), 10, 1 );
 	}
 
 	/**
@@ -239,41 +238,6 @@ class Wampum {
 	        //     'create'        => __( 'Create Connections', 'wampum' ),
 	        // ),
 	    ) );
-	}
-
-	/**
-	 * Create a resource and connect it to a lesson
-	 *
-	 * @param  array  $fields  the piklist field values
-	 *
-	 * @since  1.0.0
-	 *
-	 * @return void|WP_Error
-	 */
-	public function create_and_connect_resource_to_lesson( $fields ) {
-
-		// Value of lesson_id field from /parts/meta-boxes/wampum_lesson.php
-	    $topic_id = absint($fields['lesson_id']['value']);
-
-		foreach ( $fields['add_resource']['request_value'] as $resource ) {
-
-			// Create new resource
-			$data = array(
-				'post_type'		=> 'wampum_resource',
-				'post_status'	=> 'publish',
-				'post_title'	=> sanitize_text_field($resource['post_title']),
-				'post_content'	=> sanitize_text_field($resource['post_content']),
-			);
-			$post_id = wp_insert_post( $data, true );
-
-			if ( ! is_wp_error( $post_id ) ) {
-				// Connect new post to topic
-				$connection_id = p2p_type( 'resources_to_lessons' )->connect( $post_id, $topic_id, array(
-				    'date' => current_time('mysql')
-				));
-			}
-
-		}
 	}
 
 }
