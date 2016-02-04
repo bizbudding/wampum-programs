@@ -35,8 +35,9 @@ if ( ! defined( 'WAMPUM_BASENAME' ) ) {
 
 function wampum_require() {
 	$files = array(
+		// 'vendor/class-piklist-checker',
+		'vendor/class-tgm-plugin-activation',
 		'vendor/class-gamajo-template-loader',
-		'vendor/class-piklist-checker',
 		'vendor/class-jivedig-querystring-nav',
 		'vendor/extended-cpts',
 		'vendor/extended-taxos',
