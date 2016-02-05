@@ -9,6 +9,9 @@
  * @license   GPL-2.0+
  */
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  * Main plugin class.
  *
@@ -19,38 +22,17 @@ class Wampum_Connection {
 	function __construct() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
-		add_filter( 'piklist_field_templates', array( $this, 'field_template') );
-		add_action( 'piklist_save_field-connect_resource_to_lesson', array( $this, 'create_and_connect_resource_to_lesson' ), 10, 1 );
+		add_action( 'piklist_save_field-connect_resource_to_lesson', array( $this, 'connect_resource_to_lesson' ), 10, 1 );
 	}
 
-	// Enqueue Javascript files
+	// Register Javascript file(s)
 	public function enqueue_scripts() {
-		wp_enqueue_script( 'wampum-select2',  WAMPUM_PLUGIN_URI . '/js/select2.min.js', array( 'jquery' ), '4.0.1', true );
+		wp_register_script( 'wampum-select2',  WAMPUM_PLUGIN_URI . 'js/select2.min.js', array( 'jquery' ), '4.0.1', true );
 	}
 
-	// Enqueue CSS files
+	// Register CSS file(s)
 	public function enqueue_styles() {
-		wp_enqueue_style( 'wampum-select2', WAMPUM_PLUGIN_URI . '/css/select2.min.css', array(), '4.0.1' );
-	}
-
-	function field_template($templates) {
-		$templates['select2'] = array(
-				'name'			=> __('Select2 Field', 'wampum'),
-				'description'	=> __('', 'wampum'),
-				'template'		=> '[field_wrapper]
-                <div class="%1$s piklist-theme-field-container">
-					<div class="piklist-theme-label">
-						[field_label]
-					</div>
-					<div class="piklist-theme-field piklist-select2-field">
-						[field]
-						[field_description_wrapper]
-						<p class="piklist-theme-field-description">[field_description]</p>
-						[/field_description_wrapper]
-					</div>
-                </div>
-              [/field_wrapper]');
-		return $templates;
+		wp_register_style( 'wampum-select2', WAMPUM_PLUGIN_URI . 'css/select2.min.css', array(), '4.0.1' );
 	}
 
 	/**
@@ -62,30 +44,77 @@ class Wampum_Connection {
 	 *
 	 * @return void|WP_Error
 	 */
-	public function create_and_connect_resource_to_lesson( $fields ) {
+	public function connect_resource_to_lesson( $fields ) {
 
 		// Value of lesson_id field from /parts/meta-boxes/wampum_lesson.php
-	    $topic_id = absint($fields['lesson_id']['value']);
+	    $to = absint($fields['lesson_id']['value']);
 
-		foreach ( $fields['add_resource']['request_value'] as $resource ) {
+	    // Existing resources field check
+	    $existing_resources = isset($fields['existing_resources']['request_value']) ? $fields['existing_resources']['request_value'] : null;
 
-			// Create new resource
-			$data = array(
-				'post_type'		=> 'wampum_resource',
-				'post_status'	=> 'publish',
-				'post_title'	=> sanitize_text_field($resource['post_title']),
-				'post_content'	=> sanitize_text_field($resource['post_content']),
-			);
-			$post_id = wp_insert_post( $data, true );
-
-			if ( ! is_wp_error( $post_id ) ) {
-				// Connect new post to topic
-				$connection_id = p2p_type( 'resources_to_lessons' )->connect( $post_id, $topic_id, array(
-				    'date' => current_time('mysql')
-				));
+	    if ( $existing_resources ) {
+			foreach ( $existing_resources as $from ) {
+				$this->connect( 'resources_to_lessons', $from, $to );
 			}
+	    }
 
+	    // New resources field check
+	    $new_resources = isset($fields['add_resource']['request_value']) ? $fields['add_resource']['request_value'] : null;
+
+	    if ( $new_resources ) {
+
+			foreach ( $new_resources as $resource ) {
+
+				// Title field check
+				$title = isset($resource['post_title']) ? sanitize_text_field($resource['post_title']) : null;
+
+				// If title is null, skip this item in the loop
+				if ( ! $title ) {
+					continue;
+				}
+
+				// Content and files field checks
+				$content = isset($resource['post_content']) ? sanitize_text_field($resource['post_content']) : null;
+				$files   = isset($resource['resource_files']) ? $resource['resource_files'] : null;
+
+				// Create new resource
+				$data = array(
+					'post_type'		=> 'wampum_resource',
+					'post_status'	=> 'publish',
+					'post_title'	=> $title,
+					'post_content'	=> $content,
+				);
+				$from = wp_insert_post( $data, true );
+
+				if ( ! is_wp_error( $from ) ) {
+					if ( $files ) {
+						// Add media to the new post's meta
+						update_post_meta( $from, 'wampum_resource_files', $files );
+					}
+					// Connect new post to topic
+					$this->connect( 'resources_to_lessons', $from, $to );
+				}
+
+			}
 		}
+	}
+
+	/**
+	 * Connect one object to another
+	 *
+	 * @param  string  $type  p2p connection type
+	 * @param  int     $from  object ID getting connected from
+	 * @param  int     $to    object ID getting connected to
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return int|WP_Error   connection ID or error
+	 */
+	public function connect( $type, $from, $to ) {
+		$connection_id = p2p_type( 'resources_to_lessons' )->connect( $from, $to, array(
+		    'date' => current_time('mysql')
+		));
+		return $connection_id;
 	}
 
 }

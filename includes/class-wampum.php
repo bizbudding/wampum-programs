@@ -9,6 +9,9 @@
  * @license   GPL-2.0+
  */
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  * Main plugin class.
  *
@@ -24,8 +27,8 @@ class Wampum {
 			add_action( 'admin_init', array( $this, 'deactivate' ) );
 			return;
 		}
-		add_action( 'init', array( $this, 'register_post_types') );
-		add_action( 'init', array( $this, 'register_p2p_connections') );
+		// Add an admin settings page
+		// add_filter( 'piklist_admin_pages', array( $this, 'settings_page' ) );
 	}
 
 	/**
@@ -126,118 +129,21 @@ class Wampum {
 		// load_plugin_textdomain( 'wampum', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
-	/**
-	 * Register custom post stypes
-	 *
-	 * @since   1.0.0
-	 *
-	 * @return  void
-	 */
-	public function register_post_types() {
-	    // Programs
-	    register_extended_post_type( 'wampum_program', array(
-			'enter_title_here'	=> 'Enter Program Name',
-			'menu_icon'			=> 'dashicons-feedback',
-			'supports'			=> array('title','editor','genesis-cpt-archives-settings'),
-	        // 'admin_cols' => array(
-	            // 'type' => array(
-	                // 'taxonomy' => 'resource_cat'
-	            // )
-	        // ),
-	    ), array(
-	        'singular' => 'Program',
-	        'plural'   => 'Programs',
-	        'slug'     => 'programs'
-	    ) );
-
-	    // Lessons
-	    register_extended_post_type( 'wampum_lesson', array(
-	        'enter_title_here' => 'Enter Lesson Name',
-	        'menu_icon'        => 'dashicons-feedback',
-	        'supports'         => array('title','editor','genesis-cpt-archives-settings'),
-	    ), array(
-	        'singular' => 'Lesson',
-	        'plural'   => 'Lessons',
-	        'slug'     => 'lessons'
-	    ) );
-
-	    // Resources
-	    register_extended_post_type( 'wampum_resource', array(
-	        'enter_title_here' => 'Enter Resource Name',
-	        'menu_icon'        => 'dashicons-feedback',
-	        'supports'         => array('title','editor','genesis-cpt-archives-settings'),
-	    ), array(
-	        'singular' => 'Resource',
-	        'plural'   => 'Resources',
-	        'slug'     => 'resources'
-	    ) );
-
-	    // News Categories
-	    // register_extended_taxonomy( 'news_cat', 'news', array(
-	        // 'singular' => 'News Category',
-	        // 'plural'   => 'News Categories',
-	        // 'rewrite'  => array( 'slug' => 'news-category' ),
-	    // ) );
-	}
-
-	/**
-	 * Register Posts to Posts connections
-	 *
-	 * @since   1.0.0
-	 *
-	 * @return  void
-	 */
-	public function register_p2p_connections() {
-
-	    p2p_register_connection_type( array(
-	        'name'            => 'lessons_to_programs',
-	        'from'            => 'wampum_lesson',
-	        'to'              => 'wampum_program',
-	        'can_create_post' => false,
-	        'sortable'        => 'any',
-	        'admin_box'       => array(
-				'show'		=> 'to',
-				'context'	=> 'side',
-			),
-	        'admin_column'   => true,
-	        'admin_dropdown' => true,
-	        'reciprocal'     => true,
-	        'title'          => array(
-	            'from' => __( 'Programs', 'wampum' ),
-	            'to'   => __( 'Lessons', 'wampum' )
-	        ),
-	        'from_labels' => array(
-	            'singular_name' => __( 'Lessons', 'wampum' ),
-	        ),
-	    ) );
-
-	    p2p_register_connection_type( array(
-	        'name'            => 'resources_to_lessons',
-	        'from'            => 'wampum_resource',
-	        'to'              => 'wampum_lesson',
-	        'can_create_post' => false,
-	        'sortable'        => 'any',
-	        'admin_box'       => array(
-				'show'		=> 'to',
-				'context'	=> 'advanced',
-			),
-	        'admin_column'   => true,
-	        'admin_dropdown' => true,
-	        'reciprocal'     => true,
-	        'title'          => array(
-	            'from' => __( 'Lessons', 'wampum' ),
-	            'to'   => __( 'Lesson Resources', 'wampum' )
-	        ),
-	        'from_labels' => array(
-	            'singular_name' => __( 'Resources', 'wampum' ),
-	        ),
-	        // 'to_labels' => array(
-	        //     'singular_name' => __( 'Item', 'wampum' ),
-	        //     'search_items'  => __( 'Search items', 'wampum' ),
-	        //     'not_found'     => __( 'No items found.', 'wampum' ),
-	        //     'create'        => __( 'Create Connections', 'wampum' ),
-	        // ),
-	    ) );
+	public function settings_page( $pages ) {
+		$pages[] = array(
+			'page_title'	=> __('Wampum Settings', 'wampum'),
+			'menu_title'	=> __('Wampum', 'wampum'),
+			'capability'	=> 'manage_options',
+			'sub_menu'		=> 'options-general.php',
+			'menu_slug'		=> 'wampum',
+			'setting'		=> 'wampum_settings',
+			// 'menu_icon'		=> plugins_url('piklist/parts/img/piklist-icon.png') ,
+			// 'page_icon'		=> plugins_url('piklist/parts/img/piklist-page-icon-32.png'),
+			// 'default_tab'	=> 'General',
+			// 'single_line'	=> true,
+			'save_text'		=> __('Save Changes', 'wampum'),
+		);
+		return $pages;
 	}
 
 }

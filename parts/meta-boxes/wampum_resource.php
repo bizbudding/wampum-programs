@@ -10,7 +10,13 @@ Order: 1
 */
 
 piklist('field', array(
-	'type'	=> 'file',
-	'field'	=> 'resource_file',
-	'label'	=> __('Upload a file for this resource', 'wampum'),
+	'type'		=> 'file',
+	'field'		=> 'wampum_resource_files',
+	'label'		=> __('Upload a file for this resource', 'wampum'),
+	'template'	=> 'field',
+	'validate' => array(
+		array(
+			'type' => 'file_exists',
+		),
+	),
 ));

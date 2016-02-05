@@ -16,7 +16,7 @@
  * Text Domain:       wampum
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:           0.0.13
+ * Version:           0.0.14
  * Gitlab URI:		  https://gitlab.com/jivedig/wampum
  */
 
@@ -45,6 +45,7 @@ function wampum_require() {
 		'vendor/extended-cpts',
 		'vendor/extended-taxos',
 		'class-wampum',
+		'class-wampum-post-types',
 		'class-wampum-connection',
 		'class-wampum-template-loader',
 		'class-profile-nav',
@@ -56,10 +57,12 @@ function wampum_require() {
 wampum_require();
 
 // Instantiate dependent classes
-$wampum_connection = new Wampum_Connection();
-$wampum_template_loader = new Wampum_Template_Loader();
+$wampum_post_types		= new Wampum_Post_Types();
+$wampum_connection		= new Wampum_Connection();
+$wampum_template_loader	= new Wampum_Template_Loader();
 
 $wampum = new Wampum(
+	$wampum_post_types,
 	$wampum_connection,
 	$wampum_template_loader
 );

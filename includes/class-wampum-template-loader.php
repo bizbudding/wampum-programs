@@ -9,6 +9,8 @@
  * @license   GPL-2.0+
  */
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Template loader for Meal Planner.
