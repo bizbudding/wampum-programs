@@ -17,7 +17,7 @@
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Version:           0.0.14
- * Gitlab URI:		  https://gitlab.com/jivedig/wampum
+ * GitLab Plugin URI: https://gitlab.com/jivedig/wampum
  */
 
 // If this file is called directly, abort.
