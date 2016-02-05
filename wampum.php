@@ -7,19 +7,19 @@
  * @copyright 2016 BizBudding, INC
  *
  * @wordpress-plugin
- * Plugin Name:       Wampum
- * Plugin URI:        https://gitlab.com/jivedig/wampum
- * Plugin Type: 	  Piklist
- * Description: 	  The core Wampum plugin
- * Author:            Mike Hemberger
- * Author URI:        http://bizbudding.com
- * Text Domain:       wampum
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:           0.0.14
- * GitLab Plugin URI: https://gitlab.com/jivedig/wampum
+* Plugin Name:        Wampum
+* Plugin URI:         https://gitlab.com/jivedig/wampum
+* Description: 	      The core Wampum plugin
+* Author:             Mike Hemberger
+* Author URI:         http://bizbudding.com
+* Text Domain:        wampum
+* License:            GPL-2.0+
+* License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
+* Version:            0.0.14
+* GitLab Plugin URI:  https://gitlab.com/jivedig/wampum
  */
 
+// * Plugin Type: 	      Piklist
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) { die; }
 
