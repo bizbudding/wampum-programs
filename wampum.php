@@ -8,7 +8,8 @@
  *
  * @wordpress-plugin
  * Plugin Name:        Wampum
- * Description: 	      The core Wampum plugin
+ * Description: 	   The core Wampum plugin
+ * Plugin URI:         https://gitlab.com/jivedig/wampum
  * Author:             Mike Hemberger
  * Author URI:         http://bizbudding.com
  * Text Domain:        wampum
@@ -16,9 +17,9 @@
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
  * Version:            0.0.14
  * GitLab Plugin URI:  https://gitlab.com/jivedig/wampum
+ * GitLab Branch:	   master
  */
 
-// * Plugin URI:         https://gitlab.com/jivedig/wampum
 // * Plugin Type: 	      Piklist
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) { die; }
