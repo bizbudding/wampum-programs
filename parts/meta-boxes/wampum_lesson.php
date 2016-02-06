@@ -46,7 +46,6 @@ piklist('field', array(
         )
     ),
     'attributes' => array(
-        'name'     => 'can_i_change_this',
         'class'    => 'wampum-select2',
         'multiple' => 'multiple',
     ),
@@ -82,11 +81,11 @@ piklist('field', array(
             'scope'    => 'connect_resource_to_lesson',
             'field'    => 'resource_files',
             'label'    => __('Upload File(s)', 'wampum'),
-            'validate' => array(
-                array(
-                    'type' => 'file_exists',
-                ),
-            ),
+            // 'validate' => array(
+            //     array(
+            //         'type' => 'file_exists',
+            //     ),
+            // ),
             // 'options' => array(
             //     'basic' => true,
             // ),

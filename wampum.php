@@ -47,7 +47,7 @@ function wampum_require() {
 		'vendor/extended-taxos',
 		'class-wampum',
 		'class-wampum-post-types',
-		'class-wampum-connection',
+		'class-wampum-connections',
 		'class-wampum-template-loader',
 		'class-profile-nav',
 	);
@@ -59,12 +59,12 @@ wampum_require();
 
 // Instantiate dependent classes
 $wampum_post_types		= new Wampum_Post_Types();
-$wampum_connection		= new Wampum_Connection();
+$wampum_connections		= new Wampum_Connections();
 $wampum_template_loader	= new Wampum_Template_Loader();
 
 $wampum = new Wampum(
 	$wampum_post_types,
-	$wampum_connection,
+	$wampum_connections,
 	$wampum_template_loader
 );
 $wampum->run();

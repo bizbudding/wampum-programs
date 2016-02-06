@@ -21,7 +21,6 @@ class Wampum_Post_Types {
 
 	function __construct() {
 		add_action( 'init', array( $this, 'register_post_types') );
-		add_action( 'init', array( $this, 'register_p2p_connections') );
 	}
 
 	/**
@@ -60,66 +59,6 @@ class Wampum_Post_Types {
 	}
 
 	/**
-	 * Register Posts to Posts connections
-	 *
-	 * @since   1.0.0
-	 *
-	 * @return  void
-	 */
-	public function register_p2p_connections() {
-
-	    p2p_register_connection_type( array(
-	        'name'            => 'lessons_to_programs',
-	        'from'            => 'wampum_lesson',
-	        'to'              => 'wampum_program',
-	        'can_create_post' => false,
-	        'sortable'        => 'any',
-	        'admin_box'       => array(
-				'show'		=> 'to',
-				'context'	=> 'side',
-			),
-	        'admin_column'   => true,
-	        'admin_dropdown' => true,
-	        'reciprocal'     => true,
-	        'title'          => array(
-	            'from' => $this->plural_name('wampum_program'),
-	            'to'   => $this->plural_name('wampum_lesson'),
-	        ),
-	        'from_labels' => array(
-	            'singular_name' => $this->singular_name('wampum_lesson'),
-	        ),
-	    ) );
-
-	    p2p_register_connection_type( array(
-	        'name'            => 'resources_to_lessons',
-	        'from'            => 'wampum_resource',
-	        'to'              => 'wampum_lesson',
-	        'can_create_post' => false,
-	        'sortable'        => 'any',
-	        'admin_box'       => array(
-				'show'		=> 'to',
-				'context'	=> 'advanced',
-			),
-	        'admin_column'   => true,
-	        'admin_dropdown' => true,
-	        'reciprocal'     => true,
-	        'title'          => array(
-	            'from' => $this->plural_name('wampum_lesson'),
-	            'to'   => $this->singular_name('wampum_lesson') . ' ' . $this->plural_name('wampum_resource'),
-	        ),
-	        'from_labels' => array(
-	            'singular_name' => $this->plural_name('wampum_resource'),
-	        ),
-	        // 'to_labels' => array(
-	        //     'singular_name' => __( 'Item', 'wampum' ),
-	        //     'search_items'  => __( 'Search items', 'wampum' ),
-	        //     'not_found'     => __( 'No items found.', 'wampum' ),
-	        //     'create'        => __( 'Create Connections', 'wampum' ),
-	        // ),
-	    ) );
-	}
-
-	/**
 	 * Get singular post type name
 	 *
 	 * @since  1.0.0
@@ -128,8 +67,8 @@ class Wampum_Post_Types {
 	 *
 	 * @return string
 	 */
-	public function singular_name( $post_type, $lowercase = false ) {
-		$name = $this::default_names()[$post_type]['singular'];
+	public static function singular_name( $post_type, $lowercase = false ) {
+		$name = self::default_names()[$post_type]['singular'];
 		return ($lowercase) ? strtolower($name) : $name;
 	}
 
@@ -142,8 +81,8 @@ class Wampum_Post_Types {
 	 *
 	 * @return string
 	 */
-	public function plural_name( $post_type, $lowercase = false ) {
-		$name = $this::default_names()[$post_type]['plural'];
+	public static function plural_name( $post_type, $lowercase = false ) {
+		$name = self::default_names()[$post_type]['plural'];
 		return ($lowercase) ? strtolower($name) : $name;
 	}
 
@@ -154,7 +93,7 @@ class Wampum_Post_Types {
 	 *
 	 * @return array
 	 */
-	public function default_names() {
+	public static function default_names() {
 		$post_types = array(
 			'wampum_program' => array(
 			   'singular' => _x('Program', 'wampum'),
