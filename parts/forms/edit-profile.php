@@ -38,7 +38,7 @@ Message: User Profile Saved.
 
 piklist('field', array(
   'type'   => 'group',
-  'scope'  => 'wampum_reset_password',
+  'scope'  => 'user',
   'fields' => array(
     array(
       'type'       => 'password',
@@ -74,42 +74,42 @@ piklist('field', array(
   ),
 ));
 
-  echo '<h2>Random h2</h2>';
+  // echo '<h2>Random h2</h2>';
 
-  piklist('field', array(
-    'type' => 'password'
-    ,'scope' => 'user'
-    ,'field' => 'user_pass'
-    ,'label' => __('New Password', 'wampum')
-    ,'position' => 'start'
-    ,'columns' => '6'
-    ,'value' => false // Setting to false forces no value to show in form.
-    ,'attributes' => array(
-      'autocomplete' => 'off'
-      ,'wrapper_class' => 'user_pass'
-    )
-  ));
+  // piklist('field', array(
+  //   'type' => 'password'
+  //   ,'scope' => 'user'
+  //   ,'field' => 'user_pass'
+  //   ,'label' => __('New Password', 'wampum')
+  //   ,'template' => 'theme'
+  //   ,'columns' => '6'
+  //   ,'value' => false // Setting to false forces no value to show in form.
+  //   ,'attributes' => array(
+  //     'autocomplete' => 'off'
+  //     ,'wrapper_class' => 'user_pass'
+  //   )
+  // ));
 
-  piklist('field', array(
-    'type' => 'password'
-    ,'scope' => 'user'
-    ,'field' => 'user_pass_repeat'
-    ,'label' => __('Repeat New Password', 'wampum')
-    ,'position' => 'end'
-    ,'columns' => '6'
-    ,'value' => false // Setting to false forces no value to show in form.
-    ,'validate' => array(
-      array(
-        'type' => 'match'
-        ,'options' => array(
-          'field' => 'user_pass'
-        )
-      )
-    )
-    ,'attributes' => array(
-      'wrapper_class' => 'user_pass_repeat'
-    )
-  ));
+  // piklist('field', array(
+  //   'type' => 'password'
+  //   ,'scope' => 'user'
+  //   ,'field' => 'user_pass_repeat'
+  //   ,'label' => __('Repeat New Password', 'wampum')
+  //   ,'template' => 'theme'
+  //   ,'columns' => '6'
+  //   ,'value' => false // Setting to false forces no value to show in form.
+  //   ,'validate' => array(
+  //     array(
+  //       'type' => 'match'
+  //       ,'options' => array(
+  //         'field' => 'user_pass'
+  //       )
+  //     )
+  //   )
+  //   ,'attributes' => array(
+  //     'wrapper_class' => 'user_pass_repeat'
+  //   )
+  // ));
 
 piklist('field', array(
   'type'   => 'group',

@@ -77,6 +77,18 @@ class Wampum_Content_Types {
 			'rewrite'			=> array( 'slug' => 'programs/%wampum_program%', 'with_front' => false ),
 			'taxonomies'		=> array(self::PROGRAM),
 			'has_archive'		=> 'programs',
+		    'admin_cols' 		=> array(
+		        // A taxonomy terms column
+		        self::PROGRAM => array(
+		            'taxonomy' => self::PROGRAM,
+		            'link'	   => 'list',
+		        ),
+		        // A post field column
+	            'post_date' => array(
+	                'title'      => __( 'Publish Date', 'Date', 'pixie-article' ),
+	                'post_field' => 'post_date',
+	            ),
+		    ),
 		    'admin_filters' 	=> array(
 		        self::PROGRAM => array(
 		            'title'    => $this->singular_name(self::PROGRAM),
