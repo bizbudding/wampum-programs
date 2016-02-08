@@ -108,6 +108,7 @@ class Wampum_Content_Types {
 
 	/**
 	 * Register custom taxonomies
+	 * Replace programs metabox with Piklist generated metabox
 	 *
 	 * @since   1.0.0
 	 *
@@ -117,6 +118,7 @@ class Wampum_Content_Types {
 		// Programs
 	    register_extended_taxonomy( self::PROGRAM, self::STEP, array(
             'rewrite' => array( 'slug' => 'programs' ),
+            'show_ui' => false,
         ), $this::default_names()[self::PROGRAM] );
 
 	}
