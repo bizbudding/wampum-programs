@@ -20,15 +20,15 @@ Message: This is the success message.
 // Topic ID
 piklist('field', array(
   'type'  => 'hidden',
-  'scope' => 'connect_resource_to_lesson',
-  'field' => 'lesson_id',
+  'scope' => 'connect_resource_to_step',
+  'field' => 'step_id',
   'value' => get_the_ID(),
 ));
 
 // Resources
 piklist('field', array(
   'type'        => 'group',
-  'scope'       => 'connect_resource_to_lesson',
+  'scope'       => 'connect_resource_to_step',
   'field'       => 'add_resource',
   'add_more'    => true,
   'label'       => __('Add New Resources', 'wampum'),
@@ -37,19 +37,19 @@ piklist('field', array(
   'fields' => array(
     array(
       'type'  => 'text',
-      'scope' => 'connect_resource_to_lesson',
+      'scope' => 'connect_resource_to_step',
       'field' => 'post_title',
       'label' => __('Resource Title', 'wampum'),
     ),
     array(
       'type'  => 'editor',
-      'scope' => 'connect_resource_to_lesson',
+      'scope' => 'connect_resource_to_step',
       'field' => 'post_content',
       'label' => __('Resource Content', 'wampum'),
     ),
     array(
       'type'  => 'file',
-      'scope' => 'connect_resource_to_lesson',
+      'scope' => 'connect_resource_to_step',
       'field' => 'resource_file',
       'label' => __('Upload File', 'wampum'),
     ),

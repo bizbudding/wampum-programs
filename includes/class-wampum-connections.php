@@ -25,7 +25,7 @@ class Wampum_Connections {
 		add_action( 'p2p_init', array( $this, 'register_p2p_connections') );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
-		add_action( 'piklist_save_field-connect_resource_to_lesson', array( $this, 'connect_resource_to_lesson' ), 10, 1 );
+		add_action( 'piklist_save_field-connect_resource_to_step', array( $this, 'connect_resource_to_step' ), 10, 1 );
 	}
 
 	/**
@@ -38,9 +38,9 @@ class Wampum_Connections {
 	public function register_p2p_connections() {
 
 	    p2p_register_connection_type( array(
-	        'name'            => 'lessons_to_programs',
-	        'from'            => 'wampum_lesson',
-	        'to'              => 'wampum_program',
+	        'name'            => 'resources_to_steps',
+	        'from'            => 'wampum_resource',
+	        'to'              => 'wampum_step',
 	        'can_create_post' => false,
 	        'sortable'        => 'any',
 	        'admin_box'       => array(
@@ -51,33 +51,11 @@ class Wampum_Connections {
 	        'admin_dropdown' => true,
 	        'reciprocal'     => true,
 	        'title'          => array(
-	            'from' => Wampum_Post_Types::plural_name('wampum_program'),
-	            'to'   => Wampum_Post_Types::plural_name('wampum_lesson'),
+	            'from' => Wampum_Content_Types::plural_name('wampum_step'),
+	            'to'   => Wampum_Content_Types::singular_name('wampum_step') . ' ' . Wampum_Content_Types::plural_name('wampum_resource'),
 	        ),
 	        'from_labels' => array(
-	            'singular_name' => Wampum_Post_Types::singular_name('wampum_lesson'),
-	        ),
-	    ) );
-
-	    p2p_register_connection_type( array(
-	        'name'            => 'resources_to_lessons',
-	        'from'            => 'wampum_resource',
-	        'to'              => 'wampum_lesson',
-	        'can_create_post' => false,
-	        'sortable'        => 'any',
-	        'admin_box'       => array(
-				'show'		=> 'to',
-				'context'	=> 'advanced',
-			),
-	        'admin_column'   => true,
-	        'admin_dropdown' => true,
-	        'reciprocal'     => true,
-	        'title'          => array(
-	            'from' => Wampum_Post_Types::plural_name('wampum_lesson'),
-	            'to'   => Wampum_Post_Types::singular_name('wampum_lesson') . ' ' . Wampum_Post_Types::plural_name('wampum_resource'),
-	        ),
-	        'from_labels' => array(
-	            'singular_name' => Wampum_Post_Types::plural_name('wampum_resource'),
+	            'singular_name' => Wampum_Content_Types::plural_name('wampum_resource'),
 	        ),
 	        // 'to_labels' => array(
 	        //     'singular_name' => __( 'Item', 'wampum' ),
@@ -113,7 +91,7 @@ class Wampum_Connections {
 	}
 
 	/**
-	 * Create a resource and connect it to a lesson
+	 * Create a resource and connect it to a step
 	 *
 	 * @param  array  $fields  the piklist field values
 	 *
@@ -121,17 +99,17 @@ class Wampum_Connections {
 	 *
 	 * @return void|WP_Error
 	 */
-	public static function connect_resource_to_lesson( $fields ) {
+	public static function connect_resource_to_step( $fields ) {
 
-		// Value of lesson_id field from /parts/meta-boxes/wampum_lesson.php
-	    $to = absint($fields['lesson_id']['value']);
+		// Value of step_id field from /parts/meta-boxes/wampum_step.php
+	    $to = absint($fields['step_id']['value']);
 
 	    // Existing resources field check
 	    $existing_resources = isset($fields['existing_resources']['request_value']) ? $fields['existing_resources']['request_value'] : null;
 
 	    if ( $existing_resources ) {
 			foreach ( $existing_resources as $from ) {
-				self::connect( 'resources_to_lessons', $from, $to );
+				self::connect( 'resources_to_steps', $from, $to );
 			}
 	    }
 
@@ -169,7 +147,7 @@ class Wampum_Connections {
 						update_post_meta( $from, 'wampum_resource_files', $files );
 					}
 					// Connect new post to topic
-					self::connect( 'resources_to_lessons', $from, $to );
+					self::connect( 'resources_to_steps', $from, $to );
 				}
 
 			}
@@ -188,7 +166,7 @@ class Wampum_Connections {
 	 * @return int|WP_Error   connection ID or error
 	 */
 	public static function connect( $type, $from, $to ) {
-		$connection_id = p2p_type( 'resources_to_lessons' )->connect( $from, $to, array(
+		$connection_id = p2p_type( 'resources_to_steps' )->connect( $from, $to, array(
 		    'date' => current_time('mysql')
 		));
 		return $connection_id;

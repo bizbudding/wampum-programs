@@ -1,7 +1,7 @@
 <?php
 /*
-Title: Add Lesson Resources
-Post Type: wampum_lesson
+Title: Add Step Resources
+Post Type: wampum_step
 Capability: edit_posts
 Context: normal
 Priority: default
@@ -15,20 +15,20 @@ wp_enqueue_style('wampum-select2');
 piklist('field', array(
   'type'     => 'html',
   'template' => 'field',
-  'value'    => __('Attach resources to this lesson.', 'wampum'),
+  'value'    => __('Attach resources to this step.', 'wampum'),
 ));
 
 // Topic ID
 piklist('field', array(
   'type'  => 'hidden',
-  'scope' => 'connect_resource_to_lesson',
-  'field' => 'lesson_id',
+  'scope' => 'connect_resource_to_step',
+  'field' => 'step_id',
   'value' => get_the_ID(),
 ));
 
 piklist('field', array(
     'type'     => 'select',
-    'scope'    => 'connect_resource_to_lesson',
+    'scope'    => 'connect_resource_to_step',
     'field'    => 'existing_resources',
     'template' => 'theme',
     'label'    => __('Add Existing Resources', 'wampum'),
@@ -54,7 +54,7 @@ piklist('field', array(
 // Resources
 piklist('field', array(
     'type'     => 'group',
-    'scope'    => 'connect_resource_to_lesson',
+    'scope'    => 'connect_resource_to_step',
     'field'    => 'add_resource',
     'template' => 'theme',
     'add_more' => true,
@@ -62,7 +62,7 @@ piklist('field', array(
     'fields'   => array(
         array(
             'type'        => 'text',
-            'scope'       => 'connect_resource_to_lesson',
+            'scope'       => 'connect_resource_to_step',
             'field'       => 'post_title',
             // 'template'    => 'theme',
             'label'       => __('Title', 'wampum'),
@@ -71,14 +71,14 @@ piklist('field', array(
         ),
         array(
             'type'    => 'editor',
-            'scope'   => 'connect_resource_to_lesson',
+            'scope'   => 'connect_resource_to_step',
             'field'   => 'post_content',
             'label'   => __('Content', 'wampum'),
             'columns' => '12',
         ),
         array(
             'type'     => 'file',
-            'scope'    => 'connect_resource_to_lesson',
+            'scope'    => 'connect_resource_to_step',
             'field'    => 'resource_files',
             'label'    => __('Upload File(s)', 'wampum'),
             // 'validate' => array(
@@ -94,7 +94,7 @@ piklist('field', array(
 ));
 
 // piklist('field', array(
-  // 'scope' => 'connect_resource_to_lesson',
+  // 'scope' => 'connect_resource_to_step',
   // 'type'  => 'submit',
   // 'field' => 'submit',
   // 'value' => 'Submit',

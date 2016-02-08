@@ -6,13 +6,13 @@
  */
 
 // Resources
-$lesson = get_post_type_object( 'wampum_lesson' )->labels;
+$step = get_post_type_object( 'wampum_step' )->labels;
 
 piklist('field', array(
 	'type'		=> 'text',
-	'field'		=> 'wampum_lesson_plural',
+	'field'		=> 'wampum_step_plural',
 	'label'		=> __('Plural name', 'wampum'),
-	'value'		=> $lesson->name,
+	'value'		=> $step->name,
 	'validate'	=> array(
 		array(
 			'type' => 'safe_text',
@@ -23,9 +23,9 @@ piklist('field', array(
 
 piklist('field', array(
 	'type'		=> 'text',
-	'field'		=> 'wampum_lesson_singular',
+	'field'		=> 'wampum_step_singular',
 	'label'		=> __('Singular name', 'wampum'),
-	'value'		=> $lesson->singular_name,
+	'value'		=> $step->singular_name,
 	'validate'	=> array(
 		array(
 			'type' => 'safe_text',
