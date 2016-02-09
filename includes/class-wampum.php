@@ -27,6 +27,7 @@ class Wampum {
 			add_action( 'admin_init', array( $this, 'deactivate' ) );
 			return;
 		}
+		add_theme_support( 'genesis-connect-woocommerce' );
 		// Add an admin settings page
 		// add_filter( 'piklist_admin_pages', array( $this, 'settings_page' ) );
 	}
