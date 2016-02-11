@@ -82,23 +82,32 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 			$i = 1;
 			// Start output
 			$output = '';
-			$output .= '<nav class="querystring-nav nav-' . $name . '">';
-			$output .= '<div class="wrap">';
 
-			$output .= '<ul id="menu-' . $name . '" class="' . $this->get_ul_classes() . '">';
-			foreach( $items as $slug => $title ) {
-				$i++;
-				$slug = $this->sanitize_slug($slug);
-				$id = $name . '-' . $i;
-				$output .= '<li id="' . $id . '" class="menu-item menu-item-' . $slug . '">';
-				$output .= '<a href="?' . $name . '=' . $slug . '">';
-				$output .= sanitize_text_field($name);
-				$output .= '</a>';
-				$output .= '</li>';
-			}
-			$output .= '</ul>';
-			$output .= '</div>';
+			$output .= '<nav class="querystring-nav nav-' . $name . '">';
+				$output .= '<div class="wrap">';
+
+					$output .= '<ul id="menu-' . $name . '" class="' . $this->get_ul_classes() . '">';
+					foreach( $items as $slug => $title ) {
+						// Increment counter
+						$i++;
+						// Set our slug
+						$slug	= $this->sanitize_slug($slug);
+						// Maybe active tab
+						$active	= $this->is_tab($slug) ? ' active' : '';
+						//Set ID
+						$id		= $name . '-' . $i;
+						// Continue to output the menu
+						$output .= '<li id="' . $id . '" class="menu-item menu-item-' . $slug . $active . '">';
+							$output .= '<a href="?' . $name . '=' . $slug . '">';
+							$output .= sanitize_text_field($title);
+							$output .= '</a>';
+						$output .= '</li>';
+					}
+					$output .= '</ul>';
+
+				$output .= '</div>';
 			$output .= '</nav>';
+
 			return $output;
 		}
 
