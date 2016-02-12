@@ -21,7 +21,6 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 	 */
 	class JiveDig_Query_String_Nav {
 
-
 		/**
 		 * Menu name
 		 *
@@ -42,7 +41,6 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 					'about' => 'About',
 					'edit'  => 'Edit Profile',
 				);
-
 
 		/**
 		 * Get the menu classes
@@ -72,6 +70,10 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		public function menu() {
 			echo $this->get_menu( $this->items );
 		}
+
+		// TODO: Add the slug as data-attribute so we can grab it with jQuery and update the query string
+		// How about DOC title when doing this? Read up on pushState.
+		// CSS-Tricks had a good write up, read it again
 
 		/**
 		 * Build the menu and menu items
