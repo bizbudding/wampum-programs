@@ -92,7 +92,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		public function register_rest_endpoints() {
 		    register_rest_route( 'restfulcontentswap/v1', '/content/', array(
 				'methods'  => 'GET',
-				'callback' => array( $this, 'get_rest_content' ),
+				'callback' => array( $this, 'get_restful_content' ),
 		    ));
 		}
 
@@ -107,14 +107,46 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 				'root'		=> esc_url_raw( rest_url() ),
 				'nonce'		=> wp_create_nonce( 'wp_rest' ),
 				'json_dir'	=> 'restfulcontentswap/v1/content/',
-				'content'   => $this->get_content($this->items),
 				'success'	=> __( 'Successfully successful!', 'your-text-domain' ),
 				'failure'	=> __( 'Failurely failure!', 'your-text-domain' ),
+				'content'   => $this->get_ajax_content($this->items),
 		    );
 		}
 
-		public function get_rest_content() {
-			return '<h1>Wordup</h1>';
+		/**
+		 * ARTGHHGHHGHGHGHHGHGHG
+		 *
+		 *
+		 * @return [type] [description]
+		 */
+		public function get_restful_content() {
+
+			// return true;
+
+			// $data = array(
+			// 	'edit' => array(
+			// 		'hello' => 'World',
+			// 		'say'   => 'Something',
+			// 		'title' => get_the_title(1),
+			// 	),
+			// );
+			$items = $this->items;
+			ob_start();
+
+			$data = array();
+			// $data = '';
+			foreach( $items as $slug => $values ) {
+				// $data[$slug] = include_once( $this->get_template_file( $slug ) );
+				// if ( ! $this->can_view_item( $values ) ) {
+				// 	continue;
+				// }
+				echo get_template_part( $slug );
+				// $post = get_post(1);
+				// echo $post->post_title();
+			}
+			// return $this->get_ajax_content($this->items);
+			return ob_get_clean();
+;
 		}
 
 		/**
@@ -177,11 +209,13 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		}
 
 		protected function get_ajax_content( $items ) {
+			$data = array();
 			foreach( $items as $slug => $values ) {
-			// if ( $this->is_tab($slug) && $this->can_view_item( $values ) ) {
-				$this->get_template_part( $slug );
-			// }
+				if ( $this->can_view_item( $values ) ) {
+					$data[$slug] = $this->get_template_part( $slug );
+				}
 			}
+			return $data;
 		}
 
 		protected function get_content( $items ) {
