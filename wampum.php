@@ -60,6 +60,7 @@ wampum_require();
 // Instantiate dependent classes
 $wampum_content_types	= new Wampum_Content_Types();
 $wampum_connections		= new Wampum_Connections();
+$wampum_profile_nav		= new Wampum_Profile_Nav();
 $wampum_template_loader	= new Wampum_Template_Loader();
 
 $wampum = new Wampum(

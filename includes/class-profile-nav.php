@@ -60,10 +60,9 @@ class Wampum_Profile_Nav extends JiveDig_Restful_Content_Swap {
 	protected $classes = 'menu';
 
 	public function __construct() {
-
 		// parent::__construct();
-
-		$this->directory = get_stylesheet_directory() . '/template-parts';
+		$this->script_dir   = get_stylesheet_directory_uri() . '/assets/js/';
+		$this->template_dir = get_stylesheet_directory() . '/template-parts/';
 	}
 
 }

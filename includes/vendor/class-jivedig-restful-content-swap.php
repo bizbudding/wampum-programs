@@ -60,13 +60,62 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		protected $classes = 'menu genesis-nav-menu';
 
 		/**
+		 * Get the script directory path to look for scripts
+		 *
+		 * @since 1.0.0
+		 *
+		 * @type string
+		 */
+		protected $script_dir = 'path-to-scripts/';
+
+		/**
 		 * Get the directory path to look for template files
 		 *
 		 * @since 1.0.0
 		 *
 		 * @type string
 		 */
-		protected $directory = 'path-to-template-parts/';
+		protected $template_dir = 'path-to-template-parts/';
+
+
+		public function restful() {
+			add_action( 'rest_api_init', array( $this, 'register_rest_endpoints' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
+		}
+
+		/**
+		 * Add custom endpoint to add connection
+		 *
+		 * @since   1.0
+		 * @return  void
+		 */
+		public function register_rest_endpoints() {
+		    register_rest_route( 'restfulcontentswap/v1', '/content/', array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'get_rest_content' ),
+		    ));
+		}
+
+		public function register_scripts() {
+			// wp_register_script( 'restfulcontentswap', trailingslashit($this->script_dir) . $this->slug . '.js', array('jquery'), '1.0.0', true );
+			wp_enqueue_script( 'restfulcontentswap', trailingslashit($this->script_dir) . $this->slug . '.js', array('jquery'), '1.0.0', true );
+		    wp_localize_script( 'restfulcontentswap', 'restfulcontentswap', $this->get_ajax_data() );
+		}
+
+		public function get_ajax_data() {
+		    return array(
+				'root'		=> esc_url_raw( rest_url() ),
+				'nonce'		=> wp_create_nonce( 'wp_rest' ),
+				'json_dir'	=> 'restfulcontentswap/v1/content/',
+				'content'   => $this->get_content($this->items),
+				'success'	=> __( 'Successfully successful!', 'your-text-domain' ),
+				'failure'	=> __( 'Failurely failure!', 'your-text-domain' ),
+		    );
+		}
+
+		public function get_rest_content() {
+			return '<h1>Wordup</h1>';
+		}
 
 		/**
 		 * Display the menu
@@ -127,6 +176,14 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 			echo $this->get_content($this->items);
 		}
 
+		protected function get_ajax_content( $items ) {
+			foreach( $items as $slug => $values ) {
+			// if ( $this->is_tab($slug) && $this->can_view_item( $values ) ) {
+				$this->get_template_part( $slug );
+			// }
+			}
+		}
+
 		protected function get_content( $items ) {
 			foreach( $items as $slug => $values ) {
 				if ( $this->is_tab($slug) && $this->can_view_item( $values ) ) {
@@ -148,7 +205,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		}
 
 		protected function get_template_file( $slug ) {
-			return $this->directory . '/' . $this->sanitize_slug( $slug ) . '.php';
+			return trailingslashit($this->template_dir) . $this->sanitize_slug( $slug ) . '.php';
 		}
 
 		/**
