@@ -21,6 +21,7 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 	 */
 	class JiveDig_Query_String_Nav {
 
+
 		/**
 		 * Menu name
 		 *
@@ -44,13 +45,22 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 
 
 		/**
-		 * Whether to add genesis markup
+		 * Get the menu classes
 		 *
 		 * @since 1.1.0
 		 *
 		 * @type bool
 		 */
-		protected $genesis = true;
+		protected $classes = 'menu genesis-nav-menu';
+
+		/**
+		 * Get the directory path to look for template files
+		 *
+		 * @since 1.0.0
+		 *
+		 * @type string
+		 */
+		protected $directory = 'path-to-template-parts/';
 
 		/**
 		 * Display the menu
@@ -86,7 +96,7 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 			$output .= '<nav class="querystring-nav nav-' . $name . '">';
 				$output .= '<div class="wrap">';
 
-					$output .= '<ul id="menu-' . $name . '" class="' . $this->get_ul_classes() . '">';
+					$output .= '<ul id="menu-' . $name . '" class="' . $this->classes . '">';
 					foreach( $items as $slug => $title ) {
 						// Increment counter
 						$i++;
@@ -111,6 +121,29 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 			return $output;
 		}
 
+		public function content() {
+			echo $this->get_content($this->items);
+		}
+
+		protected function get_content( $items ) {
+			foreach( $items as $slug => $name ) {
+				if ( $this->is_tab($slug) ) {
+					$this->get_template_part( $slug );
+				}
+			}
+		}
+
+		protected function get_template_part( $slug ) {
+			if ( ! file_exists( $this->get_template_file( $slug ) ) ) {
+				return;
+			}
+			include_once( $this->get_template_file( $slug ) );
+		}
+
+		protected function get_template_file( $slug ) {
+			return $this->directory . '/' . $this->sanitize_slug( $slug ) . '.php';
+		}
+
 		/**
 		 * Get the class names for the unordered list
 		 *
@@ -118,13 +151,13 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		 *
 		 * @return string
 		 */
-		protected function get_ul_classes() {
-			if ( true === $this->genesis ) {
-				return 'menu genesis-nav-menu';
-			} else {
-				return 'menu';
-			}
-		}
+		// protected function get_ul_classes() {
+		// 	if ( true === $this->genesis ) {
+		// 		return 'menu genesis-nav-menu';
+		// 	} else {
+		// 		return 'menu';
+		// 	}
+		// }
 
 		/**
 		 * Get a sanitized version of the slug
@@ -151,18 +184,6 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		 */
 		protected function sanitize_slug( $slug ) {
 			return sanitize_title( strtolower( $slug ) );
-		}
-
-		public function get_content() {
-			// Get our menu items array
-			$items = $this->items;
-
-			foreach( $items as $key => $value ) {
-
-				if ( $this->is_tab($key) ) {
-
-				}
-			}
 		}
 
 		/**

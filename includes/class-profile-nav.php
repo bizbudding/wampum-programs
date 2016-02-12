@@ -44,4 +44,13 @@ class Wampum_Profile_Nav extends JiveDig_Query_String_Nav {
 		'purchases'	=> 'Purchases',
 	);
 
+	protected $classes = 'menu genesis-nav-menu';
+
+	public function __construct() {
+
+		// parent::__construct();
+
+		$this->directory = get_stylesheet_directory() . '/template-parts';
+	}
+
 }
