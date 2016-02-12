@@ -42,7 +42,7 @@ function wampum_require() {
 		// 'vendor/class-piklist-checker',
 		'vendor/class-tgm-plugin-activation',
 		'vendor/class-gamajo-template-loader',
-		'vendor/class-jivedig-querystring-nav',
+		'vendor/class-jivedig-restful-content-swap',
 		'vendor/extended-cpts',
 		'vendor/extended-taxos',
 		'class-wampum',
@@ -58,7 +58,7 @@ function wampum_require() {
 wampum_require();
 
 // Instantiate dependent classes
-$wampum_content_types		= new Wampum_Content_Types();
+$wampum_content_types	= new Wampum_Content_Types();
 $wampum_connections		= new Wampum_Connections();
 $wampum_template_loader	= new Wampum_Template_Loader();
 

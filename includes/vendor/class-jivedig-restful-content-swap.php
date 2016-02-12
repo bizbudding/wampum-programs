@@ -2,7 +2,7 @@
 /**
  * Create an inner nav menu using query strings on the same page to load alternate content
  *
- * @package   JiveDig_Query_String_Nav
+ * @package   JiveDig_Restful_Content_Swap
  * @author    Mike Hemberger
  * @link      TBD
  * @copyright 2016 Mike Hemberger
@@ -10,16 +10,16 @@
  * @version   1.0.0
  */
 
-if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
+if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 	/**
 	 * Query String Menu
 	 *
 	 * When using in a plugin, create a new class that extends this one and just overrides the properties.
 	 *
-	 * @package JiveDig_Query_String_Nav
+	 * @package JiveDig_Restful_Content_Swap
 	 * @author  Mike Hemberger
 	 */
-	class JiveDig_Query_String_Nav {
+	class JiveDig_Restful_Content_Swap {
 
 		/**
 		 * Menu name
@@ -38,8 +38,16 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		 * @type array
 		 */
 		protected $items = array(
-					'about' => 'About',
-					'edit'  => 'Edit Profile',
+					'about' => array(
+						'name'		 => 'About',
+						'loggedin'	 => false,
+						'capability' => null,
+					),
+					'edit'  => array(
+						'name'		 => 'Edit Posts',
+						'loggedin'	 => false,
+						'capability' => null,
+					),
 				);
 
 		/**
@@ -90,35 +98,27 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 			}
 			// Get the name
 			$name = $this->get_menu_name();
-			// Start the counter
-			$i = 1;
 			// Start output
 			$output = '';
 
-			$output .= '<nav class="querystring-nav nav-' . $name . '">';
-				$output .= '<div class="wrap">';
-
-					$output .= '<ul id="menu-' . $name . '" class="' . $this->classes . '">';
-					foreach( $items as $slug => $title ) {
-						// Increment counter
-						$i++;
-						// Set our slug
-						$slug	= $this->sanitize_slug($slug);
-						// Maybe active tab
-						$active	= $this->is_tab($slug) ? ' active' : '';
-						//Set ID
-						$id		= $name . '-' . $i;
-						// Continue to output the menu
-						$output .= '<li id="' . $id . '" class="menu-item menu-item-' . $slug . $active . '">';
-							$output .= '<a href="?' . $name . '=' . $slug . '">';
-							$output .= sanitize_text_field($title);
-							$output .= '</a>';
-						$output .= '</li>';
-					}
-					$output .= '</ul>';
-
-				$output .= '</div>';
-			$output .= '</nav>';
+			$output .= '<ul id="menu-' . $name . '" class="' . $this->classes . '">';
+			foreach( $items as $slug => $values ) {
+				// If user can't view this item, skip it and move on to the next one
+				if ( ! $this->can_view_item( $values ) ) {
+					continue;
+				}
+				// Set our slug
+				$slug	= $this->sanitize_slug($slug);
+				// Maybe active tab
+				$active	= $this->is_tab($slug) ? ' active' : '';
+				// Continue to output the menu
+				$output .= '<li class="menu-item menu-item-' . $slug . $active . '">';
+					$output .= '<a href="?' . $name . '=' . $slug . '">';
+					$output .= sanitize_text_field($values['name']);
+					$output .= '</a>';
+				$output .= '</li>';
+			}
+			$output .= '</ul>';
 
 			return $output;
 		}
@@ -128,13 +128,18 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		}
 
 		protected function get_content( $items ) {
-			foreach( $items as $slug => $name ) {
-				if ( $this->is_tab($slug) ) {
+			foreach( $items as $slug => $values ) {
+				if ( $this->is_tab($slug) && $this->can_view_item( $values ) ) {
 					$this->get_template_part( $slug );
 				}
 			}
 		}
 
+		/**
+		 * ALLOW THIS ONE TO BE OVERWRITTEN TO USE NEW TEMPLATE METHODS & FUNCTIONS
+		 * @param  [type] $slug [description]
+		 * @return [type]       [description]
+		 */
 		protected function get_template_part( $slug ) {
 			if ( ! file_exists( $this->get_template_file( $slug ) ) ) {
 				return;
@@ -147,21 +152,6 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		}
 
 		/**
-		 * Get the class names for the unordered list
-		 *
-		 * @since  1.0.0
-		 *
-		 * @return string
-		 */
-		// protected function get_ul_classes() {
-		// 	if ( true === $this->genesis ) {
-		// 		return 'menu genesis-nav-menu';
-		// 	} else {
-		// 		return 'menu';
-		// 	}
-		// }
-
-		/**
 		 * Get a sanitized version of the slug
 		 *
 		 * @since  1.0.0
@@ -170,6 +160,53 @@ if ( ! class_exists( 'JiveDig_Query_String_Nav' ) )  {
 		 */
 		protected function get_menu_name() {
 			return $this->sanitize_slug( $this->slug );
+		}
+
+		protected function can_view_item( $item_values ) {
+			$login_required	= isset( $item_values['loggedin'] ) ? $item_values['loggedin'] : false;
+			$cap_required	= isset( $item_values['capability'] ) ? $item_values['capability'] : false;
+			if ( $this->has_loggedin_access($login_required) && $this->has_capability_access($cap_required) ) {
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * [has_logged_in_access description]
+		 *
+		 * @param  bool  $loggedin [description]
+		 *
+		 * @return bool
+		 */
+		protected function has_loggedin_access( $login_required ) {
+			if ( $login_required ) {
+				if ( is_user_logged_in() ) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+			// login not required
+			return true;
+		}
+
+		/**
+		 * [has_capability_access description]
+		 *
+		 * @param  string  $capability current_user_can() capability
+		 *
+		 * @return bool
+		 */
+		protected function has_capability_access( $cap_required ) {
+			if ( $cap_required ) {
+				if ( is_user_logged_in() && current_user_can($cap_required) ) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+			// capability not required
+			return true;
 		}
 
 		/**

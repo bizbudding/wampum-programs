@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @package Wampum_Profile_Nav
  * @author  Mike Hemberger
  */
-class Wampum_Profile_Nav extends JiveDig_Query_String_Nav {
+class Wampum_Profile_Nav extends JiveDig_Restful_Content_Swap {
 
 	/**
 	 * Menu name
@@ -39,12 +39,25 @@ class Wampum_Profile_Nav extends JiveDig_Query_String_Nav {
 	 * @type array
 	 */
 	protected $items = array(
-		'about'		=> 'About',
-		'edit'		=> 'Edit Profile',
-		'purchases'	=> 'Purchases',
+		'about' => array(
+			'name'		 => 'About',
+			// 'loggedin'	 => false,
+			// 'capability' => null,
+		),
+		'edit'  => array(
+			'name'		 => 'Edit Posts',
+			'loggedin'	 => true,
+			// 'capability' => null,
+		),
+		'purchases'  => array(
+			'name'		 => 'My Purchases',
+			// 'loggedin'	 => false,
+			// 'capability' => null,
+		),
 	);
 
-	protected $classes = 'menu genesis-nav-menu';
+	// protected $classes = 'menu genesis-nav-menu';
+	protected $classes = 'menu';
 
 	public function __construct() {
 
