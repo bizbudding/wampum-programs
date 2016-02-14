@@ -38,16 +38,8 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 * @type array
 		 */
 		protected $items = array(
-					'about' => array(
-						'name'		 => 'About',
-						'loggedin'	 => false,
-						'capability' => null,
-					),
-					'edit'  => array(
-						'name'		 => 'Edit Posts',
-						'loggedin'	 => false,
-						'capability' => null,
-					),
+					'about' => 'About',
+					'edit'  => 'Edit Posts',
 				);
 
 		/**
@@ -77,6 +69,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 */
 		protected $template_dir = 'path-to-template-parts/';
 
+		protected $loading = 'Loading';
 
 		public function restful() {
 			add_action( 'rest_api_init', array( $this, 'register_rest_endpoints' ) );
@@ -107,46 +100,18 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 				'root'		=> esc_url_raw( rest_url() ),
 				'nonce'		=> wp_create_nonce( 'wp_rest' ),
 				'json_dir'	=> 'restfulcontentswap/v1/content/',
-				'success'	=> __( 'Successfully successful!', 'your-text-domain' ),
-				'failure'	=> __( 'Failurely failure!', 'your-text-domain' ),
-				'content'   => $this->get_ajax_content($this->items),
+				'name'		=> $this->slug,
+				'loading'	=> $this->loading,
 		    );
 		}
 
 		/**
-		 * ARTGHHGHHGHGHGHHGHGHG
 		 *
 		 *
 		 * @return [type] [description]
 		 */
 		public function get_restful_content() {
-
-			// return true;
-
-			// $data = array(
-			// 	'edit' => array(
-			// 		'hello' => 'World',
-			// 		'say'   => 'Something',
-			// 		'title' => get_the_title(1),
-			// 	),
-			// );
-			$items = $this->items;
-			ob_start();
-
-			$data = array();
-			// $data = '';
-			foreach( $items as $slug => $values ) {
-				// $data[$slug] = include_once( $this->get_template_file( $slug ) );
-				// if ( ! $this->can_view_item( $values ) ) {
-				// 	continue;
-				// }
-				echo get_template_part( $slug );
-				// $post = get_post(1);
-				// echo $post->post_title();
-			}
-			// return $this->get_ajax_content($this->items);
-			return ob_get_clean();
-;
+			return $this->get_ajax_content($this->items);
 		}
 
 		/**
@@ -182,10 +147,10 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 			// Start output
 			$output = '';
 
-			$output .= '<ul id="menu-' . $name . '" class="' . $this->classes . '">';
-			foreach( $items as $slug => $values ) {
+			$output .= '<ul class="' . $name . '-menu ' . $this->classes . '">';
+			foreach( $items as $slug => $value ) {
 				// If user can't view this item, skip it and move on to the next one
-				if ( ! $this->can_view_item( $values ) ) {
+				if ( ! $this->can_view( $slug ) ) {
 					continue;
 				}
 				// Set our slug
@@ -193,53 +158,41 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 				// Maybe active tab
 				$active	= $this->is_tab($slug) ? ' active' : '';
 				// Continue to output the menu
-				$output .= '<li class="menu-item menu-item-' . $slug . $active . '">';
+				$output .= '<li class="menu-item menu-item-' . $slug . $active . '" data-item="' . $slug . '">';
 					$output .= '<a href="?' . $name . '=' . $slug . '">';
-					$output .= sanitize_text_field($values['name']);
+					$output .= sanitize_text_field($value);
 					$output .= '</a>';
 				$output .= '</li>';
 			}
 			$output .= '</ul>';
 
+			// $output .= '<div id="rcs-content" class="' . $this->get_menu_name() . '-content">' . $this->get_content($this->items) . '</div>';
+
 			return $output;
 		}
 
 		public function content() {
+			echo '<div class="' . $this->get_menu_name() . '-content">';
 			echo $this->get_content($this->items);
+			echo '</div>';
 		}
 
 		protected function get_ajax_content( $items ) {
-			$data = array();
-			foreach( $items as $slug => $values ) {
-				if ( $this->can_view_item( $values ) ) {
-					$data[$slug] = $this->get_template_part( $slug );
+			$content = array();
+			foreach( $items as $slug => $value ) {
+				if ( $this->can_view( $slug ) ) {
+					$content[$slug] = 'Test'; // Override this method in your child class
 				}
 			}
-			return $data;
+			return $content;
 		}
 
 		protected function get_content( $items ) {
-			foreach( $items as $slug => $values ) {
-				if ( $this->is_tab($slug) && $this->can_view_item( $values ) ) {
-					$this->get_template_part( $slug );
+			foreach( $items as $slug => $value ) {
+				if ( $this->is_tab($slug) && $this->can_view( $slug ) ) {
+					return ''; // Override this method in your child class
 				}
 			}
-		}
-
-		/**
-		 * ALLOW THIS ONE TO BE OVERWRITTEN TO USE NEW TEMPLATE METHODS & FUNCTIONS
-		 * @param  [type] $slug [description]
-		 * @return [type]       [description]
-		 */
-		protected function get_template_part( $slug ) {
-			if ( ! file_exists( $this->get_template_file( $slug ) ) ) {
-				return;
-			}
-			include_once( $this->get_template_file( $slug ) );
-		}
-
-		protected function get_template_file( $slug ) {
-			return trailingslashit($this->template_dir) . $this->sanitize_slug( $slug ) . '.php';
 		}
 
 		/**
@@ -253,50 +206,17 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 			return $this->sanitize_slug( $this->slug );
 		}
 
-		protected function can_view_item( $item_values ) {
-			$login_required	= isset( $item_values['loggedin'] ) ? $item_values['loggedin'] : false;
-			$cap_required	= isset( $item_values['capability'] ) ? $item_values['capability'] : false;
-			if ( $this->has_loggedin_access($login_required) && $this->has_capability_access($cap_required) ) {
-				return true;
-			}
-			return false;
-		}
-
 		/**
-		 * [has_logged_in_access description]
+		 * Check if user can view all or specific items
+		 * Handles menu item and item content
 		 *
-		 * @param  bool  $loggedin [description]
+		 * Override this method in your child class
 		 *
+		 * @param  string  $item  content item slug
 		 * @return bool
 		 */
-		protected function has_loggedin_access( $login_required ) {
-			if ( $login_required ) {
-				if ( is_user_logged_in() ) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-			// login not required
-			return true;
-		}
-
-		/**
-		 * [has_capability_access description]
-		 *
-		 * @param  string  $capability current_user_can() capability
-		 *
-		 * @return bool
-		 */
-		protected function has_capability_access( $cap_required ) {
-			if ( $cap_required ) {
-				if ( is_user_logged_in() && current_user_can($cap_required) ) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-			// capability not required
+		protected function can_view( $slug ) {
+			// Add conditionals when overriding in child class
 			return true;
 		}
 
