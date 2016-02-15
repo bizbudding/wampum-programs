@@ -1,6 +1,6 @@
 <?php
 /**
- * Meal Planner
+ * Wampum Template Loader
  *
  * @package   Wampum
  * @author    Mike Hemberger
@@ -13,9 +13,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Template loader for Meal Planner.
- *
- * Only need to specify class properties here.
+ * Template loader for Wampum
  *
  * @package Wampum
  * @author  Mike Hemberger

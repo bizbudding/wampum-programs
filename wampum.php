@@ -46,10 +46,13 @@ function wampum_require() {
 		'vendor/extended-cpts',
 		'vendor/extended-taxos',
 		'class-wampum',
+		'class-wampum-account-page',
 		'class-wampum-content-types',
 		'class-wampum-connections',
+		'class-wampum-members',
+		'class-wampum-programs',
 		'class-wampum-template-loader',
-		'class-profile-nav',
+		'helpers',
 	);
 	foreach ( $files as $file ) {
 		require WAMPUM_INCLUDES_DIR . $file . '.php';
@@ -58,14 +61,19 @@ function wampum_require() {
 wampum_require();
 
 // Instantiate dependent classes
+$wampum_account_page	= new Wampum_Account_Page();
 $wampum_content_types	= new Wampum_Content_Types();
 $wampum_connections		= new Wampum_Connections();
-$wampum_profile_nav		= new Wampum_Profile_Nav();
+$wampum_members			= new Wampum_Members();
+$wampum_programs		= new Wampum_Programs();
 $wampum_template_loader	= new Wampum_Template_Loader();
 
 $wampum = new Wampum(
+	$wampum_account_page,
 	$wampum_content_types,
 	$wampum_connections,
+	$wampum_members,
+	$wampum_programs,
 	$wampum_template_loader
 );
 $wampum->run();

@@ -46,7 +46,7 @@ class Wampum_Content_Types {
 	 */
 	const PROGRAM = 'wampum_program';
 
-	function __construct() {
+	public function __construct() {
 		add_action( 'init', array( $this, 'register_post_types') );
 		add_action( 'init', array( $this, 'register_taxonomies') );
 		add_filter( 'post_type_link', array( $this, 'custom_permalinks'), 1, 2 );
@@ -116,9 +116,11 @@ class Wampum_Content_Types {
 	 */
 	public function register_taxonomies() {
 		// Programs
-	    register_extended_taxonomy( self::PROGRAM, self::STEP, array(
-            'rewrite' => array( 'slug' => 'programs' ),
-            'show_ui' => false,
+	    // register_extended_taxonomy( self::PROGRAM, 'wc_membership_plan', array(
+	    register_extended_taxonomy( self::PROGRAM, array('wc_membership_plan',self::STEP), array(
+	    	'meta_box' => false,
+            'rewrite'  => array( 'slug' => 'programs' ),
+            // 'show_ui' => false,
         ), $this::default_names()[self::PROGRAM] );
 
 	}
@@ -134,7 +136,7 @@ class Wampum_Content_Types {
 	 *
 	 * @return string|url
 	 */
-	function custom_permalinks( $post_link, $post ){
+	public function custom_permalinks( $post_link, $post ){
 	   // if ( false !== strpos( $post_link, '%wampum_program%' ) ) {
 	   //      $program_term_term = get_the_terms( $post->ID, self::PROGRAM );
 	   //      $post_link = str_replace( '%wampum_program%', array_pop( $program_term_term )->slug, $post_link );

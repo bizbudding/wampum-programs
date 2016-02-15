@@ -1,24 +1,14 @@
 <?php
 /**
- * Title: Programs
- * Post Type: wampum_step
- * Capability: edit_posts
- * Context: side
- * Priority: default
- * Meta box: true
+ * Title: Extend WC Membership Metabox
+ * Post Type: wc_membership_plan
  */
-
-/**
- * Allow sites to modify the field type (radio, select)
- * Only allow 1 choice!
- */
-$metabox_type = apply_filters( 'wampum_program_metabox_type', 'radio' );
 
 piklist('field', array(
-    'type'        => $metabox_type,
+    'type'        => 'select',
     'scope'       => 'taxonomy',
     'field'       => 'wampum_program',
-    // 'label'       => 'Programs',
+    'label'       => 'Programs',
     // 'description' => 'Terms will appear when they are added to this taxonomy.',
     // 'choices'     => array(
     //     '' => 'Choose Term'
@@ -29,7 +19,9 @@ piklist('field', array(
     //         'name',
     //     )
     // ),
-    'choices' => piklist(get_terms('wampum_program', array(
+    'choices' => array(
+        '' => 'Choose'
+		) + piklist(get_terms('wampum_program', array(
             'hide_empty' => false,
         )), array(
             'term_id',

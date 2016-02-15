@@ -27,9 +27,12 @@ class Wampum {
 			add_action( 'admin_init', array( $this, 'deactivate' ) );
 			return;
 		}
+		// Genesis & WooCommerce Connect
 		add_theme_support( 'genesis-connect-woocommerce' );
 		// Add an admin settings page
-		// add_filter( 'piklist_admin_pages', array( $this, 'settings_page' ) );
+		add_filter( 'piklist_admin_pages', array( $this, 'settings_page' ) );
+		// Add Account page menu/content
+		add_filter( 'the_content', array( $this, 'account_page_content' ) );
 	}
 
 	/**
@@ -145,6 +148,18 @@ class Wampum {
 			'save_text'		=> __('Save Changes', 'wampum'),
 		);
 		return $pages;
+	}
+
+	function account_page_content($content) {
+		// Get account page ID
+		$page = get_option('wampum_settings')['account_page'];
+		if ( is_page($page) ) {
+			// global $wampum_account_page, $restricted_content, $customer_membership;
+			global $wampum_account_page;
+			$content .= $wampum_account_page->menu(false);
+			$content .= $wampum_account_page->content(false);
+		}
+		return $content;
 	}
 
 }

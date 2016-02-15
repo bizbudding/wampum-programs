@@ -38,6 +38,8 @@ class Wampum_Profile_Nav extends JiveDig_Restful_Content_Swap {
 	 */
 	protected $items = array(
 		'about'			=> 'About',
+		'caldera'		=> 'Caldera',
+		'woo'			=> 'Woo',
 		'edit'			=> 'Edit Posts',
 		'edit_profile'	=> 'Edit Profile',
 		'purchases'		=> 'My Purchases',
@@ -48,7 +50,7 @@ class Wampum_Profile_Nav extends JiveDig_Restful_Content_Swap {
 	 *
 	 * @var string
 	 */
-	protected $default = 'edit';
+	protected $default = 'about';
 
 	/**
 	 * Menu class(es)
@@ -67,8 +69,6 @@ class Wampum_Profile_Nav extends JiveDig_Restful_Content_Swap {
 	public function __construct() {
 		// parent::__construct();
 		$this->script_dir   = get_stylesheet_directory_uri() . '/assets/js/';
-		$this->template_dir = get_stylesheet_directory() . '/template-parts/';
-
 	}
 
 	protected function get_about_content() {
@@ -77,6 +77,18 @@ class Wampum_Profile_Nav extends JiveDig_Restful_Content_Swap {
 		$content .= '<p>I\'d like to see some about tab here. How about you?</p>';
 		$content .= '</div>';
 		return $content;
+	}
+
+	protected function get_caldera_content() {
+		ob_start();
+		echo do_shortcode('[caldera_form id="CF56c1eaac42cd6"]');
+		return ob_get_clean();
+	}
+
+	protected function get_woo_content() {
+		ob_start();
+		echo do_shortcode('[woocommerce_my_account]');
+		return ob_get_clean();
 	}
 
 	protected function get_edit_content() {
@@ -88,15 +100,11 @@ class Wampum_Profile_Nav extends JiveDig_Restful_Content_Swap {
 	}
 
 	protected function get_edit_profile_content() {
-		// ob_start();
-		// echo do_shortcode('[piklist_form form="edit-profile" add_on="wampum"]');
-		// echo piklist_form::get('edit-profile');
-
-		// return piklist_form::render_form('edit-profile');
-
-		// return ob_get_contents();
-		// ob_clean();
-		// return piklist::render('forms/edit-profile');
+		// return 'Edit Profile Content';
+		// return piklist_form::render_form('edit-profile','wampum', true);
+		ob_start();
+		echo piklist_form::render_form('edit-profile','wampum');
+		return ob_get_clean();
 	}
 
 	protected function get_purchases_content() {

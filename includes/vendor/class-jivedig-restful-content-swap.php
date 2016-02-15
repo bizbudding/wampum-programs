@@ -59,7 +59,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 *
 		 * @var bool
 		 */
-		protected $classes = 'menu genesis-nav-menu';
+		protected $classes = 'menu';
 
 		/**
 		 * Get the script directory path to look for scripts
@@ -71,15 +71,6 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		protected $script_dir = 'path-to-scripts/';
 
 		/**
-		 * Get the directory path to look for template files
-		 *
-		 * @since 1.0.0
-		 *
-		 * @var string
-		 */
-		protected $template_dir = 'path-to-template-parts/';
-
-		/**
 		 * Loading text/html
 		 *
 		 * @since 1.0.0
@@ -89,6 +80,10 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		protected $loading = 'Loading';
 
 		/**
+		 * ****************************************************************************** *
+		 *** OPTIONALLY ADD THIS METHOD IN YOUR TEMPLATE TO ENABLE RESTFUL CONTENT SWAP ***
+		 * ****************************************************************************** *
+		 *
 		 * Register rest endpoints and scripts
 		 *
 		 * @since 1.0.0
@@ -169,24 +164,12 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 *
 		 * @return mixed
 		 */
-		public function menu() {
-			echo $this->get_menu( $this->items );
-		}
-
-		public function content() {
-			echo '<div class="' . $this->get_menu_name() . '-content">';
-
-				$items = $this->items;
-
-				foreach ( $items as $slug => $value ) {
-
-					$content = $this->get_content()[$slug];
-
-					if ( $this->is_active_item($slug) ) {
-						echo $content;
-					}
-				}
-			echo '</div>';
+		public function menu( $echo = true ) {
+			if ( true === $echo ) {
+				echo $this->get_menu( $this->items );
+			} else {
+				return $this->get_menu( $this->items );
+			}
 		}
 
 		/**
@@ -208,7 +191,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 			// Start output
 			$output = '';
 			// Build our menu
-			$output .= '<ul class="' . $name . '-menu ' . $this->classes . '">';
+			$output .= '<ul id="' . $name . '-menu" class="' . $name . '-menu ' . $this->classes . '">';
 			foreach( $items as $slug => $value ) {
 				// If user can't view this item, skip it and move on to the next one
 				if ( ! $this->can_view( $slug ) ) {
@@ -221,6 +204,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 				// Continue to output the menu
 				$output .= '<li class="menu-item menu-item-' . $slug . $active . '" data-item="' . $slug . '">';
 					$output .= '<a href="?' . $name . '=' . $slug . '">';
+					// $output .= '<a href="?' . $name . '=' . $slug . '#' . $name . '-menu">';
 					$output .= sanitize_text_field($value);
 					$output .= '</a>';
 				$output .= '</li>';
@@ -228,6 +212,23 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 			$output .= '</ul>';
 			// Return the menu
 			return $output;
+		}
+
+		public function content( $echo = true ) {
+			$content = '<div class="' . $this->get_menu_name() . '-content">';
+				$items = $this->items;
+				foreach ( $items as $slug => $value ) {
+					if ( $this->is_active_item($slug) ) {
+						$content .= $this->get_content()[$slug];
+					}
+				}
+			$content .= '</div>';
+			// Output the content
+			if ( true === $echo ) {
+				echo $content;
+			} else {
+				return $content;
+			}
 		}
 
 		/**
@@ -238,18 +239,12 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 * @return mixed
 		 */
 		public function get_content() {
-			$content = '';
-
 			$items = $this->items;
 			foreach( $items as $slug => $value ) {
 				// if ( $this->can_view( $slug ) ) {
 				// if ( $this->is_tab($slug) && $this->can_view( $slug ) ) {
 					$method_name    = "get_{$slug}_content";
 					$content[$slug] = $this->$method_name();
-					// $content[] = '';
-					// $content[$slug] .= $this->get_item_content( $slug );
-					// $content[$slug] .= $this->get_items_content( $items );
-					// $content[$slug] .= $value;
 				// }
 			}
 			return $content;
