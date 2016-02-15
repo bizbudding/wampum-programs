@@ -26,16 +26,16 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @type string
+		 * @var string
 		 */
-		protected $slug = 'menu-name';
+		protected $name = 'menu-name';
 
 		/**
 		 * Associative array of menu item items ['slug'] => 'Name'
 		 *
 		 * @since 1.0.0
 		 *
-		 * @type array
+		 * @var array
 		 */
 		protected $items = array(
 					'about' => 'About',
@@ -43,11 +43,21 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 				);
 
 		/**
+		 * Optionally show a default tab
+		 * Will show content without query string
+		 *
+		 * @since 1.0.0
+		 *
+		 * @var string
+		 */
+		protected $default = null;
+
+		/**
 		 * Get the menu classes
 		 *
 		 * @since 1.1.0
 		 *
-		 * @type bool
+		 * @var bool
 		 */
 		protected $classes = 'menu genesis-nav-menu';
 
@@ -56,7 +66,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @type string
+		 * @var string
 		 */
 		protected $script_dir = 'path-to-scripts/';
 
@@ -65,53 +75,91 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @type string
+		 * @var string
 		 */
 		protected $template_dir = 'path-to-template-parts/';
 
+		/**
+		 * Loading text/html
+		 *
+		 * @since 1.0.0
+		 *
+		 * @var mixed
+		 */
 		protected $loading = 'Loading';
 
+		/**
+		 * Register rest endpoints and scripts
+		 *
+		 * @since 1.0.0
+		 *
+		 * @return null
+		 */
 		public function restful() {
 			add_action( 'rest_api_init', array( $this, 'register_rest_endpoints' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
 		}
 
 		/**
-		 * Add custom endpoint to add connection
+		 * Add custom endpoint to get the content
 		 *
-		 * @since   1.0
-		 * @return  void
+		 * @since  1.0
+		 *
+		 * @return void
 		 */
 		public function register_rest_endpoints() {
 		    register_rest_route( 'restfulcontentswap/v1', '/content/', array(
 				'methods'  => 'GET',
-				'callback' => array( $this, 'get_restful_content' ),
+				'callback' => array( $this, 'get_content' ),
 		    ));
 		}
 
+		/**
+		 * Register and localize restful content swap scripts
+		 *
+		 * @since  1.0.0
+		 *
+		 * @return void
+		 */
 		public function register_scripts() {
-			// wp_register_script( 'restfulcontentswap', trailingslashit($this->script_dir) . $this->slug . '.js', array('jquery'), '1.0.0', true );
-			wp_enqueue_script( 'restfulcontentswap', trailingslashit($this->script_dir) . $this->slug . '.js', array('jquery'), '1.0.0', true );
+			wp_enqueue_script( 'restfulcontentswap', trailingslashit($this->script_dir) . $this->name . '.js', array('jquery'), '1.0.0', true );
 		    wp_localize_script( 'restfulcontentswap', 'restfulcontentswap', $this->get_ajax_data() );
 		}
 
+		/**
+		 * Get localize script data
+		 *
+		 * @since  1.0.0
+		 *
+		 * @return array
+		 */
 		public function get_ajax_data() {
 		    return array(
 				'root'		=> esc_url_raw( rest_url() ),
 				'nonce'		=> wp_create_nonce( 'wp_rest' ),
 				'json_dir'	=> 'restfulcontentswap/v1/content/',
-				'name'		=> $this->slug,
+				'name'		=> $this->name,
 				'loading'	=> $this->loading,
 		    );
 		}
 
 		/**
+		 * ******************************************************* *
+		 *** OPTIONALLY OVERRIDE THIS METHOD IN YOUR CHILD CLASS ***
+		 * ******************************************************* *
 		 *
+		 * Check if user can view all or specific items
+		 * Handles menu item and item content
 		 *
-		 * @return [type] [description]
+		 * @since  1.0.0
+		 *
+		 * @param  string  $item  content item slug
+		 *
+		 * @return bool
 		 */
-		public function get_restful_content() {
-			return $this->get_ajax_content($this->items);
+		protected function can_view( $items ) {
+			// Add conditionals when overriding in child class
+			return true;
 		}
 
 		/**
@@ -125,16 +173,29 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 			echo $this->get_menu( $this->items );
 		}
 
-		// TODO: Add the slug as data-attribute so we can grab it with jQuery and update the query string
-		// How about DOC title when doing this? Read up on pushState.
-		// CSS-Tricks had a good write up, read it again
+		public function content() {
+			echo '<div class="' . $this->get_menu_name() . '-content">';
+
+				$items = $this->items;
+
+				foreach ( $items as $slug => $value ) {
+
+					$content = $this->get_content()[$slug];
+
+					if ( $this->is_active_item($slug) ) {
+						echo $content;
+					}
+				}
+			echo '</div>';
+		}
 
 		/**
 		 * Build the menu and menu items
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param  array  	  $items  menu item slugs and names
+		 * @param  array  $items  menu item slugs and names
+		 *
 		 * @return mixed|void
 		 */
 		protected function get_menu( $items ) {
@@ -146,7 +207,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 			$name = $this->get_menu_name();
 			// Start output
 			$output = '';
-
+			// Build our menu
 			$output .= '<ul class="' . $name . '-menu ' . $this->classes . '">';
 			foreach( $items as $slug => $value ) {
 				// If user can't view this item, skip it and move on to the next one
@@ -156,7 +217,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 				// Set our slug
 				$slug	= $this->sanitize_slug($slug);
 				// Maybe active tab
-				$active	= $this->is_tab($slug) ? ' active' : '';
+				$active	= $this->is_active_item($slug) ? ' active' : '';
 				// Continue to output the menu
 				$output .= '<li class="menu-item menu-item-' . $slug . $active . '" data-item="' . $slug . '">';
 					$output .= '<a href="?' . $name . '=' . $slug . '">';
@@ -165,34 +226,33 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 				$output .= '</li>';
 			}
 			$output .= '</ul>';
-
-			// $output .= '<div id="rcs-content" class="' . $this->get_menu_name() . '-content">' . $this->get_content($this->items) . '</div>';
-
+			// Return the menu
 			return $output;
 		}
 
-		public function content() {
-			echo '<div class="' . $this->get_menu_name() . '-content">';
-			echo $this->get_content($this->items);
-			echo '</div>';
-		}
+		/**
+		 * Get item content
+		 *
+		 * @since  1.0.0
+		 *
+		 * @return mixed
+		 */
+		public function get_content() {
+			$content = '';
 
-		protected function get_ajax_content( $items ) {
-			$content = array();
+			$items = $this->items;
 			foreach( $items as $slug => $value ) {
-				if ( $this->can_view( $slug ) ) {
-					$content[$slug] = 'Test'; // Override this method in your child class
-				}
+				// if ( $this->can_view( $slug ) ) {
+				// if ( $this->is_tab($slug) && $this->can_view( $slug ) ) {
+					$method_name    = "get_{$slug}_content";
+					$content[$slug] = $this->$method_name();
+					// $content[] = '';
+					// $content[$slug] .= $this->get_item_content( $slug );
+					// $content[$slug] .= $this->get_items_content( $items );
+					// $content[$slug] .= $value;
+				// }
 			}
 			return $content;
-		}
-
-		protected function get_content( $items ) {
-			foreach( $items as $slug => $value ) {
-				if ( $this->is_tab($slug) && $this->can_view( $slug ) ) {
-					return ''; // Override this method in your child class
-				}
-			}
 		}
 
 		/**
@@ -203,21 +263,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 * @return string
 		 */
 		protected function get_menu_name() {
-			return $this->sanitize_slug( $this->slug );
-		}
-
-		/**
-		 * Check if user can view all or specific items
-		 * Handles menu item and item content
-		 *
-		 * Override this method in your child class
-		 *
-		 * @param  string  $item  content item slug
-		 * @return bool
-		 */
-		protected function can_view( $slug ) {
-			// Add conditionals when overriding in child class
-			return true;
+			return $this->sanitize_slug( $this->name );
 		}
 
 		/**
@@ -237,16 +283,63 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		}
 
 		/**
+		 * Check if viewing active item
+		 *
+		 * @since  1.0.0
+		 *
+		 * @param  string  $slug  slug of the item being viewed
+		 *
+		 * @return boolean
+		 */
+		protected function is_active_item( $slug ) {
+			if ( $this->is_tab($slug) || $this->is_default($slug) ) {
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * Check if is default item
+		 *
+		 * @since  1.0.0v
+		 *
+		 * @param  string  $slug  slug of the item being viewed
+		 *
+		 * @return bool
+		 */
+		protected function is_default( $slug ) {
+			if ( ! $this->is_a_tab() && $this->default === $slug ) {
+				return true;
+			}
+			return false;
+		}
+
+		/**
 		 * Check if on a specific tab in your menu/template
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param  string  $menu_item_slug the page you want to show content for
+		 * @param  string  $menu_item_slug  the page you want to show content for
 		 *
-		 * @return boolean
+		 * @return bool
 		 */
-		public function is_tab( $menu_item_slug ) {
-			if ( isset($_GET[$this->slug]) && $menu_item_slug === $_GET[$this->slug] ) {
+		protected function is_tab( $menu_item_slug ) {
+			// if ( isset($_GET[$this->name]) && $menu_item_slug === $_GET[$this->name] ) {
+			if ( $this->is_a_tab() && $menu_item_slug === $_GET[$this->name] ) {
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * Check if viewing a tab of the menu
+		 *
+		 * @since  1.0.0
+		 *
+		 * @return bool
+		 */
+		protected function is_a_tab() {
+			if ( isset($_GET[$this->name]) ) {
 				return true;
 			}
 			return false;
