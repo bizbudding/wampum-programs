@@ -68,57 +68,7 @@ class Wampum_Account_Page extends JiveDig_Restful_Content_Swap {
 	}
 
 	protected function get_programs_content() {
-		// global $wampum_account_page, $restricted_content, $customer_membership;
-
 		ob_start();
-		$plans         = wc_memberships_get_membership_plans();
-		$active_member = array();
-
-		foreach ( $plans as $plan ) {
-			$active = wc_memberships_is_user_active_member( get_current_user_id(), $plan );
-			echo '<pre>';
-		    print_r($active);
-		    echo '</pre>';
-			array_push( $active_member, $active );
-		}
-
-		if ( ! in_array( true, $active_member ) ) {
-			return 'You have not purchased any programs';
-		}
-
-		$programs = get_terms('wampum_program', array(
-		    'hide_empty' => 0,
-		));
-
-		$output = '';
-
-		foreach ( $programs as $program ) {
-			// echo '<pre>';
-		 //    print_r($program);
-		 //    echo '</pre>';
-			$output .= '<h2>' . $program->name . '</h2>';
-		}
-
-		return $output;
-
-		// $customer_membership = wc_memberships_get_user_membership(get_current_user_id());
-		$customer_memberships = wc_memberships_get_user_memberships(get_current_user_id());
-
-
-		foreach ( $customer_memberships as $membership ) {
-			$plan = wc_memberships_get_membership_plan($membership->plan_id);
-			$section = wc_memberships_get_members_area_sections($membership->plan_id);
-			// echo '<pre>';
-		 //    var_dump($section);
-		 //    echo '</pre>';
-		}
-		// echo '<pre>';
-	 //    print_r($customer_memberships);
-	 //    echo '</pre>';
-		// echo '<pre>';
-	 //    var_dump($restricted_content);
-	 //    echo '</pre>';
-		// $user_id = get_current_user_id();
 		wampum_get_template_part('account/programs');
 		return ob_get_clean();
 	}
