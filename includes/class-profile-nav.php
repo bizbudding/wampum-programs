@@ -36,14 +36,7 @@ class Wampum_Profile_Nav extends JiveDig_Restful_Content_Swap {
 	 *
 	 * @var array
 	 */
-	protected $items = array(
-		'about'			=> 'About',
-		'caldera'		=> 'Caldera',
-		'woo'			=> 'Woo',
-		'edit'			=> 'Edit Posts',
-		'edit_profile'	=> 'Edit Profile',
-		'purchases'		=> 'My Purchases',
-	);
+	protected $items;
 
 	/**
 	 * Set default tab

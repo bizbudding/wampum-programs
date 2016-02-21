@@ -29,6 +29,12 @@ class Wampum_Account_Page extends JiveDig_Restful_Content_Swap {
 	 */
 	protected $name = 'account';
 
+	// protected $items_array = apply_filters( 'wampum_account_page_items', array(
+	// 							'programs' => 'My Programs',
+	// 							'caldera'  => 'Caldera',
+	// 							'woo'	   => 'Woo',
+	// 						));
+
 	/**
 	 * Associative array of menu item items ['slug'] => 'Name'
 	 *
@@ -37,10 +43,10 @@ class Wampum_Account_Page extends JiveDig_Restful_Content_Swap {
 	 * @var array
 	 */
 	protected $items = array(
-		'programs' => 'My Programs',
-		'caldera'  => 'Caldera',
-		'woo'	   => 'Woo',
-	);
+						'programs' => 'My Programs',
+						'caldera'  => 'Caldera',
+						'woo'	   => 'Woo',
+					);
 
 	/**
 	 * Set default tab
@@ -64,8 +70,35 @@ class Wampum_Account_Page extends JiveDig_Restful_Content_Swap {
 	protected $loading = '<i class="fa fa-spinner fa-pulse"></i>';
 
 	public function __construct() {
+		$this->items = apply_filters( 'wampum_account_page_items', $this->items );
+		// $this->items = add_filter( 'wampum_account_page_items', array( $this, 'change_items' ) );
+		// $this->items = apply_filters( 'wampum_account_page_items', array( $this, 'get_filtered_menu_items' ) );
 		// $this->script_dir   = get_stylesheet_directory_uri() . '/assets/js/';
+		// $this->items = $this->get_menu_items();
+
+		// $items = array();
+		// $items_array = get_option('wampum_settings')['account_page_items'];
+		// foreach ( $items_array as $key => $value ) {
+		// 	if ( 'programs' === $value ) {
+		// 		$items['programs'] = 'My Programs';
+		// 	}
+		// 	if ( 'caldera' === $value ) {
+		// 		$items['caldera'] = 'Caldera';
+		// 	}
+		// 	if ( 'woo' === $value ) {
+		// 		$items['woo'] = 'Woo';
+		// 	}
+		// 	if ( 'subscriptions' === $value ) {
+		// 		$items['subscriptions'] = 'Subscriptions';
+		// 	}
+		// }
+
 	}
+
+	public function change_items( $items ) {
+        $this->items = $items;
+        return $items;
+    }
 
 	protected function get_programs_content() {
 		ob_start();

@@ -60,20 +60,23 @@ function wampum_require() {
 }
 wampum_require();
 
-// Instantiate dependent classes
-$wampum_account_page	= new Wampum_Account_Page();
-$wampum_content_types	= new Wampum_Content_Types();
-$wampum_connections		= new Wampum_Connections();
-$wampum_members			= new Wampum_Members();
-$wampum_programs		= new Wampum_Programs();
-$wampum_template_loader	= new Wampum_Template_Loader();
+// add_action( 'after_setup_theme', 'wampum_get_it_poppin' );
+// function wampum_get_it_poppin() {
+	// Instantiate dependent classes
+	$wampum_account_page	= new Wampum_Account_Page();
+	$wampum_content_types	= new Wampum_Content_Types();
+	$wampum_connections		= new Wampum_Connections();
+	$wampum_members			= new Wampum_Members();
+	$wampum_programs		= new Wampum_Programs();
+	$wampum_template_loader	= new Wampum_Template_Loader();
 
-$wampum = new Wampum(
-	$wampum_account_page,
-	$wampum_content_types,
-	$wampum_connections,
-	$wampum_members,
-	$wampum_programs,
-	$wampum_template_loader
-);
-$wampum->run();
+	$wampum = new Wampum(
+		$wampum_account_page,
+		$wampum_content_types,
+		$wampum_connections,
+		$wampum_members,
+		$wampum_programs,
+		$wampum_template_loader
+	);
+	$wampum->run();
+// }
