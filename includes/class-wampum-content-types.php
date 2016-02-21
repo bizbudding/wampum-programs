@@ -51,6 +51,8 @@ class Wampum_Content_Types {
 		// add_action( 'init', array( $this, 'register_taxonomies') );
 		add_filter( 'post_type_link', array( $this, 'custom_permalinks' ), 1, 2 );
 		add_action( 'pre_get_posts', array( $this, 'parse_request_trick' ) );
+		add_action( 'template_redirect', array( $this, 'single_step_redirect' ) );
+
 	}
 
 	/**
@@ -77,28 +79,28 @@ class Wampum_Content_Types {
 			'menu_icon'			=> 'dashicons-feedback',
 			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','genesis-cpt-archives-settings') ),
 			// 'rewrite'			=> array( 'slug' => 'programs/%wampum_program%', 'with_front' => false ),
-			// 'rewrite'			=> array( 'slug' => '%wampum_program%', 'with_front' => false ),
-			'rewrite'			=> array( 'slug' => self::STEP, 'with_front' => false ),
-			'taxonomies'		=> array(self::PROGRAM),
+			'rewrite'			=> array( 'slug' => '%wampum_program%', 'with_front' => false ),
+			// 'rewrite'			=> array( 'slug' => self::STEP, 'with_front' => false ),
+			// 'taxonomies'		=> array(self::PROGRAM),
 			// 'has_archive'		=> 'programs',
 		    'admin_cols' 		=> array(
 		        // A taxonomy terms column
-		        self::PROGRAM => array(
-		            'taxonomy' => self::PROGRAM,
-		            'link'	   => 'list',
-		        ),
+		        // self::PROGRAM => array(
+		        //     'taxonomy' => self::PROGRAM,
+		        //     'link'	   => 'list',
+		        // ),
 		        // A post field column
 	            'post_date' => array(
 	                'title'      => __( 'Publish Date', 'Date', 'pixie-article' ),
 	                'post_field' => 'post_date',
 	            ),
 		    ),
-		    'admin_filters' 	=> array(
-		        self::PROGRAM => array(
-		            'title'    => $this->singular_name(self::PROGRAM),
-		            'taxonomy' => self::PROGRAM,
-		        ),
-		    ),
+		    // 'admin_filters' 	=> array(
+		    //     self::PROGRAM => array(
+		    //         'title'    => $this->singular_name(self::PROGRAM),
+		    //         'taxonomy' => self::PROGRAM,
+		    //     ),
+		    // ),
 	    ), $this::default_names()[self::STEP] );
 
 	    // Resources
@@ -151,12 +153,9 @@ class Wampum_Content_Types {
 		    $post_link = str_replace( "/{$post->post_type}/", '/', $post_link );
 	    }
 	    if ( 'wampum_step' === $post->post_type ) {
-	    	if ( $this->get_connected_program_slug($post) ) {
-	    		$slug = $this->get_connected_program_slug($post);
-	    	} else {
-	    		$slug = 'step';
-	    	}
-		    $post_link = str_replace( $post->post_type, $slug, $post_link );
+	    	// If no connected program, set base to 'step' since we're using template_redirect if no program anyway
+    		$slug = $this->get_connected_program_slug($post) ? $this->get_connected_program_slug($post) : 'step';
+		    $post_link = str_replace( '%wampum_program%', $slug, $post_link );
 	    }
 	    return $post_link;
 	}
@@ -182,6 +181,16 @@ class Wampum_Content_Types {
 			return array_shift($connected)->post_name;
 		}
 		return null;
+	}
+
+	public function single_step_redirect() {
+	    if ( ! is_singular(self::STEP) ) {
+	    	return;
+	    }
+	    if ( null === $this->get_connected_program_slug( get_the_ID() ) ) {
+	        wp_redirect( home_url() );
+	        exit();
+	    }
 	}
 
 	/**

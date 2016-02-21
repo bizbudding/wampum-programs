@@ -81,7 +81,7 @@ class Wampum_Connections {
 	        'reciprocal'     => true,
 	        'title'          => array(
 	            // 'from' => Wampum_Content_Types::plural_name('wampum_step'),
-	            'from' => 'Step',
+	            'from' => Wampum_Content_Types::singular_name('wampum_program'),
 	            // 'to'   => Wampum_Content_Types::singular_name('wampum_step') . ' ' . Wampum_Content_Types::plural_name('wampum_resource'),
 	            'to'   => 'Program Steps',
 	        ),
