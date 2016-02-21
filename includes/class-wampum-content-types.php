@@ -48,8 +48,9 @@ class Wampum_Content_Types {
 
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_post_types') );
-		add_action( 'init', array( $this, 'register_taxonomies') );
-		add_filter( 'post_type_link', array( $this, 'custom_permalinks'), 1, 2 );
+		// add_action( 'init', array( $this, 'register_taxonomies') );
+		add_filter( 'post_type_link', array( $this, 'custom_permalinks' ), 1, 2 );
+		add_action( 'pre_get_posts', array( $this, 'parse_request_trick' ) );
 	}
 
 	/**
@@ -62,21 +63,24 @@ class Wampum_Content_Types {
 	public function register_post_types() {
 
 		// Programs
-		// $program = self::PROGRAM;
-	    // register_extended_post_type( $program, array(
-		// 	'enter_title_here'	=> 'Enter ' . $this->singular_name($program) . ' Name',
-		// 	'menu_icon'			=> 'dashicons-feedback',
-		// 	'supports'			=> apply_filters( 'wampum_program_supports', array('title','editor','genesis-cpt-archives-settings') ),
-	    // ), $this::default_names()[$program] );
+		$program = self::PROGRAM;
+	    register_extended_post_type( $program, array(
+			'enter_title_here'	=> 'Enter ' . $this->singular_name($program) . ' Name',
+			'menu_icon'			=> 'dashicons-feedback',
+			'supports'			=> apply_filters( 'wampum_program_supports', array('title','editor','genesis-cpt-archives-settings') ),
+			'rewrite'			=> array( 'slug' => self::PROGRAM, 'with_front' => false ),
+	    ), $this::default_names()[$program] );
 
 	    // Steps
 	    register_extended_post_type( self::STEP, array(
 			'enter_title_here'	=> 'Enter ' . $this->singular_name(self::STEP) . ' Name',
 			'menu_icon'			=> 'dashicons-feedback',
 			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','genesis-cpt-archives-settings') ),
-			'rewrite'			=> array( 'slug' => 'programs/%wampum_program%', 'with_front' => false ),
+			// 'rewrite'			=> array( 'slug' => 'programs/%wampum_program%', 'with_front' => false ),
+			// 'rewrite'			=> array( 'slug' => '%wampum_program%', 'with_front' => false ),
+			'rewrite'			=> array( 'slug' => self::STEP, 'with_front' => false ),
 			'taxonomies'		=> array(self::PROGRAM),
-			'has_archive'		=> 'programs',
+			// 'has_archive'		=> 'programs',
 		    'admin_cols' 		=> array(
 		        // A taxonomy terms column
 		        self::PROGRAM => array(
@@ -127,28 +131,77 @@ class Wampum_Content_Types {
 
 	/**
 	 * Rewrite permalinks for better content structure
-	 * Need to set Yoast SEO breadcrumbs to match this new structre
+	 *
+	 * TODO: Set Yoast SEO breadcrumbs to match this new structure???
 	 *
 	 * @since  1.0.0
+	 *
+	 * @link   http://kellenmace.com/remove-custom-post-type-slug-from-permalinks/
 	 *
 	 * @param  idk    $post_link  the default post link
 	 * @param  object $post       the post object
 	 *
 	 * @return string|url
 	 */
-	public function custom_permalinks( $post_link, $post ){
-	   // if ( false !== strpos( $post_link, '%wampum_program%' ) ) {
-	   //      $program_term_term = get_the_terms( $post->ID, self::PROGRAM );
-	   //      $post_link = str_replace( '%wampum_program%', array_pop( $program_term_term )->slug, $post_link );
-	   //  }
-	    // return $post_link;
-	    if ( is_object( $post ) && $post->post_type == self::STEP ){
-	        $terms = wp_get_object_terms( $post->ID, self::PROGRAM );
-	        if ( $terms ) {
-	            return str_replace( '%wampum_program%' , $terms[0]->slug , $post_link );
-	        }
+	public function custom_permalinks( $post_link, $post ) {
+		if ( 'publish' !== $post->post_status ) {
+	        return $post_link;
+		}
+	    if ( 'wampum_program' === $post->post_type ) {
+		    $post_link = str_replace( "/{$post->post_type}/", '/', $post_link );
+	    }
+	    if ( 'wampum_step' === $post->post_type ) {
+	    	if ( $this->get_connected_program_slug($post) ) {
+	    		$slug = $this->get_connected_program_slug($post);
+	    	} else {
+	    		$slug = 'step';
+	    	}
+		    $post_link = str_replace( $post->post_type, $slug, $post_link );
 	    }
 	    return $post_link;
+	}
+
+	/**
+	 * Get the first (and hopefully only) connected program slug
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  object|int   $object_or_id  the post object or ID to get connected item from
+	 *
+	 * @return string|null
+	 */
+	public function get_connected_program_slug( $object_or_id ) {
+		$connected = get_posts( array(
+			'connected_type'	=> 'steps_to_programs',
+			'connected_items'	=> $object_or_id,
+			'nopaging'			=> true,
+			'posts_per_page'	=> 1,
+			'suppress_filters'	=> false,
+		));
+		if ( $connected ) {
+			return array_shift($connected)->post_name;
+		}
+		return null;
+	}
+
+	/**
+	 * Have WordPress match postname to any of our public post types (post, page, race)
+	 * All of our public post types can have /post-name/ as the slug, so they better be unique across all posts
+	 * By default, core only accounts for posts and pages where the slug is /post-name/
+	 */
+	public function parse_request_trick( $query ) {
+	    if ( ! $query->is_main_query() || is_admin() ) {
+	        return $query;
+	    }
+	    // Only noop our very specific rewrite rule match
+	    if ( 2 != count( $query->query ) || ! isset( $query->query['page'] ) ) {
+	        return $query;
+	    }
+	    // 'name' will be set if post permalinks are just post_name, otherwise the page rule will match
+	    if ( ! empty( $query->query['name'] ) ) {
+	        $query->set( 'post_type', array( 'post', 'page', self::PROGRAM ) );
+	    }
+	    return $query;
 	}
 
 	/**
