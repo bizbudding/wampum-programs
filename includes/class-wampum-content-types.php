@@ -49,9 +49,9 @@ class Wampum_Content_Types {
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_post_types') );
 		// add_action( 'init', array( $this, 'register_taxonomies') );
-		add_filter( 'post_type_link', array( $this, 'custom_permalinks' ), 1, 2 );
+		// add_filter( 'post_type_link', array( $this, 'custom_permalinks' ), 1, 2 );
 		add_action( 'pre_get_posts', array( $this, 'parse_request_trick' ) );
-		add_action( 'template_redirect', array( $this, 'single_step_redirect' ) );
+		// add_action( 'template_redirect', array( $this, 'single_step_redirect' ) );
 
 	}
 
@@ -68,9 +68,10 @@ class Wampum_Content_Types {
 		$program = self::PROGRAM;
 	    register_extended_post_type( $program, array(
 			'enter_title_here'	=> 'Enter ' . $this->singular_name($program) . ' Name',
+			'hierarchical'		=> true,
 			'menu_icon'			=> 'dashicons-feedback',
-			'supports'			=> apply_filters( 'wampum_program_supports', array('title','editor','genesis-cpt-archives-settings') ),
 			'rewrite'			=> array( 'slug' => self::PROGRAM, 'with_front' => false ),
+			'supports'			=> apply_filters( 'wampum_program_supports', array('title','editor','page-attributes','genesis-cpt-archives-settings') ),
 	    ), $this::default_names()[$program] );
 
 	    // Steps
@@ -79,7 +80,7 @@ class Wampum_Content_Types {
 			'menu_icon'			=> 'dashicons-feedback',
 			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','genesis-cpt-archives-settings') ),
 			// 'rewrite'			=> array( 'slug' => 'programs/%wampum_program%', 'with_front' => false ),
-			'rewrite'			=> array( 'slug' => '%wampum_program%', 'with_front' => false ),
+			// 'rewrite'			=> array( 'slug' => '%wampum_program%', 'with_front' => false ),
 			// 'rewrite'			=> array( 'slug' => self::STEP, 'with_front' => false ),
 			// 'taxonomies'		=> array(self::PROGRAM),
 			// 'has_archive'		=> 'programs',
@@ -150,14 +151,25 @@ class Wampum_Content_Types {
 	        return $post_link;
 		}
 	    if ( 'wampum_program' === $post->post_type ) {
+		    // $post_link = str_replace( "/{$post->post_type}/", '/', $post_link );
 		    $post_link = str_replace( "/{$post->post_type}/", '/', $post_link );
 	    }
 	    if ( 'wampum_step' === $post->post_type ) {
 	    	// If no connected program, set base to 'step' since we're using template_redirect if no program anyway
-    		$slug = $this->get_connected_program_slug($post) ? $this->get_connected_program_slug($post) : 'step';
+    		$slug = $this->get_step_program_slug($post) ? $this->get_step_program_slug($post) : 'step';
 		    $post_link = str_replace( '%wampum_program%', $slug, $post_link );
 	    }
 	    return $post_link;
+	}
+
+	public function single_step_redirect() {
+	    if ( ! is_singular(self::STEP) ) {
+	    	return;
+	    }
+	    if ( ! $this->get_step_program_slug( get_the_ID() ) ) {
+	        wp_redirect( home_url() );
+	        exit();
+	    }
 	}
 
 	/**
@@ -165,11 +177,36 @@ class Wampum_Content_Types {
 	 *
 	 * @since  1.0.0
 	 *
-	 * @param  object|int   $object_or_id  the post object or ID to get connected item from
+	 * @param  object|int   $step_object_or_id  the post object or ID to get connected item from
 	 *
-	 * @return string|null
+	 * @return string|bool
 	 */
-	public function get_connected_program_slug( $object_or_id ) {
+	public function get_step_program_slug( $step_object_or_id ) {
+		$program = $this->get_step_program( $step_object_or_id );
+		if ( $program ) {
+			return $program->post_name;
+		}
+		return false;
+	}
+
+	/**
+	 * Get the first (and hopefully only) connected program ID
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  object|int   $step_object_or_id  the post object or ID to get connected item from
+	 *
+	 * @return string|bool
+	 */
+	public function get_step_program_id( $step_object_or_id ) {
+		$program = $this->get_step_program( $step_object_or_id );
+		if ( $program ) {
+			return $program->ID;
+		}
+		return false;
+	}
+
+	public function get_step_program( $step_object_or_id ) {
 		$connected = get_posts( array(
 			'connected_type'	=> 'steps_to_programs',
 			'connected_items'	=> $object_or_id,
@@ -178,19 +215,9 @@ class Wampum_Content_Types {
 			'suppress_filters'	=> false,
 		));
 		if ( $connected ) {
-			return array_shift($connected)->post_name;
+			return array_shift($connected);;
 		}
-		return null;
-	}
-
-	public function single_step_redirect() {
-	    if ( ! is_singular(self::STEP) ) {
-	    	return;
-	    }
-	    if ( null === $this->get_connected_program_slug( get_the_ID() ) ) {
-	        wp_redirect( home_url() );
-	        exit();
-	    }
+		return false;
 	}
 
 	/**
@@ -202,14 +229,17 @@ class Wampum_Content_Types {
 	    if ( ! $query->is_main_query() || is_admin() ) {
 	        return $query;
 	    }
+	    // echo '<pre>';
+	    // print_r($query);
+	    // echo '</pre>';
 	    // Only noop our very specific rewrite rule match
-	    if ( 2 != count( $query->query ) || ! isset( $query->query['page'] ) ) {
-	        return $query;
-	    }
-	    // 'name' will be set if post permalinks are just post_name, otherwise the page rule will match
-	    if ( ! empty( $query->query['name'] ) ) {
-	        $query->set( 'post_type', array( 'post', 'page', self::PROGRAM ) );
-	    }
+	    // if ( 2 != count( $query->query ) || ! isset( $query->query['page'] ) ) {
+	    //     return $query;
+	    // }
+	    // // 'name' will be set if post permalinks are just post_name, otherwise the page rule will match
+	    // if ( ! empty( $query->query['name'] ) ) {
+	    //     $query->set( 'post_type', array( 'post', 'page', self::PROGRAM ) );
+	    // }
 	    return $query;
 	}
 

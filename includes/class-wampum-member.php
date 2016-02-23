@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @package Wampum
  */
-class Wampum_Members {
+class Wampum_Member {
 
 	// protected $user_id = '';
 
@@ -67,6 +67,39 @@ class Wampum_Members {
 
 	    }
 	    return $member_programs;
+	}
+
+	/**
+	 * Check if current user can view a specific post/cpt
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  int  $post_id  ID of the post to check access to
+	 *
+	 * @return bool
+	 */
+	public function can_view_step( $user_id, $step_id ) {
+		$program_id = Wampum_Content_Types::get_step_program_id( $step_id );
+		if ( $program_id ) {
+			return wc_memberships_user_can( $user_id, 'view', array( 'post' => $program_id ) );
+		}
+		return false;
+	}
+
+	/**
+	 * Check if current user can view a specific post/cpt
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  int  $post_id  ID of the post to check access to
+	 *
+	 * @return bool
+	 */
+	public function can_view( $user_id, $post_id ) {
+		// if ( ! is_user_logged_in() ) {
+		// 	return false;
+		// }
+		return wc_memberships_user_can( $user_id, 'view', array( 'post' => $post_id ) );
 	}
 
 }

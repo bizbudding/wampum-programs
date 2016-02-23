@@ -49,8 +49,8 @@ function wampum_require() {
 		'class-wampum-account-page',
 		'class-wampum-content-types',
 		'class-wampum-connections',
-		'class-wampum-members',
-		'class-wampum-programs',
+		'class-wampum-member',
+		// 'class-wampum-programs',
 		'class-wampum-template-loader',
 		'helpers',
 	);
@@ -66,15 +66,15 @@ wampum_require();
 	$wampum_account_page	= new Wampum_Account_Page();
 	$wampum_content_types	= new Wampum_Content_Types();
 	$wampum_connections		= new Wampum_Connections();
-	$wampum_members			= new Wampum_Members();
-	$wampum_programs		= new Wampum_Programs();
+	$wampum_member			= new Wampum_Member();
+	// $wampum_programs		= new Wampum_Programs();
 	$wampum_template_loader	= new Wampum_Template_Loader();
 
 	$wampum = new Wampum(
 		$wampum_account_page,
 		$wampum_content_types,
 		$wampum_connections,
-		$wampum_members,
+		$wampum_member,
 		$wampum_programs,
 		$wampum_template_loader
 	);
