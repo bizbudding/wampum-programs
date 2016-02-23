@@ -99,7 +99,11 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 		 */
 		public function restful() {
 			add_action( 'rest_api_init', array( $this, 'register_rest_endpoints' ) );
+		}
+
+		public function scripts() {
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
+			// $this->register_scripts;
 		}
 
 		/**

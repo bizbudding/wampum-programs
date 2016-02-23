@@ -45,10 +45,10 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 	 * @var array
 	 */
 	protected $items = array(
-						'programs' => 'My Programs',
-						'caldera'  => 'Caldera',
-						'woo'	   => 'Woo',
-						'edit_profile'	   => 'Edit Profile',
+						'programs'		=> 'My Programs',
+						'caldera'		=> 'Caldera',
+						'woo'			=> 'Woo',
+						'edit_profile'	=> 'Edit Profile',
 					);
 
 	/**
@@ -74,9 +74,13 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 
 	public function __construct() {
 		$this->items = apply_filters( 'wampum_account_page_items', $this->items );
+		$this->script_dir = WAMPUM_PLUGIN_URI . 'js/';
+		add_action( 'after_setup_theme', array( $this, 'enable_restful_content' ) );
+		add_action( 'get_header', array( $this, 'enqueue_scripts' ) );
+
 		// $this->items = add_filter( 'wampum_account_page_items', array( $this, 'change_items' ) );
 		// $this->items = apply_filters( 'wampum_account_page_items', array( $this, 'get_filtered_menu_items' ) );
-		$this->script_dir = WAMPUM_PLUGIN_URI . 'js/';
+		// $this->script_dir = get_stylesheet_directory_uri() . 'assets/js/';
 		// $this->items = $this->get_menu_items();
 
 		// $items = array();
@@ -96,6 +100,20 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 		// 	}
 		// }
 
+	}
+
+	public function enable_restful_content() {
+		// global $wampum_account_page;
+		$this->restful();
+	}
+
+	public function enqueue_scripts() {
+		$page = get_option('wampum_settings')['account_page'];
+		if ( ! is_page($page) ) {
+			return;
+		}
+		// global $wampum_account_page;
+		$this->scripts();
 	}
 
 	// public function change_items( $items ) {
@@ -185,6 +203,9 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 
 }
 
+// global $wampum_account_page;
+// $wampum_account_page->restful();
+//
 // $wampum_account_page = new Wampum_Account_Page();
 
 /**
@@ -235,19 +256,25 @@ function wampum_account_get_purchases_content() {
 	return $content;
 }
 
+// add_action( 'after_setup_theme', 'wampum_account_page_register_rest_endpoint' );
+// function wampum_account_page_register_rest_endpoint() {
+// 	global $wampum_account_page;
+// 	$wampum_account_page->restful();
+// }
+
 //
-add_action( 'wp_head', 'wampum_do_account_page_scripts' );
-function wampum_do_account_page_scripts() {
-	// Get account page ID
-	$page = get_option('wampum_settings')['account_page'];
-	if ( ! is_page($page) ) {
-		return;
-	}
-	echo '<h1>TEST</h1>';
-	global $wampum_account_page;
-	$wampum_account_page->restful();
-	// wp_enqueue_script( 'jivedigcontentswap' );
-}
+// add_action( 'get_header', 'wampum_do_account_page_scripts' );
+// function wampum_do_account_page_scripts() {
+// 	// Get account page ID
+// 	$page = get_option('wampum_settings')['account_page'];
+// 	if ( ! is_page($page) ) {
+// 		return;
+// 	}
+// 	global $wampum_account_page;
+// 	$wampum_account_page->scripts();
+// 	// Wampum_Account_Page::scripts();
+// 	// wp_enqueue_script( 'jivedigcontentswap' );
+// }
 
 // Add Account page menu/content
 add_filter( 'the_content', 'wampum_account_page_content' );

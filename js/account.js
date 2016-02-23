@@ -1,8 +1,8 @@
 jQuery(function( $ ){
 
     // Set menu/content variables
-    var Menu    = '.' + restfulcontentswap.name + '-menu';
-    var Content = '.' + restfulcontentswap.name + '-content';
+    var Menu    = '.' + jivedigcontentswap.name + '-menu';
+    var Content = '.' + jivedigcontentswap.name + '-content';
 
 	$(Menu + ' a').on('click', function(e){
 
@@ -10,7 +10,7 @@ jQuery(function( $ ){
 		e.preventDefault();
 
         // Loading
-        $(Content).addClass('loading').html(restfulcontentswap.loading);;
+        $(Content).addClass('loading').html(jivedigcontentswap.loading);;
 
         // Get the item that was clicked
         var Item = $(this).parent();
@@ -18,19 +18,19 @@ jQuery(function( $ ){
         $(Menu + ' li').removeClass('active');
         Item.addClass('active');
 
-        var Key  = Item.attr('data-item');
+        var Key = Item.attr('data-item');
 
 
         $.ajax({
             method: "GET",
-            url: restfulcontentswap.root + restfulcontentswap.json_dir,
+            url: jivedigcontentswap.root + jivedigcontentswap.json_dir,
             beforeSend: function ( xhr ) {
-                xhr.setRequestHeader( 'X-WP-Nonce', restfulcontentswap.nonce );
+                xhr.setRequestHeader( 'X-WP-Nonce', jivedigcontentswap.nonce );
             },
             success : function( response ) {
                 $(Content).empty().append(response[Key]).removeClass('loading');
                 // Update query parameters
-                // window.history.pushState("object or string", window.document.title, window.location.protocol + "?" + restfulcontentswap.name + "=" + Item);
+                // window.history.pushState("object or string", window.document.title, window.location.protocol + "?" + jivedigcontentswap.name + "=" + Item);
             },
             fail : function( response ) {
             	console.log( response );
