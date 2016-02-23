@@ -81,6 +81,11 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 		 */
 		protected $loading = 'Loading';
 
+		public function __construct() {
+			// add_action( 'rest_api_init', array( $this, 'register_rest_endpoints' ) );
+			// add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
+		}
+
 		/**
 		 * ****************************************************************************** *
 		 *** OPTIONALLY ADD THIS METHOD IN YOUR TEMPLATE TO ENABLE RESTFUL CONTENT SWAP ***
@@ -119,6 +124,7 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 		 * @return void
 		 */
 		public function register_scripts() {
+			// wp_register_script( 'jivedigcontentswap', trailingslashit($this->script_dir) . $this->name . '.js', array('jquery'), '1.0.0', true );
 			wp_enqueue_script( 'jivedigcontentswap', trailingslashit($this->script_dir) . $this->name . '.js', array('jquery'), '1.0.0', true );
 		    wp_localize_script( 'jivedigcontentswap', 'jivedigcontentswap', $this->get_ajax_data() );
 		}
@@ -154,7 +160,7 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 		 *
 		 * @return bool
 		 */
-		protected function can_view( $items, $slug ) {
+		protected function can_view( $slug ) {
 			// Add conditionals when overriding in child class
 			return true;
 		}
@@ -196,7 +202,7 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 			$output .= '<ul id="' . $name . '-menu" class="' . $name . '-menu ' . $this->classes . '">';
 			foreach( $items as $slug => $value ) {
 				// If user can't view this item, skip it and move on to the next one
-				if ( ! $this->can_view( $items, $slug ) ) {
+				if ( ! $this->can_view( $slug ) ) {
 					continue;
 				}
 				// Set our slug
@@ -221,7 +227,7 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 				$items = $this->items;
 				foreach ( $items as $slug => $value ) {
 					// If user can't view this item, skip it and move on to the next one
-					if ( ! $this->can_view( $items, $slug ) ) {
+					if ( ! $this->can_view( $slug ) ) {
 						continue;
 					}
 					if ( $this->is_active_item($slug) ) {

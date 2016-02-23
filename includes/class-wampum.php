@@ -31,8 +31,8 @@ class Wampum {
 		add_theme_support( 'genesis-connect-woocommerce' );
 		// Add an admin settings page
 		add_filter( 'piklist_admin_pages', array( $this, 'settings_page' ) );
-		// Add Account page menu/content
-		add_filter( 'the_content', array( $this, 'account_page_content' ) );
+		// // Add Account page menu/content
+		// add_filter( 'the_content', array( $this, 'account_page_content' ) );
 	}
 
 	/**

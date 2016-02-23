@@ -76,7 +76,7 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 		$this->items = apply_filters( 'wampum_account_page_items', $this->items );
 		// $this->items = add_filter( 'wampum_account_page_items', array( $this, 'change_items' ) );
 		// $this->items = apply_filters( 'wampum_account_page_items', array( $this, 'get_filtered_menu_items' ) );
-		// $this->script_dir   = get_stylesheet_directory_uri() . '/assets/js/';
+		$this->script_dir = WAMPUM_PLUGIN_URI . 'js/';
 		// $this->items = $this->get_menu_items();
 
 		// $items = array();
@@ -109,7 +109,7 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 	   //  echo '</pre>';
     // }
 
-    protected function can_view( $items, $slug ) {
+    protected function can_view( $slug ) {
     	// echo '<pre>';
 	    // print_r($slug);
 	    // echo '</pre>';
@@ -145,52 +145,52 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 		return "{$this->prefix}_get_{$slug}_content";
 	}
 
-	protected function get_programs_content() {
-		ob_start();
-		wampum_get_template_part('account/programs');
-		return ob_get_clean();
-	}
+	// protected function get_programs_content() {
+	// 	ob_start();
+	// 	wampum_get_template_part('account/programs');
+	// 	return ob_get_clean();
+	// }
 
-	protected function get_caldera_content() {
-		ob_start();
-		echo do_shortcode('[caldera_form id="CF56c1eaac42cd6"]');
-		return ob_get_clean();
-	}
+	// protected function get_caldera_content() {
+	// 	ob_start();
+	// 	echo do_shortcode('[caldera_form id="CF56c1eaac42cd6"]');
+	// 	return ob_get_clean();
+	// }
 
-	protected function get_woo_content() {
-		ob_start();
-		echo do_shortcode('[woocommerce_my_account]');
-		return ob_get_clean();
-	}
+	// protected function get_woo_content() {
+	// 	ob_start();
+	// 	echo do_shortcode('[woocommerce_my_account]');
+	// 	return ob_get_clean();
+	// }
 
-	protected function get_edit_content() {
-		$content  = '<div>';
-		$content .= '<h2>This is the Edit tab</h2>';
-		$content .= '<p>Edit me, or edit you? Whatever you want.</p>';
-		$content .= '</div>';
-		return $content;
-	}
+	// protected function get_edit_content() {
+	// 	$content  = '<div>';
+	// 	$content .= '<h2>This is the Edit tab</h2>';
+	// 	$content .= '<p>Edit me, or edit you? Whatever you want.</p>';
+	// 	$content .= '</div>';
+	// 	return $content;
+	// }
 
-	protected function get_edit_profile_content() {
-		// return 'Edit Profile Content';
-		// return piklist_form::render_form('edit-profile','wampum', true);
-		// ob_start();
-		// echo piklist_form::render_form('edit-profile','wampum');
-		return piklist_form::render_form('edit-profile','wampum', true);
-		// return piklist_form::render_form('post','localthrive-core', true);
-		// return ob_get_clean();
-	}
+	// protected function get_edit_profile_content() {
+	// 	return piklist_form::render_form('edit-profile','wampum', true);
+	// }
 
-	protected function get_purchases_content() {
-		$content  = '<div>';
-		$content .= '<h2>This is the Purchases tab</h2>';
-		$content .= '<p>This is going to be really perfect right now.</p>';
-		$content .= '</div>';
-		return $content;
-	}
+	// protected function get_purchases_content() {
+	// 	$content  = '<div>';
+	// 	$content .= '<h2>This is the Purchases tab</h2>';
+	// 	$content .= '<p>This is going to be really perfect right now.</p>';
+	// 	$content .= '</div>';
+	// 	return $content;
+	// }
 
 }
 
+// $wampum_account_page = new Wampum_Account_Page();
+
+/**
+ * The following functions are outside of class since we overrode get_content_method_name()
+ * This allows filtering of menu items and content outside of this class (custom plugins per site)
+ */
 function wampum_account_get_programs_content() {
 	ob_start();
 	wampum_get_template_part('account/programs');
@@ -232,5 +232,33 @@ function wampum_account_get_purchases_content() {
 	$content .= '<h2>This is the Purchases tab</h2>';
 	$content .= '<p>This is going to be really perfect right now.</p>';
 	$content .= '</div>';
+	return $content;
+}
+
+//
+add_action( 'wp_head', 'wampum_do_account_page_scripts' );
+function wampum_do_account_page_scripts() {
+	// Get account page ID
+	$page = get_option('wampum_settings')['account_page'];
+	if ( ! is_page($page) ) {
+		return;
+	}
+	echo '<h1>TEST</h1>';
+	global $wampum_account_page;
+	$wampum_account_page->restful();
+	// wp_enqueue_script( 'jivedigcontentswap' );
+}
+
+// Add Account page menu/content
+add_filter( 'the_content', 'wampum_account_page_content' );
+function wampum_account_page_content($content) {
+	// Get account page ID
+	$page = get_option('wampum_settings')['account_page'];
+	if ( is_page($page) ) {
+		// global $wampum_account_page, $restricted_content, $customer_membership;
+		global $wampum_account_page;
+		$content .= $wampum_account_page->menu(false);
+		$content .= $wampum_account_page->content(false);
+	}
 	return $content;
 }
