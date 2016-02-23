@@ -26,7 +26,10 @@ class Wampum_Member {
 	}
 
 	/**
-	 * Get a members purhcased programs
+	 * TODO: REWRITE IF USING PROGRAMS AS A CPT!!!!!!!!!
+	 *
+	 *
+	 * Get a members purchased programs
 	 *
 	 * @since  1.0.0
 	 *

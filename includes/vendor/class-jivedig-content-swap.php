@@ -2,7 +2,9 @@
 /**
  * Create an inner nav menu using query strings on the same page to load alternate content
  *
- * @package   JiveDig_Restful_Content_Swap
+ *
+ *
+ * @package   JiveDig_Content_Swap
  * @author    Mike Hemberger
  * @link      TBD
  * @copyright 2016 Mike Hemberger
@@ -10,16 +12,16 @@
  * @version   1.0.0
  */
 
-if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
+if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 	/**
 	 * Query String Menu
 	 *
 	 * When using in a plugin, create a new class that extends this one and just overrides the properties.
 	 *
-	 * @package JiveDig_Restful_Content_Swap
+	 * @package JiveDig_Content_Swap
 	 * @author  Mike Hemberger
 	 */
-	class JiveDig_Restful_Content_Swap {
+	class JiveDig_Content_Swap {
 
 		/**
 		 * Menu name
@@ -103,7 +105,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 * @return void
 		 */
 		public function register_rest_endpoints() {
-		    register_rest_route( 'restfulcontentswap/v1', '/content/', array(
+		    register_rest_route( 'jivedigcontentswap/v1', '/content/', array(
 				'methods'  => 'GET',
 				'callback' => array( $this, 'get_content' ),
 		    ));
@@ -117,8 +119,8 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 * @return void
 		 */
 		public function register_scripts() {
-			wp_enqueue_script( 'restfulcontentswap', trailingslashit($this->script_dir) . $this->name . '.js', array('jquery'), '1.0.0', true );
-		    wp_localize_script( 'restfulcontentswap', 'restfulcontentswap', $this->get_ajax_data() );
+			wp_enqueue_script( 'jivedigcontentswap', trailingslashit($this->script_dir) . $this->name . '.js', array('jquery'), '1.0.0', true );
+		    wp_localize_script( 'jivedigcontentswap', 'jivedigcontentswap', $this->get_ajax_data() );
 		}
 
 		/**
@@ -132,7 +134,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		    return array(
 				'root'		=> esc_url_raw( rest_url() ),
 				'nonce'		=> wp_create_nonce( 'wp_rest' ),
-				'json_dir'	=> 'restfulcontentswap/v1/content/',
+				'json_dir'	=> 'jivedigcontentswap/v1/content/',
 				'name'		=> $this->name,
 				'loading'	=> $this->loading,
 		    );
@@ -152,7 +154,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 *
 		 * @return bool
 		 */
-		protected function can_view( $items ) {
+		protected function can_view( $items, $slug ) {
 			// Add conditionals when overriding in child class
 			return true;
 		}
@@ -194,7 +196,7 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 			$output .= '<ul id="' . $name . '-menu" class="' . $name . '-menu ' . $this->classes . '">';
 			foreach( $items as $slug => $value ) {
 				// If user can't view this item, skip it and move on to the next one
-				if ( ! $this->can_view( $slug ) ) {
+				if ( ! $this->can_view( $items, $slug ) ) {
 					continue;
 				}
 				// Set our slug
@@ -218,6 +220,10 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 			$content = '<div class="' . $this->get_menu_name() . '-content">';
 				$items = $this->items;
 				foreach ( $items as $slug => $value ) {
+					// If user can't view this item, skip it and move on to the next one
+					if ( ! $this->can_view( $items, $slug ) ) {
+						continue;
+					}
 					if ( $this->is_active_item($slug) ) {
 						$content .= $this->get_content()[$slug];
 					}
@@ -239,15 +245,38 @@ if ( ! class_exists( 'JiveDig_Restful_Content_Swap' ) )  {
 		 * @return mixed
 		 */
 		public function get_content() {
+			// $content = array();
 			$items = $this->items;
 			foreach( $items as $slug => $value ) {
-				// if ( $this->can_view( $slug ) ) {
+				if ( $this->can_view( $slug ) ) {
 				// if ( $this->is_tab($slug) && $this->can_view( $slug ) ) {
-					$method_name    = "get_{$slug}_content";
-					$content[$slug] = $this->$method_name();
-				// }
+					$method_name    = $this->get_content_method_name($slug);
+					$content[$slug] = $method_name();
+					// $content[$slug] = $this->get_content_method_name($slug);
+					// $content[$slug] = $this->get_item_content($slug);
+				}
 			}
 			return $content;
+		}
+
+		/**
+		 * ******************************************************* *
+		 *** OPTIONALLY OVERRIDE THIS METHOD IN YOUR CHILD CLASS ***
+		 * ******************************************************* *
+		 *
+		 * Example to allow filtering of menu items to add additional content
+		 *
+		 * 1. Define $prefix parameter in child class
+		 * 2. Override this method
+		 * 3. return "{$this->prefix}_get_{$slug}_content";
+		 * 4. In custom plugin (or theme) return the content via that function
+		 *
+		 * @since   1.0.0
+		 *
+		 * @return  string
+		 */
+		protected function get_content_method_name($slug) {
+			return "get_{$slug}_content";
 		}
 
 		/**
