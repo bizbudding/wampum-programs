@@ -103,7 +103,6 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 	}
 
 	public function enable_restful_content() {
-		// global $wampum_account_page;
 		$this->restful();
 	}
 
@@ -112,30 +111,12 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 		if ( ! is_page($page) ) {
 			return;
 		}
-		// global $wampum_account_page;
 		$this->scripts();
 	}
 
-	// public function change_items( $items ) {
- //        $this->items = $items;
- //        return $items;
- //    }
-
-    // protected function get_item_content( $slug ) {
-    // 	echo '<pre>';
-	   //  print_r($slug);
-	   //  echo '</pre>';
-    // }
-
     protected function can_view( $slug ) {
-    	// echo '<pre>';
-	    // print_r($slug);
-	    // echo '</pre>';
     	if ( 'caldera' === $slug ) {
-	    	// echo '<pre>';
-		    // print_r($slug);
-		    // echo '</pre>';
-    		if ( is_user_logged_in() ) {
+    		if ( ! is_user_logged_in() ) {
     			return false;
     		}
     		return true;

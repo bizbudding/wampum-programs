@@ -9,6 +9,8 @@ jQuery(function( $ ){
 		// Disable page refresh
 		e.preventDefault();
 
+        $(Content).css("min-height", $(Content).height());
+
         // Loading
         $(Content).addClass('loading').html(jivedigcontentswap.loading);;
 
@@ -19,8 +21,6 @@ jQuery(function( $ ){
         Item.addClass('active');
 
         var Key = Item.attr('data-item');
-
-
         $.ajax({
             method: "GET",
             url: jivedigcontentswap.root + jivedigcontentswap.json_dir,
@@ -28,13 +28,14 @@ jQuery(function( $ ){
                 xhr.setRequestHeader( 'X-WP-Nonce', jivedigcontentswap.nonce );
             },
             success : function( response ) {
-                $(Content).empty().append(response[Key]).removeClass('loading');
+                // Replace content, remove loading class, set inline style to empty string so it will be removed
+                $(Content).html(response[Key]).removeClass('loading').css("min-height", "");
                 // Update query parameters
-                // window.history.pushState("object or string", window.document.title, window.location.protocol + "?" + jivedigcontentswap.name + "=" + Item);
+                window.history.pushState("object or string", window.document.title, window.location.protocol + "?" + jivedigcontentswap.name + "=" + Key);
             },
             fail : function( response ) {
             	console.log( response );
-				alert( 'FAIL!' );
+				// alert( 'FAIL!' );
             }
         });
 
