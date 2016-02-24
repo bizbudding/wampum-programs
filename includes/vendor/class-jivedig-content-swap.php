@@ -226,6 +226,7 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 			return $output;
 		}
 
+		// SHOULD THIS BE ENCODED FOR JSON SOMEHOW?
 		public function content( $echo = true ) {
 			$content = '<div class="' . $this->get_menu_name() . '-content">';
 				$items = $this->items;
