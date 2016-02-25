@@ -49,8 +49,8 @@ class Wampum_Content_Types {
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_post_types') );
 		// add_action( 'init', array( $this, 'register_taxonomies') );
-		// add_filter( 'post_type_link', array( $this, 'custom_permalinks' ), 1, 2 );
-		add_action( 'pre_get_posts', array( $this, 'parse_request_trick' ) );
+		add_filter( 'post_type_link', array( $this, 'custom_permalinks' ), 1, 2 );
+		// add_action( 'pre_get_posts', array( $this, 'parse_request_trick' ) );
 		// add_action( 'template_redirect', array( $this, 'single_step_redirect' ) );
 
 	}
@@ -68,20 +68,22 @@ class Wampum_Content_Types {
 		$program = self::PROGRAM;
 	    register_extended_post_type( $program, array(
 			'enter_title_here'	=> 'Enter ' . $this->singular_name($program) . ' Name',
-			'hierarchical'		=> true,
+			// 'hierarchical'		=> true,
 			'menu_icon'			=> 'dashicons-feedback',
-			'rewrite'			=> array( 'slug' => self::PROGRAM, 'with_front' => false ),
-			'supports'			=> apply_filters( 'wampum_program_supports', array('title','editor','page-attributes','genesis-cpt-archives-settings') ),
+			// 'rewrite'			=> array( 'slug' => self::PROGRAM, 'with_front' => false ),
+			// 'rewrite'			=> array( 'slug' => '%wampum_program%', 'with_front' => true ),
+			'rewrite'			=> array( 'slug' => self::PROGRAM ),
+			'supports'			=> apply_filters( 'wampum_program_supports', array('title','editor','thumbnail','genesis-cpt-archives-settings') ),
 	    ), $this::default_names()[$program] );
 
 	    // Steps
 	    register_extended_post_type( self::STEP, array(
 			'enter_title_here'	=> 'Enter ' . $this->singular_name(self::STEP) . ' Name',
 			'menu_icon'			=> 'dashicons-feedback',
-			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','genesis-cpt-archives-settings') ),
+			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','thumbnail','genesis-cpt-archives-settings') ),
 			// 'rewrite'			=> array( 'slug' => 'programs/%wampum_program%', 'with_front' => false ),
 			// 'rewrite'			=> array( 'slug' => '%wampum_program%', 'with_front' => false ),
-			// 'rewrite'			=> array( 'slug' => self::STEP, 'with_front' => false ),
+			'rewrite'			=> array( 'slug' => self::STEP ),
 			// 'taxonomies'		=> array(self::PROGRAM),
 			// 'has_archive'		=> 'programs',
 		    'admin_cols' 		=> array(
@@ -124,11 +126,11 @@ class Wampum_Content_Types {
 	public function register_taxonomies() {
 		// Programs
 	    // register_extended_taxonomy( self::PROGRAM, 'wc_membership_plan', array(
-	    register_extended_taxonomy( self::PROGRAM, array('wc_membership_plan',self::STEP), array(
-	    	'meta_box' => false,
-            'rewrite'  => array( 'slug' => 'programs' ),
-            // 'show_ui' => false,
-        ), $this::default_names()[self::PROGRAM] );
+	    // register_extended_taxonomy( self::PROGRAM, array('wc_membership_plan',self::STEP), array(
+	    // 	'meta_box' => false,
+     //        'rewrite'  => array( 'slug' => 'programs' ),
+     //        // 'show_ui' => false,
+     //    ), $this::default_names()[self::PROGRAM] );
 
 	}
 
@@ -150,14 +152,23 @@ class Wampum_Content_Types {
 		if ( 'publish' !== $post->post_status ) {
 	        return $post_link;
 		}
-	    if ( 'wampum_program' === $post->post_type ) {
+		// var_dump($post);
+	    if ( self::PROGRAM === $post->post_type ) {
 		    // $post_link = str_replace( "/{$post->post_type}/", '/', $post_link );
-		    $post_link = str_replace( "/{$post->post_type}/", '/', $post_link );
+		    $post_link = str_replace( $post->post_type, $this->get_program_base_slug(), $post_link );
+		    // $post_link = str_replace( '%wampum_program%', $this->get_program_base_slug(), $post_link );
 	    }
-	    if ( 'wampum_step' === $post->post_type ) {
+	    if ( self::STEP === $post->post_type ) {
+	    	// var_dump($post_link);
+	    	// var_dump($this->get_step_program_slug($post->ID));
 	    	// If no connected program, set base to 'step' since we're using template_redirect if no program anyway
-    		$slug = $this->get_step_program_slug($post) ? $this->get_step_program_slug($post) : 'step';
-		    $post_link = str_replace( '%wampum_program%', $slug, $post_link );
+    		// $slug = $this->get_step_program_slug($post) ? $this->get_step_program_slug($post) : 'step';
+    		// $slug = $this->get_step_program_slug($post) ? $this->get_step_base_slug($post) : 'step';
+			// var_dump($slug);
+		    // $post_link = str_replace( '%wampum_program%', $slug, $post_link );
+		    // $post_link = str_replace( $post->post_type, $slug, $post_link );
+		    $post_link = str_replace( $post->post_type, $this->get_step_program_slug($post->ID), $post_link );
+	    	// var_dump($post_link);
 	    }
 	    return $post_link;
 	}
@@ -186,7 +197,7 @@ class Wampum_Content_Types {
 		if ( $program ) {
 			return $program->post_name;
 		}
-		return false;
+		return sanitize_title_with_dashes($this->plural_name(self::STEP));
 	}
 
 	/**
@@ -209,7 +220,7 @@ class Wampum_Content_Types {
 	public function get_step_program( $step_object_or_id ) {
 		$connected = get_posts( array(
 			'connected_type'	=> 'steps_to_programs',
-			'connected_items'	=> $object_or_id,
+			'connected_items'	=> $step_object_or_id,
 			'nopaging'			=> true,
 			'posts_per_page'	=> 1,
 			'suppress_filters'	=> false,
@@ -233,14 +244,27 @@ class Wampum_Content_Types {
 	    // print_r($query);
 	    // echo '</pre>';
 	    // Only noop our very specific rewrite rule match
-	    // if ( 2 != count( $query->query ) || ! isset( $query->query['page'] ) ) {
-	    //     return $query;
-	    // }
-	    // // 'name' will be set if post permalinks are just post_name, otherwise the page rule will match
-	    // if ( ! empty( $query->query['name'] ) ) {
-	    //     $query->set( 'post_type', array( 'post', 'page', self::PROGRAM ) );
-	    // }
+	    if ( 2 != count( $query->query ) || ! isset( $query->query['page'] ) ) {
+	        return $query;
+	    }
+	    // 'name' will be set if post permalinks are just post_name, otherwise the page rule will match
+	    if ( ! empty( $query->query['name'] ) ) {
+	        $query->set( 'post_type', array( 'post', 'page', self::PROGRAM, self::STEP ) );
+	    }
 	    return $query;
+	}
+
+	// TODO: SIMILAR TO get_step_base_slug()
+	public function get_program_base_slug() {
+		$slug = sanitize_title_with_dashes($this->plural_name(self::PROGRAM));
+		return apply_filters( 'wampum_program_base_slug', $slug );
+	}
+
+
+	public function get_step_base_slug($step_id) {
+		$plural_name = sanitize_title_with_dashes($this->plural_name(self::STEP));
+		$slug = $this->get_step_program_slug($step_id) ? $this->get_step_program_slug($step_id) : $plural_name;
+		return apply_filters( 'wampum_step_base_slug', $slug );
 	}
 
 	/**
