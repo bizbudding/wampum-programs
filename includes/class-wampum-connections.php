@@ -73,7 +73,7 @@ class Wampum_Connections {
 	        'can_create_post' => false,
 	        'sortable'        => 'any',
 	        'admin_box'       => array(
-				'show'		=> 'to',
+				'show'		=> 'any',
 				'context'	=> 'side',
 			),
 	        'admin_column'   => true,
@@ -82,11 +82,11 @@ class Wampum_Connections {
 	        'title'          => array(
 	            // 'from' => Wampum_Content_Types::plural_name('wampum_step'),
 	            'from' => Wampum_Content_Types::singular_name('wampum_program'),
-	            // 'to'   => Wampum_Content_Types::singular_name('wampum_step') . ' ' . Wampum_Content_Types::plural_name('wampum_resource'),
-	            'to'   => 'Program Steps',
+	            'to'   => Wampum_Content_Types::plural_name('wampum_step'),
+	            // 'to'   => 'Program Steps',
 	        ),
 	        'from_labels' => array(
-	            'singular_name' => 'Step',
+	            'singular_name' => Wampum_Content_Types::plural_name('wampum_step'),
 	        ),
 	        // 'to_labels' => array(
 	        //     'singular_name' => __( 'Item', 'wampum' ),
@@ -103,7 +103,7 @@ class Wampum_Connections {
 	        'can_create_post' => false,
 	        'sortable'        => 'any',
 	        'admin_box'       => array(
-				'show'		=> 'to',
+				'show'		=> 'any',
 				'context'	=> 'side',
 			),
 	        'admin_column'   => true,
@@ -113,9 +113,9 @@ class Wampum_Connections {
 	            'from' => Wampum_Content_Types::plural_name('wampum_step'),
 	            'to'   => Wampum_Content_Types::singular_name('wampum_step') . ' ' . Wampum_Content_Types::plural_name('wampum_resource'),
 	        ),
-	        'from_labels' => array(
-	            'singular_name' => Wampum_Content_Types::plural_name('wampum_resource'),
-	        ),
+	        // 'from_labels' => array(
+	            // 'singular_name' => Wampum_Content_Types::plural_name('wampum_resource'),
+	        // ),
 	        // 'to_labels' => array(
 	        //     'singular_name' => __( 'Item', 'wampum' ),
 	        //     'search_items'  => __( 'Search items', 'wampum' ),

@@ -31,6 +31,8 @@ class Wampum {
 		add_theme_support( 'genesis-connect-woocommerce' );
 		// Add an admin settings page
 		add_filter( 'piklist_admin_pages', array( $this, 'settings_page' ) );
+		// Register stylesheet
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_stylesheets' ) );
 		// // Add Account page menu/content
 		// add_filter( 'the_content', array( $this, 'account_page_content' ) );
 	}
@@ -150,16 +152,28 @@ class Wampum {
 		return $pages;
 	}
 
-	function account_page_content($content) {
-		// Get account page ID
-		$page = get_option('wampum_settings')['account_page'];
-		if ( is_page($page) ) {
-			// global $wampum_account_page, $restricted_content, $customer_membership;
-			global $wampum_account_page;
-			$content .= $wampum_account_page->menu(false);
-			$content .= $wampum_account_page->content(false);
-		}
-		return $content;
+	/**
+	 * Register stylesheets for later use
+	 * Use via wp_enqueue_style('wampum'); in a template
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return null
+	 */
+	public function register_stylesheets() {
+	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URI . 'css/wampum.css' );
 	}
+
+	// function account_page_content($content) {
+	// 	// Get account page ID
+	// 	$page = get_option('wampum_settings')['account_page'];
+	// 	if ( is_page($page) ) {
+	// 		// global $wampum_account_page, $restricted_content, $customer_membership;
+	// 		global $wampum_account_page;
+	// 		$content .= $wampum_account_page->menu(false);
+	// 		$content .= $wampum_account_page->content(false);
+	// 	}
+	// 	return $content;
+	// }
 
 }
