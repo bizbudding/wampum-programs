@@ -33,6 +33,11 @@ function wampum_get_template_part( $slug, $name = null, $load = true ) {
     $wampum_template_loader->get_template_part( $slug, $name, $load );
 }
 
+function wampum_get_program_steps_list( $program_id ) {
+	global $wampum_content_types;
+	return $wampum_content_types->get_program_steps_list( $program_id );
+}
+
 function wampum_get_program_steps( $program_id ) {
 	global $wampum_content_types;
 	return $wampum_content_types->get_program_steps( $program_id );

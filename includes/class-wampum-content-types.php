@@ -325,17 +325,42 @@ class Wampum_Content_Types {
 		return apply_filters( 'wampum_step_base_slug', $slug );
 	}
 
+	public function get_program_steps_list($program_id) {
+		$output = '';
+		$steps = $this->get_program_steps($program_id);
+		if ( $steps ) {
+			$output .= '<ul>';
+			foreach ( $steps as $step ) {
+				$output .= '<li><a href="' . get_permalink($step->ID) . '">' . $step->post_title . '</a></li>';
+			}
+			$output .= '</ul>';
+		}
+		return $output;
+	}
+
+	/**
+	 * Get all steps connected to a program
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  integer  $program_id  the program ID
+	 *
+	 * @return array|objects|bool
+	 */
 	public function get_program_steps($program_id) {
-		$connected = new WP_Query( array(
-			'connected_type'	=> 'topics_to_programs',
+		$connected = get_posts( array(
+			'connected_type'	=> 'steps_to_programs',
 			'connected_items'	=> $program_id,
 			'nopaging'			=> true,
+			'suppress_filters'	=> false,
 		) );
 		if ( $connected ) {
 			return $connected;
 		}
 		return false;
 	}
+
+
 
 	/**
 	 * Get singular post type name
