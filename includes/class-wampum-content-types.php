@@ -49,10 +49,11 @@ class Wampum_Content_Types {
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_post_types') );
 		// add_action( 'init', array( $this, 'register_taxonomies') );
-		add_filter( 'post_type_link', array( $this, 'custom_permalinks' ), 1, 2 );
+		// add_filter( 'post_type_link', array( $this, 'custom_permalinks' ), 1, 2 );
+		add_filter( 'post_type_link', array( $this, 'post_type_link' ), 1, 2 );
 		// add_action( 'pre_get_posts', array( $this, 'parse_request_trick' ) );
 		// add_action( 'template_redirect', array( $this, 'single_step_redirect' ) );
-
+		add_action( 'init', array( $this, 'add_rewrite_tags' ) );
 	}
 
 	/**
@@ -71,19 +72,34 @@ class Wampum_Content_Types {
 			// 'hierarchical'		=> true,
 			'menu_icon'			=> 'dashicons-feedback',
 			// 'rewrite'			=> array( 'slug' => self::PROGRAM, 'with_front' => false ),
-			// 'rewrite'			=> array( 'slug' => '%wampum_program%', 'with_front' => true ),
-			'rewrite'			=> array( 'slug' => self::PROGRAM ),
+			// 'rewrite'			=> array( 'slug' => '%wampum_program%', 'with_front' => false ),
+			// 'rewrite'			=> array( 'slug' => $this->get_program_base_slug(), 'with_front' => false ),
+			'rewrite' => array(
+		        'permastruct' => $this->get_program_base_slug() . '/%wampum_program%',
+		        // 'permastruct' => 'base' . '/%wampum_program%',
+		    ),
+			// 'rewrite'			=> array( 'slug' => self::PROGRAM ),
+			// 'query_var' => true,
+			// 'rewrite' => false,
 			'supports'			=> apply_filters( 'wampum_program_supports', array('title','editor','thumbnail','genesis-cpt-archives-settings') ),
 	    ), $this::default_names()[$program] );
 
 	    // Steps
+	    // $step_base = $this->get_program_base_slug();
 	    register_extended_post_type( self::STEP, array(
 			'enter_title_here'	=> 'Enter ' . $this->singular_name(self::STEP) . ' Name',
 			'menu_icon'			=> 'dashicons-feedback',
 			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','thumbnail','genesis-cpt-archives-settings') ),
 			// 'rewrite'			=> array( 'slug' => 'programs/%wampum_program%', 'with_front' => false ),
-			// 'rewrite'			=> array( 'slug' => '%wampum_program%', 'with_front' => false ),
-			'rewrite'			=> array( 'slug' => self::STEP ),
+			// 'rewrite'			=> array( 'slug' => trailingslashit($step_base) . '%wampum_program%', 'with_front' => true ),
+			// 'rewrite'			=> array( 'slug' => '%wampum_step_program%', 'with_front' => false ),
+			// 'rewrite'			=> array( 'slug' => self::STEP ),
+			'rewrite' => array(
+		        'permastruct' => $this->get_program_base_slug() . '/%wampum_step_program%/%wampum_step%',
+		        // 'permastruct' => 'base' . '/%wampum_step_program%/%wampum_step%',
+		    ),
+			// 'query_var' => true,
+			// 'rewrite' => false,
 			// 'taxonomies'		=> array(self::PROGRAM),
 			// 'has_archive'		=> 'programs',
 		    'admin_cols' 		=> array(
@@ -134,6 +150,18 @@ class Wampum_Content_Types {
 
 	}
 
+	function add_rewrite_tags() {
+
+	    // Define desired permalink structure
+	    // $post_type_rewrite = $this->get_program_base_slug() . '/%wampum_step_program%/%wampum_step%';
+
+	    // Add rewrite functions
+		add_rewrite_tag( '%wampum_program%', '([^/]+)' );
+		add_rewrite_tag( '%wampum_step_program%', '([^/]+)' );
+		// add_permastruct( 'wampum_step', $post_type_rewrite, false );
+
+	}
+
 	/**
 	 * Rewrite permalinks for better content structure
 	 *
@@ -166,9 +194,38 @@ class Wampum_Content_Types {
     		// $slug = $this->get_step_program_slug($post) ? $this->get_step_base_slug($post) : 'step';
 			// var_dump($slug);
 		    // $post_link = str_replace( '%wampum_program%', $slug, $post_link );
+		    $post_link = str_replace( '%wampum_step_program%', $this->get_step_program_slug($post->ID), $post_link );
 		    // $post_link = str_replace( $post->post_type, $slug, $post_link );
-		    $post_link = str_replace( $post->post_type, $this->get_step_program_slug($post->ID), $post_link );
+		    // $post_link = str_replace( $post->post_type, $this->get_step_program_slug($post->ID), $post_link );
 	    	// var_dump($post_link);
+	    }
+	    return $post_link;
+	}
+
+	function post_type_link( $post_link, $post = 0, $leavename = FALSE ) {
+	    if ( strpos('%wampum_step_program%', $post_link ) === 'FALSE' ) {
+			return $post_link;
+	    }
+	    if ( is_object($post) ) {
+			$post_id = $post->ID;
+	    } else {
+			$post_id = $post;
+			$post	 = get_post($post_id);
+	    }
+	    // Bail if not a post object or not a published post
+	    if ( ! is_object($post) || 'publish' !== $post->post_status ) {
+			return $post_link;
+	    }
+	    if ( $post->post_type === self::STEP ) {
+			// $program	  = $this->get_step_base_slug($post_id);
+			$program	  = $this->get_program_base_slug($post_id);
+			$step_program = $this->get_step_program_slug($post_id);
+			$post_link	  = str_replace( '%wampum_program%', $program, $post_link );
+			$post_link	  = str_replace( '%wampum_step_program%', $step_program, $post_link );
+	    }
+	    if ( $post->post_type === self::PROGRAM ) {
+			$program	= $this->get_program_base_slug($post_id);
+			$post_link	= str_replace( '%wampum_program%', $program, $post_link );
 	    }
 	    return $post_link;
 	}
@@ -222,11 +279,12 @@ class Wampum_Content_Types {
 			'connected_type'	=> 'steps_to_programs',
 			'connected_items'	=> $step_object_or_id,
 			'nopaging'			=> true,
-			'posts_per_page'	=> 1,
+			// 'posts_per_page'	=> 1,
 			'suppress_filters'	=> false,
 		));
 		if ( $connected ) {
-			return array_shift($connected);;
+			// return array_shift($connected);
+			return $connected[0];
 		}
 		return false;
 	}
