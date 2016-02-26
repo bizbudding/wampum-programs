@@ -37,27 +37,57 @@ class Wampum_Connections {
 	 */
 	public function register_p2p_connections() {
 
+	  //   p2p_register_connection_type( array(
+	  //       'name'            => 'program_to_membership_plan',
+	  //       'from'            => get_taxonomy( 'wampum_program' )->object_type,
+	  //       // 'from'            => 'wampum_program',
+	  //       'to'              => 'post',
+	  //       'can_create_post' => false,
+	  //       'sortable'        => 'any',
+	  //       // 'admin_box'       => array(
+			// 	// 'show'		=> 'any',
+			// 	// 'context'	=> 'side',
+			// // ),
+	  //       // 'admin_column'   => true,
+	  //       // 'admin_dropdown' => true,
+	  //       // 'reciprocal'     => true,
+	  //       // 'title'          => array(
+	  //       //     'from' => Wampum_Content_Types::plural_name('wampum_step'),
+	  //       //     'to'   => Wampum_Content_Types::singular_name('wampum_step') . ' ' . Wampum_Content_Types::plural_name('wampum_resource'),
+	  //       // ),
+	  //       // 'from_labels' => array(
+	  //       //     'singular_name' => Wampum_Content_Types::plural_name('wampum_resource'),
+	  //       // ),
+	  //       // 'to_labels' => array(
+	  //       //     'singular_name' => __( 'Item', 'wampum' ),
+	  //       //     'search_items'  => __( 'Search items', 'wampum' ),
+	  //       //     'not_found'     => __( 'No items found.', 'wampum' ),
+	  //       //     'create'        => __( 'Create Connections', 'wampum' ),
+	  //       // ),
+	  //   ) );
+
 	    p2p_register_connection_type( array(
-	        'name'            => 'program_to_membership_plan',
-	        'from'            => get_taxonomy( 'wampum_program' )->object_type,
-	        // 'from'            => 'wampum_program',
-	        'to'              => 'post',
+	        'name'            => 'steps_to_programs',
+	        'from'            => 'wampum_step',
+	        'to'              => 'wampum_program',
 	        'can_create_post' => false,
 	        'sortable'        => 'any',
-	        // 'admin_box'       => array(
-				// 'show'		=> 'any',
-				// 'context'	=> 'side',
-			// ),
-	        // 'admin_column'   => true,
-	        // 'admin_dropdown' => true,
-	        // 'reciprocal'     => true,
-	        // 'title'          => array(
-	        //     'from' => Wampum_Content_Types::plural_name('wampum_step'),
-	        //     'to'   => Wampum_Content_Types::singular_name('wampum_step') . ' ' . Wampum_Content_Types::plural_name('wampum_resource'),
-	        // ),
-	        // 'from_labels' => array(
-	        //     'singular_name' => Wampum_Content_Types::plural_name('wampum_resource'),
-	        // ),
+	        'admin_box'       => array(
+				'show'		=> 'any',
+				'context'	=> 'side',
+			),
+	        'admin_column'   => true,
+	        'admin_dropdown' => true,
+	        'reciprocal'     => true,
+	        'title'          => array(
+	            // 'from' => Wampum_Content_Types::plural_name('wampum_step'),
+	            'from' => Wampum_Content_Types::singular_name('wampum_program'),
+	            'to'   => Wampum_Content_Types::plural_name('wampum_step'),
+	            // 'to'   => 'Program Steps',
+	        ),
+	        'from_labels' => array(
+	            'singular_name' => Wampum_Content_Types::plural_name('wampum_step'),
+	        ),
 	        // 'to_labels' => array(
 	        //     'singular_name' => __( 'Item', 'wampum' ),
 	        //     'search_items'  => __( 'Search items', 'wampum' ),
@@ -73,7 +103,7 @@ class Wampum_Connections {
 	        'can_create_post' => false,
 	        'sortable'        => 'any',
 	        'admin_box'       => array(
-				'show'		=> 'to',
+				'show'		=> 'any',
 				'context'	=> 'side',
 			),
 	        'admin_column'   => true,
@@ -83,9 +113,9 @@ class Wampum_Connections {
 	            'from' => Wampum_Content_Types::plural_name('wampum_step'),
 	            'to'   => Wampum_Content_Types::singular_name('wampum_step') . ' ' . Wampum_Content_Types::plural_name('wampum_resource'),
 	        ),
-	        'from_labels' => array(
-	            'singular_name' => Wampum_Content_Types::plural_name('wampum_resource'),
-	        ),
+	        // 'from_labels' => array(
+	            // 'singular_name' => Wampum_Content_Types::plural_name('wampum_resource'),
+	        // ),
 	        // 'to_labels' => array(
 	        //     'singular_name' => __( 'Item', 'wampum' ),
 	        //     'search_items'  => __( 'Search items', 'wampum' ),

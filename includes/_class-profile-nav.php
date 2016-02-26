@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @package Wampum_Profile_Nav
  * @author  Mike Hemberger
  */
-class Wampum_Profile_Nav extends JiveDig_Restful_Content_Swap {
+class Wampum_Profile_Nav extends JiveDig_Content_Swap {
 
 	/**
 	 * Menu name

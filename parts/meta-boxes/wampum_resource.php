@@ -14,9 +14,9 @@ piklist('field', array(
 	'field'		=> 'wampum_resource_files',
 	'label'		=> __('Upload a file for this resource', 'wampum'),
 	'template'	=> 'field',
-	'validate' => array(
-		array(
-			'type' => 'file_exists',
-		),
-	),
+	// 'validate' => array(
+	// 	array(
+	// 		'type' => 'file_exists',
+	// 	),
+	// ),
 ));

@@ -33,6 +33,8 @@ function wampum_get_template_part( $slug, $name = null, $load = true ) {
     $wampum_template_loader->get_template_part( $slug, $name, $load );
 }
 
+
+// NO LONGER NEEDED UNLESS WE GO BACK TO PROGRAM AS TAXONOMY
 function wampum_get_member_program_ids( $user_id ) {
 
 	$terms = get_terms('wampum_program');
@@ -70,6 +72,8 @@ function wampum_get_member_program_ids( $user_id ) {
 }
 
 /**
+ * DO WE NEED THIS FOR ANYTHING?!?!?!?!?
+ *
  * Get the page/post IDs or taxonomy term IDs for restricted content
  * for chosen WooCommerce Memberships levels which have been assigned to a post or page.
  *
