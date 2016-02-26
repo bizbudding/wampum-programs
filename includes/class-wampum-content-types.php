@@ -325,6 +325,18 @@ class Wampum_Content_Types {
 		return apply_filters( 'wampum_step_base_slug', $slug );
 	}
 
+	public function get_program_steps($program_id) {
+		$connected = new WP_Query( array(
+			'connected_type'	=> 'topics_to_programs',
+			'connected_items'	=> $program_id,
+			'nopaging'			=> true,
+		) );
+		if ( $connected ) {
+			return $connected;
+		}
+		return false;
+	}
+
 	/**
 	 * Get singular post type name
 	 * TODO: Allow for taxonomy name?
