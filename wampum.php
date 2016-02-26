@@ -9,15 +9,15 @@
  * @wordpress-plugin
  * Plugin Name:        Wampum
  * Description: 	   The core Wampum plugin
- * Plugin URI:         https://gitlab.com/jivedig/wampum
+ * Plugin URI:         https://github.com/JiveDig/wampum
  * Author:             Mike Hemberger
  * Author URI:         http://bizbudding.com
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
  * Version:            0.0.21
- * GitLab Plugin URI:  https://gitlab.com/jivedig/wampum
- * GitLab Branch:	   master
+ * GitHub Plugin URI:  https://github.com/JiveDig/wampum
+ * GitHub Branch:	   master
  */
 
 // * Plugin Type: 	      Piklist
