@@ -15,7 +15,7 @@
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:            0.0.15
+ * Version:            0.0.20
  * GitLab Plugin URI:  https://gitlab.com/jivedig/wampum
  * GitLab Branch:	   master
  */
