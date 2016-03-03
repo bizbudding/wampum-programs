@@ -215,8 +215,8 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 				$active	= $this->is_active_item($slug) ? ' active' : '';
 				// Continue to output the menu
 				$output .= '<li class="menu-item menu-item-' . $slug . $active . '" data-item="' . $slug . '">';
-					$output .= '<a href="?' . $name . '=' . $slug . '">';
-					// $output .= '<a href="?' . $name . '=' . $slug . '#' . $name . '-menu">';
+					$output .= '<a href="' . $this->get_menu_item_url( $slug ) . '">';
+					// $output .= '<a href="?' . $name . '=' . $slug . '">';
 					$output .= sanitize_text_field($value);
 					$output .= '</a>';
 				$output .= '</li>';
@@ -226,25 +226,30 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 			return $output;
 		}
 
+		protected function get_menu_item_url($slug) {
+			return esc_url_raw( add_query_arg( $this->get_menu_name(), $slug, get_permalink() ) );
+		}
+
 		// SHOULD THIS BE ENCODED FOR JSON SOMEHOW?
 		public function content( $echo = true ) {
-			$content = '<div class="' . $this->get_menu_name() . '-content">';
-				$items = $this->items;
-				foreach ( $items as $slug => $value ) {
-					// If user can't view this item, skip it and move on to the next one
-					if ( ! $this->can_view( $slug ) ) {
-						continue;
-					}
-					if ( $this->is_active_item($slug) ) {
-						$content .= $this->get_content()[$slug];
-					}
+			$items = $this->items;
+			foreach ( $items as $slug => $value ) {
+				// If user can't view this item, skip it and move on to the next one
+				if ( ! $this->can_view( $slug ) ) {
+					continue;
 				}
-			$content .= '</div>';
+				if ( $this->is_active_item($slug) ) {
+					$class   = $slug;
+					$content = $this->get_content()[$slug];
+				}
+			}
+			$open  = '<div class="' . $this->get_menu_name() . '-content ' . $class . '">';
+			$close = '</div>';
 			// Output the content
 			if ( true === $echo ) {
-				echo $content;
+				echo $open . $content . $close;
 			} else {
-				return $content;
+				return $open . $content . $close;
 			}
 		}
 
@@ -300,6 +305,16 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 		protected function get_menu_name() {
 			return $this->sanitize_slug( $this->name );
 		}
+
+		// public function get_menu_item_url( $name, $slug ) {
+		// 	return esc_url_raw( add_query_arg( $name, $slug, home_url() ) );
+		// }
+
+		// I DON'T THINK THIS IS NEEDED
+		// protected function get_current_url_with_args() {
+		// 	// Current URL with query args
+		// 	return home_url( add_query_arg( null, null ) );
+		// }
 
 		/**
 		 * Get a lowercase and sanitized version of the slug

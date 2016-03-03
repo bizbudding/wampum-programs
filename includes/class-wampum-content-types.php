@@ -54,6 +54,8 @@ class Wampum_Content_Types {
 		// add_action( 'pre_get_posts', array( $this, 'parse_request_trick' ) );
 		// add_action( 'template_redirect', array( $this, 'single_step_redirect' ) );
 		add_action( 'init', array( $this, 'add_rewrite_tags' ) );
+		// Add custom archive support for CPT
+		add_post_type_support( 'wc_membership_plan', 'post-thumbnails' );
 	}
 
 	/**
@@ -102,6 +104,7 @@ class Wampum_Content_Types {
 			// 'rewrite' => false,
 			// 'taxonomies'		=> array(self::PROGRAM),
 			// 'has_archive'		=> 'programs',
+		    // 'show_in_menu' => 'edit.php?post_type=wampum_program',
 		    'admin_cols' 		=> array(
 		        // A taxonomy terms column
 		        // self::PROGRAM => array(

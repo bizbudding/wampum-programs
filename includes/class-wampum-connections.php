@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class Wampum_Connections {
 
 	function __construct() {
-		add_action( 'p2p_init', array( $this, 'register_p2p_connections') );
+		add_action( 'p2p_init', 			 array( $this, 'register_p2p_connections') );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 		add_action( 'piklist_save_field-connect_resource_to_step', array( $this, 'connect_resource_to_step' ), 10, 1 );
@@ -88,12 +88,12 @@ class Wampum_Connections {
 	        'from_labels' => array(
 	            'singular_name' => Wampum_Content_Types::plural_name('wampum_step'),
 	        ),
-	        // 'to_labels' => array(
-	        //     'singular_name' => __( 'Item', 'wampum' ),
-	        //     'search_items'  => __( 'Search items', 'wampum' ),
-	        //     'not_found'     => __( 'No items found.', 'wampum' ),
-	        //     'create'        => __( 'Create Connections', 'wampum' ),
-	        // ),
+	        'to_labels' => array(
+	            'singular_name' => __( 'Item', 'wampum' ),
+	            'search_items'  => __( 'Search items', 'wampum' ),
+	            'not_found'     => __( 'No items found.', 'wampum' ),
+	            'create'        => __( '', 'wampum' ),
+	        ),
 	    ) );
 
 	    p2p_register_connection_type( array(
@@ -113,16 +113,51 @@ class Wampum_Connections {
 	            'from' => Wampum_Content_Types::plural_name('wampum_step'),
 	            'to'   => Wampum_Content_Types::singular_name('wampum_step') . ' ' . Wampum_Content_Types::plural_name('wampum_resource'),
 	        ),
-	        // 'from_labels' => array(
-	            // 'singular_name' => Wampum_Content_Types::plural_name('wampum_resource'),
-	        // ),
-	        // 'to_labels' => array(
-	        //     'singular_name' => __( 'Item', 'wampum' ),
-	        //     'search_items'  => __( 'Search items', 'wampum' ),
-	        //     'not_found'     => __( 'No items found.', 'wampum' ),
-	        //     'create'        => __( 'Create Connections', 'wampum' ),
-	        // ),
+	        'from_labels' => array(
+	            'singular_name' => __( 'Item', 'wampum' ),
+	            'search_items'  => __( 'Search items', 'wampum' ),
+	            'not_found'     => __( 'No items found.', 'wampum' ),
+	            'create'        => 'Connect a ' . Wampum_Content_Types::singular_name('wampum_resource'),
+	        ),
+	        'to_labels' => array(
+	            'singular_name' => __( 'Item', 'wampum' ),
+	            'search_items'  => __( 'Search items', 'wampum' ),
+	            'not_found'     => __( 'No items found.', 'wampum' ),
+	            'create'        => 'Connect to ' . Wampum_Content_Types::singular_name('wampum_step'),
+	        ),
 	    ) );
+
+	    p2p_register_connection_type( array(
+	        'name'            => 'resources_to_programs',
+	        'from'            => 'wampum_resource',
+	        'to'              => 'wampum_program',
+	        'can_create_post' => false,
+	        'sortable'        => 'any',
+	        'admin_box'       => array(
+				'show'		=> 'any',
+				'context'	=> 'side',
+			),
+	        'admin_column'   => true,
+	        'admin_dropdown' => true,
+	        'reciprocal'     => true,
+	        'title'          => array(
+	            'from' => Wampum_Content_Types::plural_name('wampum_program'),
+	            'to'   => Wampum_Content_Types::singular_name('wampum_program') . ' ' . Wampum_Content_Types::plural_name('wampum_resource'),
+	        ),
+	        'from_labels' => array(
+	            'singular_name' => __( 'Item', 'wampum' ),
+	            'search_items'  => __( 'Search items', 'wampum' ),
+	            'not_found'     => __( 'No items found.', 'wampum' ),
+	            'create'        => 'Connect a ' . Wampum_Content_Types::singular_name('wampum_resource'),
+	        ),
+	        'to_labels' => array(
+	            'singular_name' => __( 'Item', 'wampum' ),
+	            'search_items'  => __( 'Search items', 'wampum' ),
+	            'not_found'     => __( 'No items found.', 'wampum' ),
+	            'create'        => 'Connect to ' . Wampum_Content_Types::singular_name('wampum_program'),
+	        ),
+	    ) );
+
 	}
 
 	/**

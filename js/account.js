@@ -12,7 +12,7 @@ jQuery(function( $ ){
         $(Content).css("min-height", $(Content).height());
 
         // Loading
-        $(Content).addClass('loading').html(jivedigcontentswap.loading);;
+        $(Content).addClass('loading').html(jivedigcontentswap.loading);
 
         // Get the item that was clicked
         var Item = $(this).parent();
@@ -20,7 +20,12 @@ jQuery(function( $ ){
         $(Menu + ' li').removeClass('active');
         Item.addClass('active');
 
+        // Get item slug/key
         var Key = Item.attr('data-item');
+
+        // Add content slug as content wrap class
+        $(Content).attr('class', jivedigcontentswap.name + '-content ' + Key);
+
         $.ajax({
             method: "GET",
             url: jivedigcontentswap.root + jivedigcontentswap.json_dir,

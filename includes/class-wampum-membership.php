@@ -1,6 +1,6 @@
 <?php
 /**
- * Wampum Members
+ * Wampum Membership
  *
  * @package   Wampum
  * @author    Mike Hemberger
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @package Wampum
  */
-class Wampum_Member {
+class Wampum_Membership {
 
 	// protected $user_id = '';
 
@@ -81,7 +81,7 @@ class Wampum_Member {
 	 *
 	 * @return bool
 	 */
-	public function can_view_step( $user_id, $step_id ) {
+	public static function can_view_step( $user_id, $step_id ) {
 		$program_id = Wampum_Content_Types::get_step_program_id( $step_id );
 		if ( $program_id ) {
 			return wc_memberships_user_can( $user_id, 'view', array( 'post' => $program_id ) );
@@ -98,7 +98,7 @@ class Wampum_Member {
 	 *
 	 * @return bool
 	 */
-	public function can_view( $user_id, $post_id ) {
+	public static function can_view( $user_id, $post_id ) {
 		// if ( ! is_user_logged_in() ) {
 		// 	return false;
 		// }

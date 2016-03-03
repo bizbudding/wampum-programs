@@ -36,43 +36,43 @@ Message: User Profile Saved.
 //   ),
 // ));
 
-piklist('field', array(
-  'type'   => 'group',
-  'scope'  => 'user',
-  'fields' => array(
-    array(
-      'type'       => 'password',
-      'scope'      => 'user',
-      'field'      => 'user_pass',
-      'label'      => __('New Password', 'wampum'),
-      'columns'    => '6',
-      'value'      => false, // Setting to false forces no value to show in form.,
-      'attributes' => array(
-        'autocomplete'  => 'off',
-        'wrapper_class' => 'user_pass',
-      ),
-    ),
-    array(
-      'type'     => 'password',
-      'scope'    => 'user',
-      'field'    => 'user_pass_repeat',
-      'label'    => __('Repeat New Password', 'wampum'),
-      'columns'  => '6',
-      'value'    => false, // Setting to false forces no value to show in form.
-      'validate' => array(
-        array(
-          'type'    => 'match',
-          'options' => array(
-            'field' => 'user_pass',
-          ),
-        ),
-      ),
-      'attributes' => array(
-        'wrapper_class' => 'user_pass_repeat',
-      ),
-    ),
-  ),
-));
+// piklist('field', array(
+//   'type'   => 'group',
+//   'scope'  => 'user',
+//   'fields' => array(
+//     array(
+//       'type'       => 'password',
+//       'scope'      => 'user',
+//       'field'      => 'user_pass',
+//       'label'      => __('New Password', 'wampum'),
+//       'columns'    => '6',
+//       'value'      => false, // Setting to false forces no value to show in form.,
+//       'attributes' => array(
+//         'autocomplete'  => 'off',
+//         'wrapper_class' => 'user_pass',
+//       ),
+//     ),
+//     array(
+//       'type'     => 'password',
+//       'scope'    => 'user',
+//       'field'    => 'user_pass_repeat',
+//       'label'    => __('Repeat New Password', 'wampum'),
+//       'columns'  => '6',
+//       'value'    => false, // Setting to false forces no value to show in form.
+//       'validate' => array(
+//         array(
+//           'type'    => 'match',
+//           'options' => array(
+//             'field' => 'user_pass',
+//           ),
+//         ),
+//       ),
+//       'attributes' => array(
+//         'wrapper_class' => 'user_pass_repeat',
+//       ),
+//     ),
+//   ),
+// ));
 
   // echo '<h2>Random h2</h2>';
 

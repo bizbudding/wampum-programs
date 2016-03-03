@@ -15,7 +15,7 @@
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:            0.0.22
+ * Version:            0.0.23
  * GitHub Plugin URI:  https://github.com/JiveDig/wampum
  * GitHub Branch:	   master
  */
@@ -49,7 +49,7 @@ function wampum_require() {
 		'class-wampum-account-page',
 		'class-wampum-content-types',
 		'class-wampum-connections',
-		'class-wampum-member',
+		'class-wampum-membership',
 		// 'class-wampum-programs',
 		'class-wampum-template-loader',
 		'helpers',
@@ -66,7 +66,7 @@ wampum_require();
 	$wampum_account_page	= new Wampum_Account_Page();
 	$wampum_content_types	= new Wampum_Content_Types();
 	$wampum_connections		= new Wampum_Connections();
-	$wampum_member			= new Wampum_Member();
+	$wampum_membership		= new Wampum_Membership();
 	// $wampum_programs		= new Wampum_Programs();
 	$wampum_template_loader	= new Wampum_Template_Loader();
 
@@ -74,7 +74,7 @@ wampum_require();
 		$wampum_account_page,
 		$wampum_content_types,
 		$wampum_connections,
-		$wampum_member,
+		$wampum_membership,
 		// $wampum_programs,
 		$wampum_template_loader
 	);
