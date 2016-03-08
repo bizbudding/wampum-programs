@@ -271,7 +271,7 @@ class Wampum_Content_Types {
 	// This? http://www.billerickson.net/manually-curated-related-posts/
 	public function get_related_steps( $step_object_or_id ) {
 		global $wp_query;
-		p2p_type( 'steps_to_programs' )->each_connected( $wp_query, array(), 'wampum_steps' );
+		p2p_type( 'programs_to_steps' )->each_connected( $wp_query, array(), 'wampum_steps' );
 	    if ( $wp_query->have_posts() ) {
 			$output = array();
 	        while ( $wp_query->have_posts() ) : $wp_query->the_post();
@@ -325,7 +325,7 @@ class Wampum_Content_Types {
 
 	public function get_step_program( $step_object_or_id ) {
 		$connected = get_posts( array(
-			'connected_type'	=> 'steps_to_programs',
+			'connected_type'	=> 'programs_to_steps',
 			'connected_items'	=> $step_object_or_id,
 			'nopaging'			=> true,
 			// 'posts_per_page'	=> 1,
@@ -376,7 +376,7 @@ class Wampum_Content_Types {
 	 */
 	public function get_program_steps($program_id) {
 		$connected = get_posts( array(
-			'connected_type'	=> 'steps_to_programs',
+			'connected_type'	=> 'programs_to_steps',
 			'connected_items'	=> $program_id,
 			'nopaging'			=> true,
 			'suppress_filters'	=> false,
