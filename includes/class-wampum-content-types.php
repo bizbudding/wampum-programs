@@ -244,6 +244,52 @@ class Wampum_Content_Types {
 	}
 
 	/**
+	 * Have WordPress match postname to any of our public post types (post, page, race)
+	 * All of our public post types can have /post-name/ as the slug, so they better be unique across all posts
+	 * By default, core only accounts for posts and pages where the slug is /post-name/
+	 */
+	public function parse_request_trick( $query ) {
+	    if ( ! $query->is_main_query() || is_admin() ) {
+	        return $query;
+	    }
+	    // echo '<pre>';
+	    // print_r($query);
+	    // echo '</pre>';
+	    // Only noop our very specific rewrite rule match
+	    if ( 2 != count( $query->query ) || ! isset( $query->query['page'] ) ) {
+	        return $query;
+	    }
+	    // 'name' will be set if post permalinks are just post_name, otherwise the page rule will match
+	    if ( ! empty( $query->query['name'] ) ) {
+	        $query->set( 'post_type', array( 'post', 'page', self::PROGRAM, self::STEP ) );
+	    }
+	    return $query;
+	}
+
+
+	// NOT WORKING ??!?!
+	// This? http://www.billerickson.net/manually-curated-related-posts/
+	public function get_related_steps( $step_object_or_id ) {
+		global $wp_query;
+		p2p_type( 'steps_to_programs' )->each_connected( $wp_query, array(), 'wampum_steps' );
+	    if ( $wp_query->have_posts() ) {
+			$output = array();
+	        while ( $wp_query->have_posts() ) : $wp_query->the_post();
+				echo '<pre>';
+			    print_r($wp_query->connected);
+			    echo '</pre>';
+			    foreach ( $wp_query->connected as $post ) : setup_postdata( $post );
+			    	$output[] = $post->p2p_id;
+			    endforeach;
+			    wp_reset_postdata(); // set $post back to original post
+			endwhile;
+			// Return the array of post IDs
+			return $output;
+		}
+		return false;
+	}
+
+	/**
 	 * Get the first (and hopefully only) connected program slug
 	 *
 	 * @since  1.0.0
@@ -292,29 +338,6 @@ class Wampum_Content_Types {
 		return false;
 	}
 
-	/**
-	 * Have WordPress match postname to any of our public post types (post, page, race)
-	 * All of our public post types can have /post-name/ as the slug, so they better be unique across all posts
-	 * By default, core only accounts for posts and pages where the slug is /post-name/
-	 */
-	public function parse_request_trick( $query ) {
-	    if ( ! $query->is_main_query() || is_admin() ) {
-	        return $query;
-	    }
-	    // echo '<pre>';
-	    // print_r($query);
-	    // echo '</pre>';
-	    // Only noop our very specific rewrite rule match
-	    if ( 2 != count( $query->query ) || ! isset( $query->query['page'] ) ) {
-	        return $query;
-	    }
-	    // 'name' will be set if post permalinks are just post_name, otherwise the page rule will match
-	    if ( ! empty( $query->query['name'] ) ) {
-	        $query->set( 'post_type', array( 'post', 'page', self::PROGRAM, self::STEP ) );
-	    }
-	    return $query;
-	}
-
 	// TODO: SIMILAR TO get_step_base_slug()
 	public function get_program_base_slug() {
 		$slug = sanitize_title_with_dashes($this->plural_name(self::PROGRAM));
@@ -328,6 +351,7 @@ class Wampum_Content_Types {
 		return apply_filters( 'wampum_step_base_slug', $slug );
 	}
 
+	// Switch to this?!?!?! http://www.billerickson.net/code/posts-2-posts-list-connections/
 	public function get_program_steps_list($program_id) {
 		$output = '';
 		$steps = $this->get_program_steps($program_id);

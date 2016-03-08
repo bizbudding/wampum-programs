@@ -66,6 +66,7 @@ class Wampum_Connections {
 	  //       // ),
 	  //   ) );
 
+		// STEPS TO PROGRAMS
 	    p2p_register_connection_type( array(
 	        'name'            => 'steps_to_programs',
 	        'from'            => 'wampum_step',
@@ -92,10 +93,11 @@ class Wampum_Connections {
 	            'singular_name' => __( 'Item', 'wampum' ),
 	            'search_items'  => __( 'Search items', 'wampum' ),
 	            'not_found'     => __( 'No items found.', 'wampum' ),
-	            'create'        => __( '', 'wampum' ),
+	            'create'        => __( 'Connect to ', 'wampum' ) . Wampum_Content_Types::singular_name('wampum_program'),
 	        ),
 	    ) );
 
+	    // RESOURCES TO STEPS
 	    p2p_register_connection_type( array(
 	        'name'            => 'resources_to_steps',
 	        'from'            => 'wampum_resource',
@@ -123,10 +125,11 @@ class Wampum_Connections {
 	            'singular_name' => __( 'Item', 'wampum' ),
 	            'search_items'  => __( 'Search items', 'wampum' ),
 	            'not_found'     => __( 'No items found.', 'wampum' ),
-	            'create'        => 'Connect to ' . Wampum_Content_Types::singular_name('wampum_step'),
+	            'create'        => __( 'Connect to ', 'wampum' ) . Wampum_Content_Types::singular_name('wampum_step'),
 	        ),
 	    ) );
 
+	    // RESOURCES TO PROGRAMS
 	    p2p_register_connection_type( array(
 	        'name'            => 'resources_to_programs',
 	        'from'            => 'wampum_resource',
@@ -148,14 +151,27 @@ class Wampum_Connections {
 	            'singular_name' => __( 'Item', 'wampum' ),
 	            'search_items'  => __( 'Search items', 'wampum' ),
 	            'not_found'     => __( 'No items found.', 'wampum' ),
-	            'create'        => 'Connect a ' . Wampum_Content_Types::singular_name('wampum_resource'),
+	            'create'        => __( 'Connect a ', 'wampum' ) . Wampum_Content_Types::singular_name('wampum_resource'),
 	        ),
 	        'to_labels' => array(
 	            'singular_name' => __( 'Item', 'wampum' ),
 	            'search_items'  => __( 'Search items', 'wampum' ),
 	            'not_found'     => __( 'No items found.', 'wampum' ),
-	            'create'        => 'Connect to ' . Wampum_Content_Types::singular_name('wampum_program'),
+	            'create'        => __( 'Connect to ', 'wampum' ) . Wampum_Content_Types::singular_name('wampum_program'),
 	        ),
+	    ) );
+
+	    // USERS TO STEPS (incomplete/complete or viewed)
+	    p2p_register_connection_type( array(
+			'name'		=> 'users_to_steps',
+			'from'		=> 'user',
+			'to'		=> 'wampum_step',
+			'admin_box'	=> array(
+				'show' => false,
+			),
+	        'admin_column'   => true,
+	        'admin_dropdown' => true,
+	        'reciprocal'     => true,
 	    ) );
 
 	}

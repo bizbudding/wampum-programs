@@ -43,6 +43,7 @@ function wampum_require() {
 		'vendor/class-tgm-plugin-activation',
 		'vendor/class-gamajo-template-loader',
 		'vendor/class-jivedig-content-swap',
+		'vendor/class-p2p-restful-connection',
 		'vendor/extended-cpts',
 		'vendor/extended-taxos',
 		'class-wampum',
@@ -50,8 +51,11 @@ function wampum_require() {
 		'class-wampum-content-types',
 		'class-wampum-connections',
 		'class-wampum-membership',
+		'class-wampum-p2p-restful-user-to-step',
 		// 'class-wampum-programs',
 		'class-wampum-template-loader',
+		'class-wampum-widgets',
+		'widgets/class-wampum-widget-program-steps',
 		'helpers',
 	);
 	foreach ( $files as $file ) {
@@ -67,16 +71,20 @@ wampum_require();
 	$wampum_content_types	= new Wampum_Content_Types();
 	$wampum_connections		= new Wampum_Connections();
 	$wampum_membership		= new Wampum_Membership();
+	$wampum_p2p_usertostep  = new Wampum_P2P_User_To_Step();
 	// $wampum_programs		= new Wampum_Programs();
 	$wampum_template_loader	= new Wampum_Template_Loader();
+	$wampum_widgets     	= new Wampum_Widgets();
 
 	$wampum = new Wampum(
 		$wampum_account_page,
 		$wampum_content_types,
 		$wampum_connections,
 		$wampum_membership,
+		$wampum_p2p_usertostep,
 		// $wampum_programs,
-		$wampum_template_loader
+		$wampum_template_loader,
+		$wampum_widgets
 	);
 	$wampum->run();
 // }
