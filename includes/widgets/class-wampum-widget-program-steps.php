@@ -56,8 +56,8 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 
 	    echo '<ul class="widget-program-steps">';
 	    	// Set default li class
-	    	$classes = 'widget-program-step';
 			foreach ( $steps as $step ) {
+		    	$classes = 'widget-program-step';
 				// Add current step class
 				if ( $queried_step_id === $step->ID ) {
 					$classes .= ' current-step';
