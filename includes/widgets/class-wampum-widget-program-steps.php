@@ -30,14 +30,15 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		if ( 'wampum_step' !== get_post_type() ) {
 			return;
 		}
-		// Get current post ID
-		$post_id = get_the_ID();
-		// Get the program this step is from
-		// $step_program = Wampum_Content_Types::get_step_program( $post_id );
-		// Get all steps from program
-		// $steps = Wampum_Content_Types::get_program_steps( $step_program );
 
-		$steps = Wampum_Content_Types::get_related_steps( $post_id );
+		global $wampum_content_types;
+
+		// Get current post ID
+		$queried_step_id = get_the_ID();
+		// Get the program this step is from
+		$program = $wampum_content_types->get_step_program( $queried_step_id );
+		// Get all steps from program
+		$steps   = $wampum_content_types->get_program_steps( $program );
 
 		// Bail no steps
 		if ( ! $steps ) {
@@ -58,7 +59,7 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 	    	$classes = 'widget-program-step';
 			foreach ( $steps as $step ) {
 				// Add current step class
-				if ( $post_id === $step->ID ) {
+				if ( $queried_step_id === $step->ID ) {
 					$classes .= ' current-step';
 				}
 				echo '<li class="' . $classes . '"><a href="' . get_the_permalink( $step ) . '" title="' . get_the_title( $step ) . '">' . get_the_title( $step ) . '</a></li>';

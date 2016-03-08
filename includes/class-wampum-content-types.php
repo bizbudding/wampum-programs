@@ -54,6 +54,7 @@ class Wampum_Content_Types {
 		// add_action( 'pre_get_posts', array( $this, 'parse_request_trick' ) );
 		// add_action( 'template_redirect', array( $this, 'single_step_redirect' ) );
 		add_action( 'init', array( $this, 'add_rewrite_tags' ) );
+		// add_action( 'wp_head', array( $this, 'add_connections_to_wp_query' ) );
 		// Add custom archive support for CPT
 		add_post_type_support( 'wc_membership_plan', 'post-thumbnails' );
 	}
@@ -266,27 +267,58 @@ class Wampum_Content_Types {
 	    return $query;
 	}
 
+	public function add_connections_to_wp_query() {
+		// CHECK IF ON SINGLE STEP?!?!?
+		// global $wp_query;
+		// p2p_type( 'programs_to_steps' )->each_connected( $wp_query );
+	}
 
 	// NOT WORKING ??!?!
 	// This? http://www.billerickson.net/manually-curated-related-posts/
-	public function get_related_steps( $step_object_or_id ) {
-		global $wp_query;
-		p2p_type( 'programs_to_steps' )->each_connected( $wp_query, array(), 'wampum_steps' );
-	    if ( $wp_query->have_posts() ) {
-			$output = array();
-	        while ( $wp_query->have_posts() ) : $wp_query->the_post();
-				echo '<pre>';
-			    print_r($wp_query->connected);
-			    echo '</pre>';
-			    foreach ( $wp_query->connected as $post ) : setup_postdata( $post );
-			    	$output[] = $post->p2p_id;
-			    endforeach;
-			    wp_reset_postdata(); // set $post back to original post
+	public static function get_related_steps( $step_object_or_id ) {
+		$related = p2p_type( 'programs_to_steps' )->get_related( $step_object_or_id );
+		// echo '<pre>';
+	 //    print_r($related);
+	 //    echo '</pre>';
+	    if ( $related->have_posts() ) {
+	    	while ( $related->have_posts() ) : $related->the_post();
+			    $output = array();
+			    foreach ( $related as $step ) {
+					if ( ! is_object($step) ) {
+						continue;
+					}
+					echo '<pre>';
+				    print_r($step);
+				    echo '</pre>';
+			    	$output[] = $step;
+			    }
 			endwhile;
-			// Return the array of post IDs
 			return $output;
 		}
 		return false;
+		// echo '<pre>';
+	 //    print_r($output);
+	 //    echo '</pre>';
+	 //    return $output;
+		// global $wp_query;
+		// p2p_type( 'programs_to_steps' )->each_connected( $wp_query );
+	 //    // die();
+	 //    global $wp_query;
+	 //    if ( $wp_query->have_posts() ) {
+		// 	$output = array();
+	 //        while ( $wp_query->have_posts() ) : $wp_query->the_post();
+		// 		echo '<pre>';
+		// 	    print_r($wp_query->connected);
+		// 	    echo '</pre>';
+		// 	    foreach ( $wp_query->connected as $post ) : setup_postdata( $post );
+		// 	    	$output[] = $post->p2p_id;
+		// 	    endforeach;
+		// 	    wp_reset_postdata(); // set $post back to original post
+		// 	endwhile;
+		// 	// Return the array of post IDs
+		// 	return $output;
+		// }
+		// return false;
 	}
 
 	/**
@@ -324,16 +356,22 @@ class Wampum_Content_Types {
 	}
 
 	public function get_step_program( $step_object_or_id ) {
-		$connected = get_posts( array(
-			'connected_type'	=> 'programs_to_steps',
-			'connected_items'	=> $step_object_or_id,
-			'nopaging'			=> true,
-			// 'posts_per_page'	=> 1,
-			'suppress_filters'	=> false,
-		));
-		if ( $connected ) {
-			// return array_shift($connected);
-			return $connected[0];
+		// $connected = get_posts( array(
+		// 	'connected_type'	=> 'programs_to_steps',
+		// 	'connected_items'	=> $step_object_or_id,
+		// 	'nopaging'			=> true,
+		// 	'suppress_filters'	=> false,
+		// ));
+		// if ( $connected ) {
+		// 	return $connected[0];
+		// }
+		// return false;
+		$programs = p2p_type( 'programs_to_steps' )->set_direction( 'to' )->get_connected( $step_object_or_id );
+		if ( $programs ) {
+			// echo '<pre>';
+		    // print_r($programs->posts[0]);
+		    // echo '</pre>';
+			return $programs->posts[0];
 		}
 		return false;
 	}
@@ -352,9 +390,9 @@ class Wampum_Content_Types {
 	}
 
 	// Switch to this?!?!?! http://www.billerickson.net/code/posts-2-posts-list-connections/
-	public function get_program_steps_list($program_id) {
+	public function get_program_steps_list($program_object_or_id) {
 		$output = '';
-		$steps = $this->get_program_steps($program_id);
+		$steps = $this->get_program_steps($program_object_or_id);
 		if ( $steps ) {
 			$output .= '<ul>';
 			foreach ( $steps as $step ) {
@@ -370,14 +408,14 @@ class Wampum_Content_Types {
 	 *
 	 * @since  1.0.0
 	 *
-	 * @param  integer  $program_id  the program ID
+	 * @param  integer  $program_object_or_id  the program Object or ID
 	 *
 	 * @return array|objects|bool
 	 */
-	public function get_program_steps($program_id) {
+	public function get_program_steps($program_object_or_id) {
 		$connected = get_posts( array(
 			'connected_type'	=> 'programs_to_steps',
-			'connected_items'	=> $program_id,
+			'connected_items'	=> $program_object_or_id,
 			'nopaging'			=> true,
 			'suppress_filters'	=> false,
 		) );
