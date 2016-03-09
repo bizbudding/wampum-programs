@@ -13,7 +13,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Account nav and content for Wampum
+ * TODO: Put something here
  *
  * @package Wampum_P2P_User_To_Step
  * @author  Mike Hemberger
@@ -29,7 +29,7 @@ class Wampum_P2P_User_To_Step extends P2P_Restful_Connection {
 	 */
 	protected $connection_name = 'users_to_steps';
 
-	protected $script_url = '/assets/name.js';
+	// protected $script_url = '/assets/js/restful_p2p.js';
 
 	protected $messages = array(
 			'connect_success'		=> 'Success!',
@@ -39,7 +39,8 @@ class Wampum_P2P_User_To_Step extends P2P_Restful_Connection {
 		);
 
 	public function __construct() {
-		$this->script_url = get_stylesheet_directory_uri() . '/assets/js/p2presttest.js';
+		parent::__construct();
+		$this->script_url = WAMPUM_PLUGIN_URI . '/js/restful_p2p.js';
 		add_action( 'genesis_entry_content', array($this, 'test_function') );
 	}
 

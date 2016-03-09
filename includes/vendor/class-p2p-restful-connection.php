@@ -10,6 +10,15 @@
  * @version   1.0.0
  */
 
+/**
+ * Steps To Extend This Class
+ *
+ * 1.
+ * 2.
+ * 3.
+ *
+ */
+
 if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	/**
 	 * P2P Connections.
@@ -169,7 +178,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		}
 
 		/**
-		 * Delete connection
+		 * Connection 2 objects
 		 *
 		 * @since   1.0.0
 		 *
@@ -191,25 +200,31 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 			    'date' => current_time('mysql')
 			) );
 
+			// If error, return WP_Error
 			if ( is_wp_error( $p2p ) ) {
-
+				// Fail
 				return array(
 					'success' => false,
 					'message' => $p2p->get_error_message(),
 				);
-
 			} else {
-
+				// Success
 				return array(
 					'success' => true,
 					'id'	  => $p2p,
 					'message' => $this->messages['connect_success'],
 				);
-
 			}
-
 		}
 
+		/**
+		 * Disconnect 2 objects
+		 *
+		 * @since   1.0.0
+		 *
+		 * @param 	array $data Options for the function.
+		 * @return  int|object
+		 */
 		public function disconnect( $data ) {
 
 			// Send error if cannot delete connection
@@ -225,19 +240,17 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 
 			// If error, return WP_Error
 			if ( is_wp_error( $p2p ) ) {
-
+				// Fail
 				return array(
 					'success' => false,
 					'message' => $p2p->get_error_message(),
 				);
-
 			} else {
-
+				// Success
 				return array(
 					'success' => true,
 					'message' => $this->messages['disconnect_success'],
 				);
-
 			}
 		}
 
