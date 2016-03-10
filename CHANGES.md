@@ -1,3 +1,6 @@
+#### 0.0.4
+* Restful p2p connections work!
+
 #### 0.0.32
 * Fix current-step class in program steps widget
 
