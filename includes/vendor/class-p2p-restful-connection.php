@@ -62,9 +62,10 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 * @return void
 		 */
 		public function __construct() {
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 			add_action( 'rest_api_init', array( $this, 'register_rest_endpoint_connect' ) );
 			add_action( 'rest_api_init', array( $this, 'register_rest_endpoint_disconnect' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+			// add_action( 'init', array( $this, 'register_rest_endpoints' ) );
 		}
 
 	    /**
@@ -75,7 +76,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 * @return void
 	     */
 	    public function enqueue_scripts() {
-	        wp_enqueue_script(  $this->connection_name, $this->script_url, array(), '1.0.0', true );
+	        wp_enqueue_script(  $this->connection_name, $this->script_url, array('jquery'), '1.0.0', true );
 	        wp_localize_script( $this->connection_name, 'restful_p2p_connection_vars', $this->get_ajax_data() );
 	    }
 
@@ -133,6 +134,10 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 			return true;
 		}
 
+		public function register_rest_endpoints() {
+
+		}
+
 		/**
 		 * Add custom endpoint to add connection
 		 *
@@ -187,6 +192,8 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 */
 		public function connect( $data ) {
 
+			// trace($data);
+
 			// Send error if cannot create connection
 			if ( ! $this->can_connect( $data ) ) {
 				return array(
@@ -194,6 +201,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 					'message' => $this->messages['can_connect_fail']
 				);
 			}
+
 
 			// Create connection
 			$p2p = p2p_type( $this->connection_name )->connect( $data['from_id'], $data['to_id'], array(
@@ -253,6 +261,20 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 				);
 			}
 		}
+
+	    /**
+	     * Check if a connection exists
+	     *
+	     * @since   1.0.0
+	     *
+	     * @param  	string  $from  object connecting from
+	     * @param   string  $to    object connecting to
+	     *
+	     * @return  bool
+	     */
+	    public function connection_exists( $data ) {
+			return p2p_connection_exists( $this->connection_name, array('from' => $data['from_id'], 'to' => $data['to_id'] ) );
+	    }
 
 	    /**
 	     * Get the post ID sent by the AJAX request.

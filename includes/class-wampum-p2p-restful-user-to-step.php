@@ -41,11 +41,11 @@ class Wampum_P2P_User_To_Step extends P2P_Restful_Connection {
 	public function __construct() {
 		parent::__construct();
 		$this->script_url = WAMPUM_PLUGIN_URI . '/js/restful_p2p.js';
-		add_action( 'genesis_entry_content', array($this, 'test_function') );
+		// add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_callback_script' ) );
 	}
 
-	public function test_function() {
-		echo 'IS IT WORKING?!?!?!';
+	public function enqueue_callback_script() {
+        wp_enqueue_script(  'some-name-here', WAMPUM_PLUGIN_URI . '/js/restful_p2p_user_to_step.js', array(), '1.0.0', true );
 	}
 
 }
