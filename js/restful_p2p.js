@@ -6,18 +6,17 @@
 		// this disables href from acting like a link
 		connect.preventDefault();
 
-
         var data = {
                 // clicked: $(this).data( $(this) ),
                 from_id: $(this).attr('data-from-id'),
                 to_id: $(this).attr('data-to-id'),
             };
 
-        var clicked = $(this);
-		// console.log(clicked);
+        var clickedg = $(this);
 
-		AddConnection(data,clicked);
-        // AddConnection( data ).done(RestfulP2PConnect);
+        clickedg.html('Working...')
+
+		AddConnection(data,clickedg);
 
 	});
 
@@ -26,41 +25,37 @@
 		// this disables href from acting like a link
 		disconnect.preventDefault();
 
-
         var data = {
                 from_id: $(this).attr('data-from-id'),
                 to_id: $(this).attr('data-to-id'),
             };
 
         var clicked = $(this);
-		// console.log(data);
+
+        clicked.html('Working...')
 
         RemoveConnection(data,clicked);
-		// RemoveConnection(data).done(RestfulP2PDisconnect);
 
 	});
 
-	function AddConnection( data, clicked ) {
+	function AddConnection( data, clickedg ) {
         $.ajax({
             method: "POST",
             url: restful_p2p_connection_vars.root + 'restful-p2p/v1/connect/',
             data: data,
             beforeSend: function ( xhr ) {
                 xhr.setRequestHeader( 'X-WP-Nonce', restful_p2p_connection_vars.nonce );
-            },
-            // done : function ( response ) {
-                // return response;
-            // }
-            success : function( response ) {
+                // clicked.text('Working...')
+           },
+            success: function( response ) {
                 // console.log( clicked );
                 if ( true === response.success ) {
-                    clicked.removeClass('p2p-connect');
-                    clicked.addClass('p2p-disconnect');
+                    clickedg.removeClass('p2p-connect').addClass('p2p-disconnect').html('Mark Unread');
                 } else if ( false === response.success ) {
-
+                    alert(response.message);
                 }
             },
-            fail : function( response ) {
+            fail: function( response ) {
             	// What to do if no response at all?
                 alert( 'Sorry, something went wrong. Please try again.' );
             }
@@ -74,17 +69,19 @@
             data: data,
             beforeSend: function ( xhr ) {
                 xhr.setRequestHeader( 'X-WP-Nonce', restful_p2p_connection_vars.nonce );
+                // clicked.text('Working...')
             },
-            success : function( response ) {
+            success: function( response ) {
                 // console.log( clicked );
                 if ( true === response.success ) {
-                    clicked.removeClass('p2p-disconnect');
-                    clicked.addClass('p2p-connect');
+                    // clicked.removeClass('p2p-disconnect');
+                    // clicked.addClass('p2p-connect');
+                    clicked.removeClass('p2p-disconnect').addClass('p2p-connect').html('Mark Read');
                 } else if ( false === response.success ) {
-
+                    alert(response.message);
                 }
             },
-            fail : function( response ) {
+            fail: function( response ) {
             	// What to do if no response at all?
                 alert( 'Sorry, something went wrong. Please try again.' );
             }

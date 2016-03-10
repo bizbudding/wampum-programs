@@ -134,10 +134,6 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 			return true;
 		}
 
-		public function register_rest_endpoints() {
-
-		}
-
 		/**
 		 * Add custom endpoint to add connection
 		 *
