@@ -48,8 +48,8 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		protected $script_url = 'path/to/script/filename.js';
 
 		protected $messages = array(
-				'connect_success'		=> 'Success!',
-				'disconnect_success'	=> 'Success!',
+				'connect_success'		=> 'Successfully Connected!',
+				'disconnect_success'	=> 'Successfully Disconnected!',
 				'can_connect_fail'		=> 'An error occurred',
 				'can_disconnect_fail'	=> 'An error occurred',
 			);
@@ -62,10 +62,8 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 * @return void
 		 */
 		public function __construct() {
-			add_action( 'rest_api_init', array( $this, 'register_rest_endpoint_connect' ) );
-			add_action( 'rest_api_init', array( $this, 'register_rest_endpoint_disconnect' ) );
+			add_action( 'rest_api_init', array( $this, 'register_rest_endpoint' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-			// add_action( 'init', array( $this, 'register_rest_endpoints' ) );
 		}
 
 	    /**
@@ -90,11 +88,10 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	     */
 	    private function get_ajax_data() {
 	        return array(
-				'root'			=> esc_url_raw( rest_url() ),
-				'nonce'			=> wp_create_nonce( 'wp_rest' ),
-				// 'connection'	=> $this->connection_name, // Do we need this?
-				'success'		=> true,
-				'failure'		=> false,
+				'root'		=> esc_url_raw( rest_url() ),
+				'nonce'		=> wp_create_nonce( 'wp_rest' ),
+				'success'	=> true,
+				'failure'	=> false,
 	        );
 	    }
 
@@ -141,10 +138,10 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 *
 		 * @return  void
 		 */
-		public function register_rest_endpoint_connect() {
-		    register_rest_route( 'restful-p2p/v1', '/connect/', array(
+		public function register_rest_endpoint() {
+		    register_rest_route( 'restful-p2p/v1', '/connection/', array(
 				'methods'  => 'POST',
-				'callback' => array( $this, 'connect' ),
+				'callback' => array( $this, 'connectdisconnect' ),
 				'args'	   => array(
 		            'from_id' => array(
 						'validate_callback' => 'is_numeric'
@@ -156,26 +153,14 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		    ));
 		}
 
-		/**
-		 * Add custom endpoint to remove connection
-		 *
-		 * @since   1.0
-		 *
-		 * @return  void
-		 */
-		public function register_rest_endpoint_disconnect() {
-		    register_rest_route( 'restful-p2p/v1', '/disconnect/', array(
-				'methods'  => 'POST',
-				'callback' => array( $this, 'disconnect' ),
-				'args'	   => array(
-		            'from_id' => array(
-						'validate_callback' => 'is_numeric'
-		            ),
-		            'to_id' => array(
-		                'validate_callback' => 'is_numeric'
-		            ),
-		        ),
-		    ));
+
+		public function connectdisconnect( $data ) {
+			// trace($data);
+			if ( $this->connection_exists( $data ) ) {
+				return $this->disconnect( $data );
+			} else {
+				return $this->connect( $data );
+			}
 		}
 
 		/**
@@ -192,6 +177,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 
 			// Send error if cannot create connection
 			if ( ! $this->can_connect( $data ) ) {
+				// trace($data);
 				return array(
 					'success' => false,
 					'message' => $this->messages['can_connect_fail']
@@ -203,7 +189,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 			$p2p = p2p_type( $this->connection_name )->connect( $data['from_id'], $data['to_id'], array(
 			    'date' => current_time('mysql')
 			) );
-
+			// trace($p2p);
 			// If error, return WP_Error
 			if ( is_wp_error( $p2p ) ) {
 				// Fail
@@ -241,7 +227,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 
 			// Remove connection
 			$p2p = p2p_type( $this->connection_name )->disconnect( $data['from_id'], $data['to_id'] );
-
+			// trace($p2p);
 			// If error, return WP_Error
 			if ( is_wp_error( $p2p ) ) {
 				// Fail

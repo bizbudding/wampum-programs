@@ -203,9 +203,9 @@ class Wampum_Connections {
 	/**
 	 * Create a resource and connect it to a step
 	 *
-	 * @param  array  $fields  the piklist field values
-	 *
 	 * @since  1.0.0
+	 *
+	 * @param  array  $fields  the piklist field values
 	 *
 	 * @return void|WP_Error
 	 */
@@ -264,22 +264,52 @@ class Wampum_Connections {
 		}
 	}
 
+    /**
+     * Check if a connection exists
+     *
+     * @since   1.0.0
+     *
+     * @param  	string  $from  object connecting from
+     * @param   string  $to    object connecting to
+     *
+     * @return  bool
+     */
+    public static function connection_exists( $type, $from, $to ) {
+		return p2p_connection_exists( $type, array('from' => $from, 'to' => $to) );
+    }
+
 	/**
 	 * Connect one object to another
+	 *
+	 * @since  1.0.0
 	 *
 	 * @param  string  $type  p2p connection type
 	 * @param  int     $from  object ID getting connected from
 	 * @param  int     $to    object ID getting connected to
 	 *
-	 * @since  1.0.0
-	 *
 	 * @return int|WP_Error   connection ID or error
 	 */
 	public static function connect( $type, $from, $to ) {
-		$connection_id = p2p_type( 'steps_to_resources' )->connect( $from, $to, array(
+		$p2p = p2p_type( $type )->connect( $from, $to, array(
 		    'date' => current_time('mysql')
 		));
-		return $connection_id;
+		return $p2p;
+	}
+
+	/**
+	 * Disonnect one object from another
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  string  $type  p2p connection type
+	 * @param  int     $from  object ID getting connected from
+	 * @param  int     $to    object ID getting connected to
+	 *
+	 * @return bool|WP_Error   true|1 or error
+	 */
+	public static function disconnect( $type, $from, $to ) {
+		$p2p = p2p_type( $this->connection_name )->disconnect( $from, $to );
+		return $p2p;
 	}
 
 }

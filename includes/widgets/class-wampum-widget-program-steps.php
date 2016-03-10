@@ -11,7 +11,6 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		parent::__construct(
 	 		'wampum_widget_program_steps', // Base ID
 			'Wampum - ' . Wampum_Content_Types::plural_name('wampum_step'), // Name
-			// 'TEST', // Name
 			array( 'description' => __( 'Show steps of a program', 'wampum' ), ) // Args
 		);
 	}
@@ -58,9 +57,13 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 	    	// Set default li class
 			foreach ( $steps as $step ) {
 		    	$classes = 'widget-program-step';
-				// Add current step class
+				// Add class if current step
 				if ( $queried_step_id === $step->ID ) {
 					$classes .= ' current-step';
+				}
+				// Add class if step is completed
+				if ( Wampum_Connections::connection_exists('users_to_steps', get_current_user_id(), $step->ID) ) {
+					$classes .= ' completed';
 				}
 				echo '<li class="' . $classes . '"><a href="' . get_the_permalink( $step ) . '" title="' . get_the_title( $step ) . '">' . get_the_title( $step ) . '</a></li>';
 			}

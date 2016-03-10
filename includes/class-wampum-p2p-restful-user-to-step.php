@@ -1,6 +1,6 @@
 <?php
 /**
- * Wampum Account Page
+ * Wampum
  *
  * @package   Wampum_P2P_User_To_Step
  * @author    Mike Hemberger
@@ -13,7 +13,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * TODO: Put something here
+ * Restfully connect a user to a step
  *
  * @package Wampum_P2P_User_To_Step
  * @author  Mike Hemberger
@@ -25,27 +25,32 @@ class Wampum_P2P_User_To_Step extends P2P_Restful_Connection {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @type string
+	 * @var   string
 	 */
 	protected $connection_name = 'users_to_steps';
 
-	// protected $script_url = '/assets/js/restful_p2p.js';
-
+	/**
+	 * Our success/fail messages for this connection
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var   array
+	 */
 	protected $messages = array(
-			'connect_success'		=> 'Success!',
-			'disconnect_success'	=> 'Success!',
+			'connect_success'		=> 'Completed!',
+			'disconnect_success'	=> 'Mark Complete',
 			'can_connect_fail'		=> 'An error occurred',
 			'can_disconnect_fail'	=> 'An error occurred',
 		);
 
+	/**
+	 * Run the parent constructor and locate our javascript file url
+	 *
+	 * @since  1.0.0
+	 */
 	public function __construct() {
 		parent::__construct();
 		$this->script_url = WAMPUM_PLUGIN_URI . '/js/restful_p2p.js';
-		// add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_callback_script' ) );
-	}
-
-	public function enqueue_callback_script() {
-        wp_enqueue_script(  'some-name-here', WAMPUM_PLUGIN_URI . '/js/restful_p2p_user_to_step.js', array(), '1.0.0', true );
 	}
 
 }
