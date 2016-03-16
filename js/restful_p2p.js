@@ -1,10 +1,10 @@
 ;(function( $ ) {
     'use strict';
 
-	$('.p2p-connection').on('click', function(connect){
+    $('.wampum-connection-wrap').on( 'click', '.wampum-connection', function(connection) {
 
 		// this disables href from acting like a link
-		connect.preventDefault();
+		connection.preventDefault();
 
         var data = {
                 from_id: $(this).attr('data-from-id'),
@@ -13,18 +13,26 @@
 
         var clicked = $(this);
 
-        clicked.toggleClass('p2p-loading').html('Working...');
+        clicked.toggleClass('loading').html('Working...');
+
+        if ( clicked.is( '.connect' ) ) {
+            var url = 'restful-p2p/v1/connect/';
+            var text = restful_p2p_connection_vars.connected_text;
+        } else if ( clicked.is( '.connected' ) ) {
+            var url = 'restful-p2p/v1/disconnect/';
+            var text = restful_p2p_connection_vars.connect_text;
+        }
 
         $.ajax({
             method: "POST",
-            url: restful_p2p_connection_vars.root + 'restful-p2p/v1/connection/',
+            url: restful_p2p_connection_vars.root + url,
             data: data,
             beforeSend: function ( xhr ) {
                 xhr.setRequestHeader( 'X-WP-Nonce', restful_p2p_connection_vars.nonce );
             },
             success: function( response ) {
                 if ( true === response.success ) {
-                    clicked.toggleClass('p2p-loading p2p-connected').html(response.message);
+                    clicked.toggleClass('loading connect connected').html(text);
                 } else if ( false === response.success ) {
                     alert(response.message);
                 }

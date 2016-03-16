@@ -87,7 +87,8 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 	}
 
     protected function can_view( $slug ) {
-    	if ( 'caldera' === $slug ) {
+
+    	if ( 'edit_profile' === $slug ) {
     		if ( ! is_user_logged_in() ) {
     			return false;
     		}
@@ -146,7 +147,7 @@ function wampum_account_get_memberships_content() {
 }
 
 function wampum_account_get_edit_profile_content() {
-	$output = '';
+	$output  = '';
 	$output .= '<h2>Edit Profile</h2>';
 	$output .= wc_get_template_html( 'myaccount/form-edit-account.php', array(
 		'user' => get_user_by( 'id', get_current_user_id() ),
@@ -158,7 +159,7 @@ function wampum_account_get_edit_profile_content() {
 	return $output;
 }
 
-add_action( 'wp_head', function() {
+add_action( 'get_header', function() {
 	// Get account page ID
 	$page = get_option('wampum_settings')['account_page'];
 	if ( ! is_page($page) ) {
@@ -174,6 +175,12 @@ function wampum_do_account_page_body_class($classes) {
 }
 // Add Account page menu/content
 function wampum_do_account_page_content($content) {
+	if ( ! is_user_logged_in() ) {
+		global $wampum_membership;
+		echo '<p>You must be logged in to view your account.</p>';
+		echo $wampum_membership->get_login_form();
+		return;
+	}
 	global $wampum_account_page;
 	$content .= $wampum_account_page->menu(false);
 	$content .= $wampum_account_page->content(false);

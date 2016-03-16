@@ -51,7 +51,7 @@ function wampum_require() {
 		'class-wampum-content-types',
 		'class-wampum-connections',
 		'class-wampum-membership',
-		'class-wampum-p2p-restful-user-to-step',
+		'class-wampum-user-step-progress',
 		// 'class-wampum-programs',
 		'class-wampum-template-loader',
 		'class-wampum-widgets',
@@ -67,21 +67,21 @@ wampum_require();
 // add_action( 'after_setup_theme', 'wampum_get_it_poppin' );
 // function wampum_get_it_poppin() {
 	// Instantiate dependent classes
-	$wampum_account_page	= new Wampum_Account_Page();
-	$wampum_content_types	= new Wampum_Content_Types();
-	$wampum_connections		= new Wampum_Connections();
-	$wampum_membership		= new Wampum_Membership();
-	$wampum_p2p_usertostep  = new Wampum_P2P_User_To_Step();
-	// $wampum_programs		= new Wampum_Programs();
-	$wampum_template_loader	= new Wampum_Template_Loader();
-	$wampum_widgets     	= new Wampum_Widgets();
+	$wampum_account_page			= new Wampum_Account_Page();
+	$wampum_content_types			= new Wampum_Content_Types();
+	$wampum_connections				= new Wampum_Connections();
+	$wampum_membership				= new Wampum_Membership();
+	$wampum_user_step_progress	    = new Wampum_P2P_User_Step_Progress();
+	// $wampum_programs				= new Wampum_Programs();
+	$wampum_template_loader			= new Wampum_Template_Loader();
+	$wampum_widgets					= new Wampum_Widgets();
 
 	$wampum = new Wampum(
 		$wampum_account_page,
 		$wampum_content_types,
 		$wampum_connections,
 		$wampum_membership,
-		$wampum_p2p_usertostep,
+		$wampum_p2p_user_step_progress,
 		// $wampum_programs,
 		$wampum_template_loader,
 		$wampum_widgets

@@ -24,14 +24,14 @@ piklist('field', array(
     ),
 ));
 
-piklist('field', array(
-    'type'     => 'checkbox',
-    'field'    => 'account_page_items',
-    'label'    => __('Account Page Items', 'wampum'),
-    'choices'  => array(
-        'programs'      => 'Programs',
-        'caldera'       => 'Caldera',
-        'woo'           => 'Woo',
-        'subscriptions' => 'Subscriptions',
-    ),
-));
+// piklist('field', array(
+//     'type'     => 'checkbox',
+//     'field'    => 'account_page_items',
+//     'label'    => __('Account Page Items', 'wampum'),
+//     'choices'  => array(
+//         'programs'      => 'Programs',
+//         'caldera'       => 'Caldera',
+//         'woo'           => 'Woo',
+//         'subscriptions' => 'Subscriptions',
+//     ),
+// ));

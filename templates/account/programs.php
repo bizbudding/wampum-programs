@@ -12,9 +12,19 @@ echo '<h2>My Programs</h2>';
 
 $programs = wampum_get_user_programs( get_current_user_id() );
 
+if ( ! $programs ) {
+	$text = 'You don\'t have any ' . Wampum_Content_Types::plural_name('wampum_program') . ' yet.';
+	$text = apply_filters( 'wampum_account_programs_no_programs_text', $text );
+	return "<p>{$text}</p>";
+}
+
+// piklist::pre($programs);
+
 echo '<div class="wampum-user-programs flex-cols flex-col-xs-12 flex-col-sm-6">';
 
 	foreach ( $programs as $program ) {
+
+		// piklist::pre($program);
 
 		$image_size = apply_filters('wampum_account_programs_image_size', 'thumbnail');
 

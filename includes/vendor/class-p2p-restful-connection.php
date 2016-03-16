@@ -5,7 +5,7 @@
  * @package   P2P_Restful_Connection
  * @author    Mike Hemberger
  * @link      TBD
- * @copyright 2016 Mike Hemberger
+ * @copyright 2016 Mike Hemberger <mike@thestizmedia.com>
  * @license   GPL-2.0+
  * @version   1.0.0
  */
@@ -13,9 +13,13 @@
 /**
  * Steps To Extend This Class
  *
- * 1.
- * 2.
- * 3.
+ * 1. Register your p2p connection
+ * 2. Create new child class with properties below
+ * 3. Optionally override any methods you want
+ * 4. Create/modify js file at $script_url location to handle ajax
+ * 5. Add link with appropriate data attributes where you want to make the connection
+ *    Example:
+ *    <div class="connection-wrap"><a data-from-id="<?php echo $from_id; ?>" data-to-id="<?php echo $to_id; ?>" class="button connection" href="#"><?php echo $text; ?></a></div>
  *
  */
 
@@ -50,8 +54,8 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		protected $messages = array(
 				'connect_success'		=> 'Successfully Connected!',
 				'disconnect_success'	=> 'Successfully Disconnected!',
-				'can_connect_fail'		=> 'An error occurred',
-				'can_disconnect_fail'	=> 'An error occurred',
+				'can_connect_fail'		=> 'An error occurred during connection.',
+				'can_disconnect_fail'	=> 'An error occurred during disconnect.',
 			);
 
 		/**
@@ -87,12 +91,28 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	     * @return array
 	     */
 	    private function get_ajax_data() {
-	        return array(
+	        $ajax_data = array(
 				'root'		=> esc_url_raw( rest_url() ),
 				'nonce'		=> wp_create_nonce( 'wp_rest' ),
 				'success'	=> true,
 				'failure'	=> false,
 	        );
+	        $additional_data = $this->additional_ajax_data();
+	        return array_merge( $ajax_data, $additional_data );
+	    }
+
+	    /**
+	     * ************************************************
+	     * OPTIONALLY OVERRIDE THIS METHOD IN YOUR CHILD CLASS!
+	     *
+	     * Add additional ajax data for use in your javascript
+	     *
+	     * @since  1.0.0
+	     *
+	     * @return array
+	     */
+	    public function additional_ajax_data() {
+	    	return array();
 	    }
 
 	    /**
@@ -131,6 +151,70 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 			return true;
 		}
 
+	    /**
+	     * ************************************************
+	     * OPTIONALLY OVERRIDE THIS METHOD IN YOUR CHILD CLASS!
+	     *
+	     * Run some code before a connection is made
+	     *
+	     * @since  1.0.0
+	     *
+	     * @param  array  $data  array of data
+	     *
+	     * @return array
+	     */
+		public function before_connect( $data ) {
+			// Do some things
+		}
+
+	    /**
+	     * ************************************************
+	     * OPTIONALLY OVERRIDE THIS METHOD IN YOUR CHILD CLASS!
+	     *
+	     * Run some code before a connection is made
+	     *
+	     * @since  1.0.0
+	     *
+	     * @param  array  $data  array of data
+	     *
+	     * @return array
+	     */
+		public function after_connect( $data ) {
+			// Do some things
+		}
+
+	    /**
+	     * ************************************************
+	     * OPTIONALLY OVERRIDE THIS METHOD IN YOUR CHILD CLASS!
+	     *
+	     * Run some code before a connection is made
+	     *
+	     * @since  1.0.0
+	     *
+	     * @param  array  $data  array of data
+	     *
+	     * @return array
+	     */
+		public function before_disconnect( $data ) {
+			// Do some things
+		}
+
+	    /**
+	     * ************************************************
+	     * OPTIONALLY OVERRIDE THIS METHOD IN YOUR CHILD CLASS!
+	     *
+	     * Run some code before a connection is made
+	     *
+	     * @since  1.0.0
+	     *
+	     * @param  array  $data  array of data
+	     *
+	     * @return array
+	     */
+		public function after_disconnect( $data ) {
+			// Do some things
+		}
+
 		/**
 		 * Add custom endpoint to add connection
 		 *
@@ -139,9 +223,21 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 * @return  void
 		 */
 		public function register_rest_endpoint() {
-		    register_rest_route( 'restful-p2p/v1', '/connection/', array(
+		  //   register_rest_route( 'restful-p2p/v1', '/connection/', array(
+				// 'methods'  => 'POST',
+				// 'callback' => array( $this, 'connectdisconnect' ),
+				// 'args'	   => array(
+		  //           'from_id' => array(
+				// 		'validate_callback' => 'is_numeric'
+		  //           ),
+		  //           'to_id' => array(
+		  //               'validate_callback' => 'is_numeric'
+		  //           ),
+		  //       ),
+		  //   ));
+		    register_rest_route( 'restful-p2p/v1', '/connect/', array(
 				'methods'  => 'POST',
-				'callback' => array( $this, 'connectdisconnect' ),
+				'callback' => array( $this, 'connect' ),
 				'args'	   => array(
 		            'from_id' => array(
 						'validate_callback' => 'is_numeric'
@@ -151,16 +247,19 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		            ),
 		        ),
 		    ));
-		}
 
-
-		public function connectdisconnect( $data ) {
-			// trace($data);
-			if ( $this->connection_exists( $data ) ) {
-				return $this->disconnect( $data );
-			} else {
-				return $this->connect( $data );
-			}
+		    register_rest_route( 'restful-p2p/v1', '/disconnect/', array(
+				'methods'  => 'POST',
+				'callback' => array( $this, 'disconnect' ),
+				'args'	   => array(
+		            'from_id' => array(
+						'validate_callback' => 'is_numeric'
+		            ),
+		            'to_id' => array(
+		                'validate_callback' => 'is_numeric'
+		            ),
+		        ),
+		    ));
 		}
 
 		/**
@@ -184,12 +283,14 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 				);
 			}
 
+			// Optionally run other code
+			$this->before_connect( $data );
 
 			// Create connection
 			$p2p = p2p_type( $this->connection_name )->connect( $data['from_id'], $data['to_id'], array(
 			    'date' => current_time('mysql')
 			) );
-			// trace($p2p);
+
 			// If error, return WP_Error
 			if ( is_wp_error( $p2p ) ) {
 				// Fail
@@ -198,6 +299,10 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 					'message' => $p2p->get_error_message(),
 				);
 			} else {
+
+				// Optionally run other code
+				$this->after_connect( $data );
+
 				// Success
 				return array(
 					'success' => true,
@@ -225,9 +330,12 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 				);
 			}
 
+			// Optionally run other code
+			$this->before_disconnect( $data );
+
 			// Remove connection
 			$p2p = p2p_type( $this->connection_name )->disconnect( $data['from_id'], $data['to_id'] );
-			// trace($p2p);
+
 			// If error, return WP_Error
 			if ( is_wp_error( $p2p ) ) {
 				// Fail
@@ -236,6 +344,10 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 					'message' => $p2p->get_error_message(),
 				);
 			} else {
+
+				// Optionally run other code
+				$this->after_disconnect( $data );
+
 				// Success
 				return array(
 					'success' => true,

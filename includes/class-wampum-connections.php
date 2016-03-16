@@ -164,9 +164,33 @@ class Wampum_Connections {
 
 	    // USERS TO STEPS (incomplete/complete or viewed)
 	    p2p_register_connection_type( array(
-			'name'		=> 'users_to_steps',
+			'name'		=> 'user_step_progress',
 			'from'		=> 'user',
 			'to'		=> 'wampum_step',
+			'admin_box'	=> array(
+				'show' => false,
+			),
+	        'admin_column'   => false,
+	        'admin_dropdown' => false,
+	    ) );
+
+	    // USERS TO POSTS (Likes)
+	    p2p_register_connection_type( array(
+			'name'		=> 'user_post_likes',
+			'from'		=> 'user',
+			'to'		=> 'post',
+			'admin_box'	=> array(
+				'show' => false,
+			),
+	        'admin_column'   => false,
+	        'admin_dropdown' => false,
+	    ) );
+
+	    // USERS TO POSTS (Bookmarks)
+	    p2p_register_connection_type( array(
+			'name'		=> 'user_post_bookmarks',
+			'from'		=> 'user',
+			'to'		=> 'post',
 			'admin_box'	=> array(
 				'show' => false,
 			),
@@ -215,32 +239,34 @@ class Wampum_Connections {
 	    $to = absint($fields['step_id']['value']);
 
 	    // Existing resources field check
-	    $existing_resources = isset($fields['existing_resources']['request_value']) ? $fields['existing_resources']['request_value'] : null;
+	    $existing_resources = isset($fields['existing_resources']['request_value']) ? $fields['existing_resources']['request_value'] : false;
 
 	    if ( $existing_resources ) {
 			foreach ( $existing_resources as $from ) {
-				self::connect( 'steps_to_resources', $from, $to );
+				$this->connect( 'steps_to_resources', $from, $to );
 			}
 	    }
 
 	    // New resources field check
-	    $new_resources = isset($fields['add_resource']['request_value']) ? $fields['add_resource']['request_value'] : null;
+	    $new_resources = isset($fields['add_resource']['request_value']) ? $fields['add_resource']['request_value'] : false;
+
+	    // trace($new_resources);
 
 	    if ( $new_resources ) {
 
 			foreach ( $new_resources as $resource ) {
 
 				// Title field check
-				$title = isset($resource['post_title']) ? sanitize_text_field($resource['post_title']) : null;
+				$title = isset($resource['post_title']) ? sanitize_text_field($resource['post_title']) : false;
 
-				// If title is null, skip this item in the loop
+				// If title is false, skip this item in the loop
 				if ( ! $title ) {
 					continue;
 				}
 
 				// Content and files field checks
-				$content = isset($resource['post_content']) ? sanitize_text_field($resource['post_content']) : null;
-				$files   = isset($resource['resource_files']) ? $resource['resource_files'] : null;
+				$content = isset($resource['post_content']) ? sanitize_text_field($resource['post_content']) : false;
+				$files   = isset($resource['resource_files']) ? $resource['resource_files'] : false;
 
 				// Create new resource
 				$data = array(
@@ -257,7 +283,7 @@ class Wampum_Connections {
 						update_post_meta( $from, 'wampum_resource_files', $files );
 					}
 					// Connect new post to topic
-					self::connect( 'steps_to_resources', $from, $to );
+					$this->connect( 'steps_to_resources', $from, $to );
 				}
 
 			}
@@ -274,7 +300,7 @@ class Wampum_Connections {
      *
      * @return  bool
      */
-    public static function connection_exists( $type, $from, $to ) {
+    public function connection_exists( $type, $from, $to ) {
 		return p2p_connection_exists( $type, array('from' => $from, 'to' => $to) );
     }
 
@@ -289,7 +315,7 @@ class Wampum_Connections {
 	 *
 	 * @return int|WP_Error   connection ID or error
 	 */
-	public static function connect( $type, $from, $to ) {
+	public function connect( $type, $from, $to ) {
 		$p2p = p2p_type( $type )->connect( $from, $to, array(
 		    'date' => current_time('mysql')
 		));
@@ -307,9 +333,19 @@ class Wampum_Connections {
 	 *
 	 * @return bool|WP_Error   true|1 or error
 	 */
-	public static function disconnect( $type, $from, $to ) {
+	public function disconnect( $type, $from, $to ) {
 		$p2p = p2p_type( $this->connection_name )->disconnect( $from, $to );
 		return $p2p;
+	}
+
+	public function connection_button( $type, $from, $to, $text_connect, $text_connected ) {
+		$class = ' connect';
+		$text  = $text_connect;
+		if ( p2p_connection_exists( $type, array( 'from' => $from, 'to' => $to ) ) ) {
+			$class = ' connected';
+			$text  = $text_connected;
+		}
+		return '<div class="wampum-connection-wrap"><a data-from-id="' . get_current_user_ID() . '" data-to-id="' . get_the_ID() . '" class="button wampum-connection' . $class . '" href="#">' . $text . '</a></div>';
 	}
 
 }

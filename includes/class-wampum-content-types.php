@@ -275,7 +275,7 @@ class Wampum_Content_Types {
 
 	// NOT WORKING ??!?!
 	// This? http://www.billerickson.net/manually-curated-related-posts/
-	public static function get_related_steps( $step_object_or_id ) {
+	public function get_related_steps( $step_object_or_id ) {
 		$related = p2p_type( 'programs_to_steps' )->get_related( $step_object_or_id );
 		// echo '<pre>';
 	 //    print_r($related);
@@ -367,18 +367,19 @@ class Wampum_Content_Types {
 		// }
 		// return false;
 		$programs = p2p_type( 'programs_to_steps' )->set_direction( 'to' )->get_connected( $step_object_or_id );
-		if ( $programs ) {
+		if ( is_object($programs) ) {
 			// echo '<pre>';
-		    // print_r($programs->posts[0]);
-		    // echo '</pre>';
-			return $programs->posts[0];
+		 //    print_r(array_shift($programs->posts));
+		 //    echo '</pre>';
+			return array_shift($programs->posts);
+			// return $programs->posts[0];
 		}
 		return false;
 	}
 
 	// TODO: SIMILAR TO get_step_base_slug()
 	public function get_program_base_slug() {
-		$slug = sanitize_title_with_dashes($this->plural_name(self::PROGRAM));
+		$slug = sanitize_title_with_dashes(self::plural_name(self::PROGRAM));
 		return apply_filters( 'wampum_program_base_slug', $slug );
 	}
 

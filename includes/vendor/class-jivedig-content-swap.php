@@ -81,10 +81,10 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 		 */
 		protected $loading = 'Loading';
 
-		public function __construct() {
+		// public function __construct() {
 			// add_action( 'rest_api_init', array( $this, 'register_rest_endpoints' ) );
 			// add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
-		}
+		// }
 
 		/**
 		 * ****************************************************************************** *

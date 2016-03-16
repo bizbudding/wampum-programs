@@ -26,18 +26,30 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 	public function widget( $args, $instance ) {
 
 		// Bail if not viewing a step
-		if ( 'wampum_step' !== get_post_type() ) {
+		// if ( 'wampum_step' !== get_post_type() ) {
+			// return;
+		// }
+		// Post types to check agains
+		$post_types = array('wampum_program','wampum_step');
+		// Bail if not viewing a step
+		if ( ! in_array(get_post_type(), $post_types) ) {
 			return;
 		}
 
 		global $wampum_content_types;
 
 		// Get current post ID
-		$queried_step_id = get_the_ID();
-		// Get the program this step is from
-		$program = $wampum_content_types->get_step_program( $queried_step_id );
+		$queried_post_id = get_the_ID();
+
+		// Get program
+		if ( 'wampum_program' === get_post_type() ) {
+			$program_id = $queried_post_id;
+		} else {
+			// Get the program this step is from
+			$program_id = $wampum_content_types->get_step_program_id( $queried_post_id );
+		}
 		// Get all steps from program
-		$steps   = $wampum_content_types->get_program_steps( $program );
+		$steps = $wampum_content_types->get_program_steps( $program_id );
 
 		// Bail no steps
 		if ( ! $steps ) {
@@ -58,12 +70,17 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 			foreach ( $steps as $step ) {
 		    	$classes = 'widget-program-step';
 				// Add class if current step
-				if ( $queried_step_id === $step->ID ) {
+				if ( $queried_post_id === $step->ID ) {
 					$classes .= ' current-step';
 				}
-				// Add class if step is completed
-				if ( Wampum_Connections::connection_exists('users_to_steps', get_current_user_id(), $step->ID) ) {
-					$classes .= ' completed';
+				global $wampum_user_step_progress;
+				// Check if step progress is enabled
+				if ( $wampum_user_step_progress->is_step_progress_enabled( $program_id ) ) {
+					// Add class if step is completed
+					global $wampum_connections;
+					if ( $wampum_connections->connection_exists( 'user_step_progress', get_current_user_id(), $step->ID ) ) {
+						$classes .= ' completed';
+					}
 				}
 				echo '<li class="' . $classes . '"><a href="' . get_the_permalink( $step ) . '" title="' . get_the_title( $step ) . '">' . get_the_title( $step ) . '</a></li>';
 			}
