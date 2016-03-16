@@ -1,3 +1,9 @@
+#### 0.0.41
+* Step progress now available per program
+* Refined p2p connection code
+* Fix random php errors
+* Add logged in check to account dashboard
+
 #### 0.0.4
 * Restful p2p connections work!
 
