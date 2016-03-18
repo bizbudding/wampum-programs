@@ -15,3 +15,15 @@
     padding: 6px 14px;
     border-radius: 3px;
 }
+
+.programs .program {
+	margin-bottom: 20px;
+}
+
+.programs .image {
+	background-color: rgba(0,0,0,0.1);
+}
+
+.programs .image img {
+	display: block;
+}

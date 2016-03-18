@@ -341,11 +341,46 @@ class Wampum_Connections {
 	public function connection_button( $type, $from, $to, $text_connect, $text_connected ) {
 		$class = ' connect';
 		$text  = $text_connect;
-		if ( p2p_connection_exists( $type, array( 'from' => $from, 'to' => $to ) ) ) {
+		if ( $this->connection_exists( $type, $from, $to ) ) {
 			$class = ' connected';
 			$text  = $text_connected;
 		}
 		return '<div class="wampum-connection-wrap"><a data-from-id="' . get_current_user_ID() . '" data-to-id="' . get_the_ID() . '" class="button wampum-connection' . $class . '" href="#">' . $text . '</a></div>';
+	}
+
+	public function prev_next_connection_links( $connection, $post_id ) {
+		echo $this->get_prev_next_connection_links( $connection, $post_id );
+	}
+
+	public function get_prev_next_connection_links( $connection, $post_id ) {
+		// Let's get it started
+		$output = '';
+		// Get parent, previous, and next connected posts
+		$items = $this->get_adjacent_items( $connection, $post_id );
+		// Bail if none
+		if ( ! $items ) {
+			return $output;
+		}
+		// Set markup for links
+		$prev = $items['previous'] ? '<div class="pagination-previous alignleft"><a href="' . get_permalink( $items['previous'] ) . '">' . get_the_title( $items['previous'] ) . '</a></div>' : '';
+		$next = $items['next'] ? '<div class="pagination-next alignright"><a href="' . get_permalink( $items['next'] ) . '">' . get_the_title( $items['next'] ) . '</a></div>' : '';
+		// If previous or next link
+		if ( $prev || $next ) {
+			$output .= '<div class="wampum-pagination">';
+			$output .= $prev . $next;
+			$output .= '</div>';
+		}
+		// Send it home baby
+		return $output;
+	}
+
+	public function get_adjacent_items( $connection, $post_id ) {
+		$items = p2p_type($connection)->get_adjacent_items($post_id);
+		// Bail if none
+		if ( $items ) {
+			return $items;
+		}
+		return false;
 	}
 
 }

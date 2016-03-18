@@ -52,4 +52,15 @@ class Wampum_Template_Loader extends Gamajo_Template_Loader {
 	 */
 	protected $plugin_directory = WAMPUM_PLUGIN_DIR;
 
+	/**
+	 * Directory name where templates are found in this plugin.
+	 *
+	 * Can either be a defined constant, or a relative reference from where the subclass lives.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @type string
+	 */
+	protected $plugin_template_directory = 'templates'; // or includes/templates, etc.
+
 }

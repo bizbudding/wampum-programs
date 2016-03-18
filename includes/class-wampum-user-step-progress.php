@@ -51,27 +51,10 @@ class Wampum_P2P_User_Step_Progress extends P2P_Restful_Connection {
 	public function __construct() {
 		parent::__construct();
 		$this->script_url = WAMPUM_PLUGIN_URI . '/js/restful_p2p.js';
-		add_action( 'get_header', array( $this, 'step_progress_button' ) );
 	}
 
 	public function additional_ajax_data() {
 		return $this->get_step_progress_connected_text( get_the_ID() );
-	}
-
-	public function step_progress_button() {
-		// Bail if not viewing a step
-		if ( ! is_singular('wampum_step') ) {
-			return;
-		}
-		add_filter( 'the_content', array( $this, 'do_step_progress_button' ) );
-	}
-
-	public function do_step_progress_button( $content ) {
-		// Bail is user is not logged in
-		if ( ! is_user_logged_in() ) {
-			return $content;
-		}
-		return $content . $this->get_step_progress_button( get_the_ID() );
 	}
 
 	public function get_step_progress_button( $step_id ) {

@@ -25,10 +25,13 @@
 if ( ! defined( 'WPINC' ) ) { die; }
 
 if ( ! defined( 'WAMPUM_PLUGIN_DIR' ) ) {
-	define( 'WAMPUM_PLUGIN_DIR', dirname( __FILE__ ) );
+	define( 'WAMPUM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 }
 if ( ! defined( 'WAMPUM_INCLUDES_DIR' ) ) {
 	define( 'WAMPUM_INCLUDES_DIR', WAMPUM_PLUGIN_DIR . '/includes/' );
+}
+if ( ! defined( 'WAMPUM_TEMPLATES_DIR' ) ) {
+	define( 'WAMPUM_TEMPLATES_DIR', WAMPUM_PLUGIN_DIR . '/templates/' );
 }
 if ( ! defined( 'WAMPUM_PLUGIN_URI' ) ) {
 	define( 'WAMPUM_PLUGIN_URI', plugin_dir_url( __FILE__ ) );
@@ -39,13 +42,13 @@ if ( ! defined( 'WAMPUM_BASENAME' ) ) {
 
 function wampum_require() {
 	$files = array(
-		// 'vendor/class-piklist-checker',
-		'vendor/class-tgm-plugin-activation',
-		'vendor/class-gamajo-template-loader',
-		'vendor/class-jivedig-content-swap',
-		'vendor/class-p2p-restful-connection',
-		'vendor/extended-cpts',
-		'vendor/extended-taxos',
+		// 'lib/class-piklist-checker',
+		'lib/class-tgm-plugin-activation',
+		'lib/class-gamajo-template-loader',
+		'lib/class-jivedig-content-swap',
+		'lib/class-p2p-restful-connection',
+		'lib/extended-cpts',
+		'lib/extended-taxos',
 		'class-wampum',
 		'class-wampum-account-page',
 		'class-wampum-content-types',
@@ -56,7 +59,8 @@ function wampum_require() {
 		'class-wampum-template-loader',
 		'class-wampum-widgets',
 		'widgets/class-wampum-widget-program-steps',
-		'helpers',
+		'functions-display',
+		'functions-helpers',
 	);
 	foreach ( $files as $file ) {
 		require WAMPUM_INCLUDES_DIR . $file . '.php';

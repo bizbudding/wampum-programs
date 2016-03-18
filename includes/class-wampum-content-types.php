@@ -55,6 +55,10 @@ class Wampum_Content_Types {
 		// add_action( 'template_redirect', array( $this, 'single_step_redirect' ) );
 		add_action( 'init', array( $this, 'add_rewrite_tags' ) );
 		// add_action( 'wp_head', array( $this, 'add_connections_to_wp_query' ) );
+		add_filter( 'single_template', array( $this, 'single_step_template' ) );
+		add_filter( 'archive_template', array( $this, 'booklistTpl_archive' ) );
+
+
 		// Add custom archive support for CPT
 		add_post_type_support( 'wc_membership_plan', 'post-thumbnails' );
 	}
@@ -267,60 +271,6 @@ class Wampum_Content_Types {
 	    return $query;
 	}
 
-	public function add_connections_to_wp_query() {
-		// CHECK IF ON SINGLE STEP?!?!?
-		// global $wp_query;
-		// p2p_type( 'programs_to_steps' )->each_connected( $wp_query );
-	}
-
-	// NOT WORKING ??!?!
-	// This? http://www.billerickson.net/manually-curated-related-posts/
-	public function get_related_steps( $step_object_or_id ) {
-		$related = p2p_type( 'programs_to_steps' )->get_related( $step_object_or_id );
-		// echo '<pre>';
-	 //    print_r($related);
-	 //    echo '</pre>';
-	    if ( $related->have_posts() ) {
-	    	while ( $related->have_posts() ) : $related->the_post();
-			    $output = array();
-			    foreach ( $related as $step ) {
-					if ( ! is_object($step) ) {
-						continue;
-					}
-					echo '<pre>';
-				    print_r($step);
-				    echo '</pre>';
-			    	$output[] = $step;
-			    }
-			endwhile;
-			return $output;
-		}
-		return false;
-		// echo '<pre>';
-	 //    print_r($output);
-	 //    echo '</pre>';
-	 //    return $output;
-		// global $wp_query;
-		// p2p_type( 'programs_to_steps' )->each_connected( $wp_query );
-	 //    // die();
-	 //    global $wp_query;
-	 //    if ( $wp_query->have_posts() ) {
-		// 	$output = array();
-	 //        while ( $wp_query->have_posts() ) : $wp_query->the_post();
-		// 		echo '<pre>';
-		// 	    print_r($wp_query->connected);
-		// 	    echo '</pre>';
-		// 	    foreach ( $wp_query->connected as $post ) : setup_postdata( $post );
-		// 	    	$output[] = $post->p2p_id;
-		// 	    endforeach;
-		// 	    wp_reset_postdata(); // set $post back to original post
-		// 	endwhile;
-		// 	// Return the array of post IDs
-		// 	return $output;
-		// }
-		// return false;
-	}
-
 	/**
 	 * Get the first (and hopefully only) connected program slug
 	 *
@@ -356,23 +306,14 @@ class Wampum_Content_Types {
 	}
 
 	public function get_step_program( $step_object_or_id ) {
-		// $connected = get_posts( array(
-		// 	'connected_type'	=> 'programs_to_steps',
-		// 	'connected_items'	=> $step_object_or_id,
-		// 	'nopaging'			=> true,
-		// 	'suppress_filters'	=> false,
-		// ));
-		// if ( $connected ) {
-		// 	return $connected[0];
+		// $programs = p2p_type( 'programs_to_steps' )->set_direction( 'to' )->get_connected( $step_object_or_id );
+		// if ( is_object($programs) ) {
+		// 	return array_shift($programs->posts);
 		// }
-		// return false;
-		$programs = p2p_type( 'programs_to_steps' )->set_direction( 'to' )->get_connected( $step_object_or_id );
-		if ( is_object($programs) ) {
-			// echo '<pre>';
-		 //    print_r(array_shift($programs->posts));
-		 //    echo '</pre>';
-			return array_shift($programs->posts);
-			// return $programs->posts[0];
+		global $wampum_connections;
+		$items = $wampum_connections->get_adjacent_items( 'programs_to_steps', $step_object_or_id );
+		if ( $items['parent'] ) {
+			return $items['parent'];
 		}
 		return false;
 	}
@@ -426,7 +367,29 @@ class Wampum_Content_Types {
 		return false;
 	}
 
+	//route single- template
+	function single_step_template($template){
 
+		global $post;
+	    if ( 'wampum_step' === $post->post_type  ) {
+	    	if ( file_exists( WAMPUM_TEMPLATES_DIR . 'single-wampum_step.php' ) ) {
+	    		$template = WAMPUM_TEMPLATES_DIR . 'single-wampum_step.php';
+	    	}
+	        // $template = wampum_get_template_part( 'single', 'wampum_step', false );
+	        // wampum_get_template_part( 'single', 'wampum_step' );
+	    }
+	    return $template;
+	}
+
+	//route archive- template
+	function booklistTpl_archive($template){
+		global $post;
+
+	    if ( 'wampum_step' === $post->post_type  ) {
+	        $template = wampum_get_template_part( 'archive', 'wampum_step' );
+	    }
+	    return $template;
+	}
 
 	/**
 	 * Get singular post type name

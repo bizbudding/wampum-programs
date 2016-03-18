@@ -20,7 +20,7 @@ if ( ! $programs ) {
 
 // piklist::pre($programs);
 
-// echo '<div class="wampum-user-programs flex-cols flex-col-xs-12 flex-col-sm-6">';
+echo '<div class="wampum-user-programs flex-cols flex-col-xs-12 flex-col-sm-6">';
 
 	foreach ( $programs as $program ) {
 
@@ -28,25 +28,22 @@ if ( ! $programs ) {
 
 		$image_size = apply_filters('wampum_account_programs_image_size', 'thumbnail');
 
-		$image = '';
-		if ( has_post_thumbnail( $program->ID ) ) {
-		    $image = sprintf( '<a href="%s" title="%s">%s</a>',
-				get_permalink( $program->ID ),
-				the_title_attribute( 'echo=0' ),
-				get_the_post_thumbnail( $program->ID, $image_size )
-			);
-		}
+	    $image = sprintf( '<a href="%s" title="%s">%s</a>',
+			get_permalink( $program->ID ),
+			the_title_attribute( 'echo=0' ),
+			get_the_post_thumbnail( $program->ID, $image_size )
+		);
 		?>
-		<div class="program flex-cols flex-col-xs-2-10 middle-xs">
-			<div class="image col"><?php echo $image; ?></div>
-			<div class="content col">
-				<div class="title"><h3><a href="<?php echo get_permalink( $program->ID ); ?>"><?php echo $program->post_title ?></a></h3></div>
-				<div class="excerpt"><?php echo $program->post_excerpt ?></div>
-			</div>
+		<div class="wampum-user-program col">
+			<?php if ( $image ) { ?>
+				<div class="image"><?php echo $image; ?></div>
+			<?php } ?>
+			<div class="title"><h3><?php echo $program->post_title ?></h3></div>
+			<div class="excerpt"><?php echo $program->post_excerpt ?></div>
 		</div>
 		<?php
 	}
 
-// echo '</div>';
+echo '</div>';
 
 do_action('wampum_account_after_programs');

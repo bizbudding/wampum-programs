@@ -181,6 +181,7 @@ function wampum_do_account_page_content($content) {
 		echo $wampum_membership->get_login_form();
 		return;
 	}
+	wp_enqueue_style('wampum');
 	global $wampum_account_page;
 	$content .= $wampum_account_page->menu(false);
 	$content .= $wampum_account_page->content(false);
