@@ -55,7 +55,6 @@ function wampum_require() {
 		'class-wampum-connections',
 		'class-wampum-membership',
 		'class-wampum-user-step-progress',
-		// 'class-wampum-programs',
 		'class-wampum-template-loader',
 		'class-wampum-widgets',
 		'widgets/class-wampum-widget-program-steps',
@@ -68,27 +67,28 @@ function wampum_require() {
 }
 wampum_require();
 
-// add_action( 'after_setup_theme', 'wampum_get_it_poppin' );
-// function wampum_get_it_poppin() {
-	// Instantiate dependent classes
-	$wampum_account_page			= new Wampum_Account_Page();
-	$wampum_content_types			= new Wampum_Content_Types();
-	$wampum_connections				= new Wampum_Connections();
-	$wampum_membership				= new Wampum_Membership();
-	$wampum_user_step_progress	    = new Wampum_P2P_User_Step_Progress();
-	// $wampum_programs				= new Wampum_Programs();
-	$wampum_template_loader			= new Wampum_Template_Loader();
-	$wampum_widgets					= new Wampum_Widgets();
+// Instantiate dependent classes
+$wampum_account_page		= new Wampum_Account_Page();
+$wampum_content_types		= new Wampum_Content_Types();
+$wampum_connections			= new Wampum_Connections();
+$wampum_membership			= new Wampum_Membership();
+$wampum_user_step_progress	= new Wampum_User_Step_Progress();
+$wampum_template_loader		= new Wampum_Template_Loader();
+$wampum_widgets				= new Wampum_Widgets();
 
-	$wampum = new Wampum(
-		$wampum_account_page,
-		$wampum_content_types,
-		$wampum_connections,
-		$wampum_membership,
-		$wampum_p2p_user_step_progress,
-		// $wampum_programs,
-		$wampum_template_loader,
-		$wampum_widgets
-	);
-	$wampum->run();
+$wampum = new Wampum(
+	$wampum_account_page,
+	$wampum_content_types,
+	$wampum_connections,
+	$wampum_membership,
+	$wampum_user_step_progress,
+	$wampum_template_loader,
+	$wampum_widgets
+);
+$wampum->run();
+
+//
+// add_action( 'wp_enqueue_scripts', 'wampum_init' );
+// function wampum_init() {
+//    $wampum_user_step_progress = new Wampum_User_Step_Progress();
 // }

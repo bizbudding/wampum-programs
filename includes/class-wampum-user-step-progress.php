@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @package Wampum_P2P_User_Step_Progress
  * @author  Mike Hemberger
  */
-class Wampum_P2P_User_Step_Progress extends P2P_Restful_Connection {
+class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 
 	/**
 	 * Name of the p2p connection.
@@ -28,6 +28,14 @@ class Wampum_P2P_User_Step_Progress extends P2P_Restful_Connection {
 	 * @var   string
 	 */
 	protected $connection_name = 'user_step_progress';
+
+	// protected $from;
+
+	// protected $to;
+
+	protected $link_connect_text = 'Connect!';
+
+	protected $link_connected_text = 'Connected!';
 
 	/**
 	 * Our success/fail messages for this connection
@@ -48,36 +56,45 @@ class Wampum_P2P_User_Step_Progress extends P2P_Restful_Connection {
 	 *
 	 * @since  1.0.0
 	 */
-	public function __construct() {
-		parent::__construct();
+	public function __construct( $data = array() ) {
+		parent::__construct( $data );
 		$this->script_url = WAMPUM_PLUGIN_URI . '/js/restful_p2p.js';
+
+		// $text = $this->$this->get_connection_text( $this->to );
+
+		// $this->link_connect_text   = $this->$this->get_connection_text( $this->to )['connect_text'];
+		// $this->link_connected_text = $this->$this->get_connection_text( $this->to )['connected_text'];
+
+		// $this->from = get_current_user_id();
+		// $this->to   = get_the_ID();
 	}
 
+    /**
+     * Get additional ajax data
+     *
+     * @return array
+     */
 	public function additional_ajax_data() {
-		return $this->get_step_progress_connected_text( get_the_ID() );
+		// return array(
+		// 	'connect_text'   => $this->link_connect_text,
+		// 	'connected_text' => $this->link_connected_text,
+		// );
+		// if ( ! $this->is_step_progress_page() ) {
+			// return array();
+		// }
+		// step_id
+		return $this->get_connection_text( $this->to );
+		// return self::get_step_progress_connected_text( get_the_ID() );
 	}
 
-	public function get_step_progress_button( $step_id ) {
-		global $wampum_content_types;
-		$program_id = $wampum_content_types->get_step_program_id($step_id);
-		if ( ! $this->is_step_progress_enabled( $program_id ) ) {
-			return false;
-		}
-		$enabled = get_post_meta( $program_id, 'wampum_program_step_progress' );
-		$text    = $this->get_step_progress_connected_text( $step_id );
-		// Return the connection button
-		global $wampum_connections;
-		return $wampum_connections->connection_button( $this->connection_name, get_current_user_ID(), $step_id, $text['connect_text'], $text['connected_text'] );
-	}
-
-	public function get_step_progress_connected_text( $step_id ) {
+	public function get_connection_text( $step_id ) {
 		global $wampum_content_types;
 		$program_id = $wampum_content_types->get_step_program_id( $step_id );
-		$enabled = $this->is_step_progress_enabled( $program_id );
+		// $enabled = $this->is_step_progress_enabled( $program_id );
 		// piklist::pre($enabled);
-		if ( ! $enabled  ) {
-			return array();
-		}
+		// if ( ! $enabled  ) {
+		// 	return array();
+		// }
 		$settings   = $this->get_step_progress_settings( $program_id );
 		$connect    = ! empty($settings['connect_text']) ? sanitize_text_field($settings['connect_text']) : __( 'Mark Complete', 'wampum' );
 		$connected  = ! empty($settings['connected_text']) ? sanitize_text_field($settings['connected_text']) : __( 'Completed', 'wampum' );
@@ -88,7 +105,7 @@ class Wampum_P2P_User_Step_Progress extends P2P_Restful_Connection {
 	}
 
 	public function is_step_progress_enabled( $program_id ) {
-		$enabled = get_post_meta( $program_id, 'wampum_program_step_progress', true );
+		$enabled = $this->get_step_progress_settings( $program_id );
 		// piklist::pre($enabled);
 		if ( $enabled && isset($enabled['enabled']) ) {
 			if ( 'yes' === $enabled['enabled'] ) {
@@ -101,5 +118,12 @@ class Wampum_P2P_User_Step_Progress extends P2P_Restful_Connection {
 	public function get_step_progress_settings( $program_id ) {
 		return get_post_meta( $program_id, 'wampum_program_step_progress', true );
 	}
+
+	// public function is_step_progress_page() {
+	// 	if ( is_singular('wampum_step') ) {
+	// 		return true;
+	// 	}
+	// 	return false;
+	// }
 
 }

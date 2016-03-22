@@ -186,7 +186,7 @@ function wampum_get_user_programs( $user_id, $args = array() ) {
 	return $programs;
 }
 
-function wampum_get_connection_button( $type, $from, $to, $text_connected, $text_disconnected ) {
-	global $wampum_connections;
-	return $wampum_connections->connection_button( $type, $from, $to, $text_connected, $text_disconnected );
-}
+// function wampum_get_connection_button( $type, $from, $to, $text_connected, $text_disconnected ) {
+// 	global $wampum_connections;
+// 	return $wampum_connections->connection_button( $type, $from, $to, $text_connected, $text_disconnected );
+// }

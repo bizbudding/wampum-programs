@@ -7,8 +7,8 @@
 		connection.preventDefault();
 
         var data = {
-                from_id: $(this).attr('data-from-id'),
-                to_id: $(this).attr('data-to-id'),
+                from: $(this).attr('data-from-id'),
+                to: $(this).attr('data-to-id'),
             };
 
         var clicked = $(this);

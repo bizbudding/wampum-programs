@@ -36,7 +36,9 @@ class Wampum {
 			// Register stylesheet
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_stylesheets' ) );
 			// Setup front end hooks
-			add_filter( 'the_content', array( $this, 'setup_hooks' ) );
+			// add_filter( 'the_content', array( $this, 'setup_content_filters' ) );
+			add_filter( 'the_content', array( $this, 'before_content' ) );
+			add_filter( 'the_content', array( $this, 'after_content' ) );
 		}
 	}
 
@@ -167,15 +169,52 @@ class Wampum {
 	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URI . 'css/wampum.css' );
 	}
 
-	function setup_hooks( $content ) {
-		if ( ! is_singular() ) {
-			return $content;
-		}
-		$output  = '';
-		$output .= do_action( 'wampum_before_content' );
-		$output .= $content;
-		$output .= do_action( 'wampum_after_content' );
-		return $output;
+	// function setup_content_filters( $content ) {
+	// 	$before = $after = '';
+	// 	if ( ! is_main_query() && ! is_singular() ) {
+	// 		return $content;
+	// 	}
+	// 	$before = apply_filters( 'wampum_before_content', $before );
+	// 	$after  = apply_filters( 'wampum_after_content', $after );
+	// 	return $before . $content . $after;
+	// }
+
+	/**
+	 * Before Download Content
+	 *
+	 * Adds an action to the beginning of download post content that can be hooked to
+	 * by other functions.
+	 *
+	 * @since 1.0.8
+	 * @global $post
+	 *
+	 * @param $content The the_content field of the download object
+	 * @return string the content with any additional data attached
+	 */
+	function before_content( $content ) {
+		ob_start();
+		do_action( 'wampum_before_content' );
+		$content = ob_get_clean() . $content;
+		return $content;
+	}
+
+	/**
+	 * After Download Content
+	 *
+	 * Adds an action to the end of download post content that can be hooked to by
+	 * other functions.
+	 *
+	 * @since 1.0.8
+	 * @global $post
+	 *
+	 * @param $content The the_content field of the download object
+	 * @return string the content with any additional data attached
+	 */
+	function after_content( $content ) {
+		ob_start();
+		do_action( 'wampum_after_content' );
+		$content .= ob_get_clean();
+		return $content;
 	}
 
 }

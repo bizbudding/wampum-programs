@@ -47,9 +47,11 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		} else {
 			// Get the program this step is from
 			$program_id = $wampum_content_types->get_step_program_id( $queried_post_id );
+			// $program_id = Wampum_Content_Types::get_step_program_id( $queried_post_id );
 		}
 		// Get all steps from program
 		$steps = $wampum_content_types->get_program_steps( $program_id );
+		// $steps = Wampum_Content_Types::get_program_steps( $program_id );
 
 		// Bail no steps
 		if ( ! $steps ) {
@@ -74,11 +76,14 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 					$classes .= ' current-step';
 				}
 				global $wampum_user_step_progress;
+				// $wampum_user_step_progress	= new Wampum_User_Step_Progress();
 				// Check if step progress is enabled
 				if ( $wampum_user_step_progress->is_step_progress_enabled( $program_id ) ) {
+				// if ( Wampum_User_Step_Progress::is_step_progress_enabled( $program_id ) ) {
 					// Add class if step is completed
 					global $wampum_connections;
 					if ( $wampum_connections->connection_exists( 'user_step_progress', get_current_user_id(), $step->ID ) ) {
+					// if ( Wampum_Connections::connection_exists( 'user_step_progress', get_current_user_id(), $step->ID ) ) {
 						$classes .= ' completed';
 					}
 				}

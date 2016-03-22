@@ -19,7 +19,7 @@
  * 4. Create/modify js file at $script_url location to handle ajax
  * 5. Add link with appropriate data attributes where you want to make the connection
  *    Example:
- *    <div class="connection-wrap"><a data-from-id="<?php echo $from; ?>" data-to-id="<?php echo $to; ?>" class="button connection" href="#"><?php echo $text; ?></a></div>
+ *    <div class="connection-wrap"><a data-from-id="<?php echo $from_id; ?>" data-to-id="<?php echo $to_id; ?>" class="button connection" href="#"><?php echo $text; ?></a></div>
  *
  */
 
@@ -33,7 +33,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	 * @package P2P_Restful_Connection
 	 * @author  Mike Hemberger
 	 */
-	abstract class P2P_Restful_Connection {
+	class P2P_Restful_Connection {
 
 		/**
 		 * Name of the p2p connection.
@@ -43,14 +43,6 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 * @type string
 		 */
 		protected $connection_name = 'posts_to_pages';
-
-		protected $from = null;
-
-		protected $to = null;
-
-		protected $link_connect_text = 'Connect';
-
-		protected $link_connected_text = 'Connected';
 
 		/**
 		 * URL of the JS file you will need to create.
@@ -73,48 +65,15 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 *
 		 * @return void
 		 */
-		public function __construct( $data = array() ) {
-
-		    // Ensure that the Address can be populated.
-			if (!is_array($data)) {
-				trigger_error('Unable to construct address with a ' . get_class($name));
-			}
-
-			// If there is at least one value, populate the Address with it.
-			if (count($data) > 0) {
-				foreach ($data as $name => $value) {
-					// Special case for protected properties.
-					if (in_array($name, array(
-							'from',
-							'to',
-						))) {
-						$name = $name;
-					}
-					$this->$name = $value;
-				}
-			}
-
+		public function __construct() {
 			add_action( 'rest_api_init', array( $this, 'register_rest_endpoint' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
+			// add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		}
 
-		public function get_link() {
-			$this->enqueue_scripts();
-			return $this->get_connection_link( $this->connection_name, $this->from, $this->to, $this->link_connect_text, $this->link_connected_text );
-		}
-
-		public function get_connection_link( $type, $from, $to, $text_connect, $text_connected ) {
-			$class = ' connect';
-			$text  = $text_connect;
-			// $data  = array(
-			// 		'from' => $from,
-			// 		'to'   => $to,
-			// 	);
-			if ( $this->connection_exists( $from, $to ) ) {
-				$class = ' connected';
-				$text  = $text_connected;
-			}
-			return '<div class="wampum-connection-wrap"><a data-from-id="' . $from . '" data-to-id="' . $to . '" class="button wampum-connection' . $class . '" href="#">' . $text . '</a></div>';
+		public static function get_link( $step_id ) {
+			parent::enqueue_scripts();
+			return self::get_step_progress_button( $step_id );
 		}
 
 	    /**
@@ -158,7 +117,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	     *
 	     * @return array
 	     */
-	    public function enqueue_scripts() {
+	    public static function enqueue_scripts() {
 	    	// Conditional checks when to enqueue
 	    	wp_enqueue_script( $this->connection_name );
 	    }
@@ -191,7 +150,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	     */
 		public function can_connect( $data ) {
 			// Do not allow existing connection to be made twice
-			if ( $this->connection_exists( $data['from'], $data['to'] ) ) {
+			if ( $this->connection_exists( $data['from_id'], $data['to_id'] ) ) {
 				return false;
 			}
 			return true;
@@ -290,10 +249,10 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 				'methods'  => 'POST',
 				'callback' => array( $this, 'connect' ),
 				'args'	   => array(
-		            'from' => array(
+		            'from_id' => array(
 						'validate_callback' => 'is_numeric'
 		            ),
-		            'to' => array(
+		            'to_id' => array(
 		                'validate_callback' => 'is_numeric'
 		            ),
 		        ),
@@ -303,10 +262,10 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 				'methods'  => 'POST',
 				'callback' => array( $this, 'disconnect' ),
 				'args'	   => array(
-		            'from' => array(
+		            'from_id' => array(
 						'validate_callback' => 'is_numeric'
 		            ),
-		            'to' => array(
+		            'to_id' => array(
 		                'validate_callback' => 'is_numeric'
 		            ),
 		        ),
@@ -338,7 +297,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 			$this->before_connect( $data );
 
 			// Create connection
-			$p2p = p2p_type( $this->connection_name )->connect( $data['from'], $data['to'], array(
+			$p2p = p2p_type( $this->connection_name )->connect( $data['from_id'], $data['to_id'], array(
 			    'date' => current_time('mysql')
 			) );
 
@@ -385,7 +344,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 			$this->before_disconnect( $data );
 
 			// Remove connection
-			$p2p = p2p_type( $this->connection_name )->disconnect( $data['from'], $data['to'] );
+			$p2p = p2p_type( $this->connection_name )->disconnect( $data['from_id'], $data['to_id'] );
 
 			// If error, return WP_Error
 			if ( is_wp_error( $p2p ) ) {
@@ -417,12 +376,8 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	     *
 	     * @return  bool
 	     */
-	    public function connection_exists( $from, $to ) {
-			$data = array(
-					'from' => $from,
-					'to'   => $to,
-				);
-			return p2p_connection_exists( $this->connection_name, $data );
+	    public function connection_exists( $data ) {
+			return p2p_connection_exists( $this->connection_name, array('from' => $data['from_id'], 'to' => $data['to_id'] ) );
 	    }
 
 	    /**
@@ -430,8 +385,8 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	     *
 	     * @return int
 	     */
-	    private function get_from() {
-	        return $this->sanitize_id( $_POST['from'] );
+	    private function get_from_id() {
+	        return $this->sanitize_id( $_POST['from_id'] );
 	    }
 
 
@@ -440,8 +395,8 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	     *
 	     * @return int
 	     */
-	    private function get_to() {
-	        return $this->sanitize_id( $_POST['to'] );
+	    private function get_to_id() {
+	        return $this->sanitize_id( $_POST['to_id'] );
 	    }
 
 
