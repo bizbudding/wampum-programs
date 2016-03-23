@@ -13,14 +13,32 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Account nav and content for Wampum
+ * Register Wampum Widgets
  *
  * @package Wampum Widgets
  * @author  Mike Hemberger
  */
-class Wampum_Widgets {
+final class Wampum_Widgets {
 
-	public function __construct() {
+	/** Singleton *************************************************************/
+
+	/**
+	 * @var   Wampum_Settings The one true Wampum_Settings
+	 * @since 1.0.0
+	 */
+	private static $instance;
+
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			// Setup the setup
+			self::$instance = new Wampum_Widgets;
+			// Methods
+			self::$instance->init();
+		}
+		return self::$instance;
+	}
+
+	public function init() {
 		// require_once('widgets/class-wampum-widget-program-steps.php');
 		// Register our new widget
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );

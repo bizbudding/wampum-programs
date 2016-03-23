@@ -17,7 +17,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @package Wampum
  */
-class Wampum_Content_Types {
+final class Wampum_Content_Types {
+	/** Singleton *************************************************************/
+
+	/**
+	 * @var Wampum_Content_Types The one true Wampum_Content_Types
+	 * @since 1.0.0
+	 */
+	private static $instance;
 
 	/**
 	 * Name of registered post type.
@@ -46,7 +53,17 @@ class Wampum_Content_Types {
 	 */
 	const PROGRAM = 'wampum_program';
 
-	public function __construct() {
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			// Setup the setup
+			self::$instance = new Wampum_Content_Types;
+			// Methods
+			self::$instance->init();
+		}
+		return self::$instance;
+	}
+
+	public function init() {
 		add_action( 'init', array( $this, 'register_post_types') );
 		// add_action( 'init', array( $this, 'register_taxonomies') );
 		// add_filter( 'post_type_link', array( $this, 'custom_permalinks' ), 1, 2 );
@@ -313,8 +330,13 @@ class Wampum_Content_Types {
 		// if ( is_object($programs) ) {
 		// 	return array_shift($programs->posts);
 		// }
-		global $wampum_connections;
-		$items = $wampum_connections->get_adjacent_items( 'programs_to_steps', $step_object_or_id );
+
+		// global $wampum_connections;
+		// $items = $wampum_connections->get_adjacent_items( 'programs_to_steps', $step_object_or_id );
+		$items = Wampum()->connections->get_adjacent_items( 'programs_to_steps', $step_object_or_id );
+		// echo '<pre>';
+	    // print_r($items);
+	    // echo '</pre>';
 		if ( $items['parent'] ) {
 			// echo '<pre>';
 		    // print_r($items['parent']);

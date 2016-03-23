@@ -19,7 +19,7 @@
  * @return bool
  */
 function wampum_user_can_view_step( $user_id, $step_id ) {
-	return Wampum_Membership::can_view_step( $user_id, $step_id );
+	return Wampum()->membership->can_view_step( $user_id, $step_id );
 }
 
 /**
@@ -32,7 +32,7 @@ function wampum_user_can_view_step( $user_id, $step_id ) {
  * @return bool
  */
 function wampum_user_can_view( $user_id, $post_id ) {
-	return Wampum_Membership::can_view( $user_id, $post_id );
+	return Wampum()->membership->can_view( $user_id, $post_id );
 }
 
 /**
@@ -134,23 +134,23 @@ function wampum_get_user_memberships( $user_id = null, $args = array() ) {
  * @return mixed
  */
 function wampum_get_template_part( $slug, $name = null, $load = true ) {
-    global $wampum_template_loader;
-    $wampum_template_loader->get_template_part( $slug, $name, $load );
+    // global $wampum_template_loader;
+    Wampum()->templates->get_template_part( $slug, $name, $load );
 }
 
 function wampum_get_program_steps_list( $program_object_or_id ) {
-	global $wampum_content_types;
-	return $wampum_content_types->get_program_steps_list( $program_object_or_id );
+	// global $wampum_content_types;
+	return Wampum()->content_types->get_program_steps_list( $program_object_or_id );
 }
 
 function wampum_get_program_steps( $program_object_or_id ) {
-	global $wampum_content_types;
-	return $wampum_content_types->get_program_steps( $program_object_or_id );
+	// global $wampum_content_types;
+	return Wampum()->content_types->get_program_steps( $program_object_or_id );
 }
 
 function wampum_get_step_program( $step_object_or_id ) {
-	global $wampum_content_types;
-	return $wampum_content_types->get_step_program( $step_object_or_id );
+	// global $wampum_content_types;
+	return Wampum()->content_types->get_step_program( $step_object_or_id );
 }
 
 function wampum_get_user_programs( $user_id, $args = array() ) {

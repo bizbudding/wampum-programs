@@ -44,11 +44,11 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 */
 		protected $connection_name = 'posts_to_pages';
 
-		protected $from = null;
+		// protected $from = null;
 
-		protected $to = null;
+		// protected $to = null;
 
-		protected $link_connect_text = 'Connect';
+		// protected $link_connect_text = 'Connect';
 
 		protected $link_connected_text = 'Connected';
 
@@ -73,34 +73,14 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 *
 		 * @return void
 		 */
-		public function __construct( $data = array() ) {
-
-		    // Ensure that the Address can be populated.
-			if (!is_array($data)) {
-				trigger_error('Unable to construct address with a ' . get_class($name));
-			}
-
-			// If there is at least one value, populate the Address with it.
-			if (count($data) > 0) {
-				foreach ($data as $name => $value) {
-					// Special case for protected properties.
-					if (in_array($name, array(
-							'from',
-							'to',
-						))) {
-						$name = $name;
-					}
-					$this->$name = $value;
-				}
-			}
-
+		public function __construct() {
 			add_action( 'rest_api_init', array( $this, 'register_rest_endpoint' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
 		}
 
-		public function get_link() {
+		public function get_link( $from, $to, $link_connect_text, $link_connected_text ) {
 			$this->enqueue_scripts();
-			return $this->get_connection_link( $this->connection_name, $this->from, $this->to, $this->link_connect_text, $this->link_connected_text );
+			return $this->get_connection_link( $this->connection_name, $from, $to, $link_connect_text, $link_connected_text );
 		}
 
 		public function get_connection_link( $type, $from, $to, $text_connect, $text_connected ) {

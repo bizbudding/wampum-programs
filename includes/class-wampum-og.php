@@ -166,7 +166,7 @@ class Wampum {
 	 * @return null
 	 */
 	public function register_stylesheets() {
-	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URI . 'css/wampum.css' );
+	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css' );
 	}
 
 	// function setup_content_filters( $content ) {

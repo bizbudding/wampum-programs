@@ -10,7 +10,7 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 	 		'wampum_widget_program_steps', // Base ID
-			'Wampum - ' . Wampum_Content_Types::plural_name('wampum_step'), // Name
+			'Wampum - ' . Wampum()->content_types->plural_name('wampum_step'), // Name
 			array( 'description' => __( 'Show steps of a program', 'wampum' ), ) // Args
 		);
 	}
@@ -36,7 +36,7 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 			return;
 		}
 
-		global $wampum_content_types;
+		// global $wampum_content_types;
 
 		// Get current post ID
 		$queried_post_id = get_the_ID();
@@ -46,11 +46,11 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 			$program_id = $queried_post_id;
 		} else {
 			// Get the program this step is from
-			$program_id = $wampum_content_types->get_step_program_id( $queried_post_id );
+			$program_id = Wampum()->content_types->get_step_program_id( $queried_post_id );
 			// $program_id = Wampum_Content_Types::get_step_program_id( $queried_post_id );
 		}
 		// Get all steps from program
-		$steps = $wampum_content_types->get_program_steps( $program_id );
+		$steps = Wampum()->content_types->get_program_steps( $program_id );
 		// $steps = Wampum_Content_Types::get_program_steps( $program_id );
 
 		// Bail no steps
@@ -75,14 +75,15 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 				if ( $queried_post_id === $step->ID ) {
 					$classes .= ' current-step';
 				}
-				global $wampum_user_step_progress;
+				// global $wampum_user_step_progress;
+				$step_progress = Wampum_User_Step_Progress::instance();
 				// $wampum_user_step_progress	= new Wampum_User_Step_Progress();
 				// Check if step progress is enabled
-				if ( $wampum_user_step_progress->is_step_progress_enabled( $program_id ) ) {
+				if ( $step_progress->is_step_progress_enabled( $program_id ) ) {
 				// if ( Wampum_User_Step_Progress::is_step_progress_enabled( $program_id ) ) {
 					// Add class if step is completed
-					global $wampum_connections;
-					if ( $wampum_connections->connection_exists( 'user_step_progress', get_current_user_id(), $step->ID ) ) {
+					// global $wampum_connections;
+					if ( Wampum()->connections->connection_exists( 'user_step_progress', get_current_user_id(), $step->ID ) ) {
 					// if ( Wampum_Connections::connection_exists( 'user_step_progress', get_current_user_id(), $step->ID ) ) {
 						$classes .= ' completed';
 					}

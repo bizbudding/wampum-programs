@@ -18,7 +18,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @package Wampum
  * @author  Mike Hemberger
  */
-class Wampum_Template_Loader extends Gamajo_Template_Loader {
+final class Wampum_Template_Loader extends Gamajo_Template_Loader {
+
+	/**
+	 * @var   Wampum_Template_Loader The one true Wampum_Template_Loader
+	 * @since 1.0.0
+	 */
+	private static $instance;
 
 	/**
 	 * Prefix for filter names.
@@ -62,5 +68,13 @@ class Wampum_Template_Loader extends Gamajo_Template_Loader {
 	 * @type string
 	 */
 	protected $plugin_template_directory = 'templates'; // or includes/templates, etc.
+
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			// Setup the setup
+			self::$instance = new Wampum_Template_Loader;
+		}
+		return self::$instance;
+	}
 
 }

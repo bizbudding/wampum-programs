@@ -18,7 +18,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @package Wampum_P2P_User_Step_Progress
  * @author  Mike Hemberger
  */
-class Wampum_User_Step_Progress extends P2P_Restful_Connection {
+final class Wampum_User_Step_Progress extends P2P_Restful_Connection {
+
+	/**
+	 * @since 1.0.0
+	 *
+	 * @var Wampum_User_Step_Progress The one true Wampum_User_Step_Progress
+	 */
+	private static $instance;
 
 	/**
 	 * Name of the p2p connection.
@@ -29,13 +36,15 @@ class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 	 */
 	protected $connection_name = 'user_step_progress';
 
-	// protected $from;
+	protected $from;
 
-	// protected $to;
+	protected $to;
 
-	protected $link_connect_text = 'Connect!';
+	// protected $link_connect_text = 'Connect!';
+	protected $link_connect_text;
 
-	protected $link_connected_text = 'Connected!';
+	// protected $link_connected_text = 'Connected!';
+	protected $link_connected_text;
 
 	/**
 	 * Our success/fail messages for this connection
@@ -51,22 +60,22 @@ class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 	// 		'can_disconnect_fail'	=> 'An error occurred',
 	// 	);
 
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			// Setup the setup
+			self::$instance = new Wampum_User_Step_Progress;
+		}
+		return self::$instance;
+	}
+
 	/**
 	 * Run the parent constructor and locate our javascript file url
 	 *
 	 * @since  1.0.0
 	 */
-	public function __construct( $data = array() ) {
-		parent::__construct( $data );
-		$this->script_url = WAMPUM_PLUGIN_URI . '/js/restful_p2p.js';
-
-		// $text = $this->$this->get_connection_text( $this->to );
-
-		// $this->link_connect_text   = $this->$this->get_connection_text( $this->to )['connect_text'];
-		// $this->link_connected_text = $this->$this->get_connection_text( $this->to )['connected_text'];
-
-		// $this->from = get_current_user_id();
-		// $this->to   = get_the_ID();
+	public function __construct() {
+		parent::__construct();
+		$this->script_url = WAMPUM_PLUGIN_URL . '/js/restful_p2p.js';
 	}
 
     /**
@@ -87,15 +96,45 @@ class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 		// return self::get_step_progress_connected_text( get_the_ID() );
 	}
 
+	/**
+	 * The main function for that returns Wampum_User_Step_Progress link
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  $from  User ID
+	 * @param  $to    Step ID
+	 *
+	 * @return string|null  connection link with data attributes for from/to
+	 */
+	public function maybe_get_step_progress_link( $from, $to ) {
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+		$step_program_id = Wampum()->content_types->get_step_program_id( $to );
+		if ( ! $this->is_step_progress_enabled( $step_program_id ) ) {
+			return;
+		}
+		echo $this->get_step_progress_link( $from, $to );
+	}
+
+	/**
+	 * The main function for that returns Wampum_User_Step_Progress link
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  $from  User ID
+	 * @param  $to    Step ID
+	 *
+	 * @return string connection link with data attributes for from/to
+	 */
+	public function get_step_progress_link( $from, $to ) {
+		$text = $this->get_connection_text( $to );
+		return $this->get_link( $from, $to, $text['connect_text'], $text['connected_text'] );
+	}
+
 	public function get_connection_text( $step_id ) {
-		global $wampum_content_types;
-		$program_id = $wampum_content_types->get_step_program_id( $step_id );
-		// $enabled = $this->is_step_progress_enabled( $program_id );
-		// piklist::pre($enabled);
-		// if ( ! $enabled  ) {
-		// 	return array();
-		// }
-		$settings   = $this->get_step_progress_settings( $program_id );
+		$program_id = Wampum()->content_types->get_step_program_id( $step_id );
+		$settings   = Wampum()->settings->get_step_progress_settings( $program_id );
 		$connect    = ! empty($settings['connect_text']) ? sanitize_text_field($settings['connect_text']) : __( 'Mark Complete', 'wampum' );
 		$connected  = ! empty($settings['connected_text']) ? sanitize_text_field($settings['connected_text']) : __( 'Completed', 'wampum' );
 		return array(
@@ -105,7 +144,7 @@ class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 	}
 
 	public function is_step_progress_enabled( $program_id ) {
-		$enabled = $this->get_step_progress_settings( $program_id );
+		$enabled = Wampum()->settings->get_step_progress_settings( $program_id );
 		// piklist::pre($enabled);
 		if ( $enabled && isset($enabled['enabled']) ) {
 			if ( 'yes' === $enabled['enabled'] ) {
@@ -114,16 +153,5 @@ class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 		}
 		return false;
 	}
-
-	public function get_step_progress_settings( $program_id ) {
-		return get_post_meta( $program_id, 'wampum_program_step_progress', true );
-	}
-
-	// public function is_step_progress_page() {
-	// 	if ( is_singular('wampum_step') ) {
-	// 		return true;
-	// 	}
-	// 	return false;
-	// }
 
 }

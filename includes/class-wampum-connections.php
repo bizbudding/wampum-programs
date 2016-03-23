@@ -21,7 +21,23 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 class Wampum_Connections {
 
-	function __construct() {
+	/**
+	 * @var Wampum_Connections The one true Wampum_Connections
+	 * @since 1.4
+	 */
+	private static $instance;
+
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			// Setup the setup
+			self::$instance = new Wampum_Connections;
+			// Methods
+			self::$instance->init();
+		}
+		return self::$instance;
+	}
+
+	function init() {
 		add_action( 'p2p_init', 			 array( $this, 'register_p2p_connections') );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
@@ -36,35 +52,6 @@ class Wampum_Connections {
 	 * @return  void
 	 */
 	public function register_p2p_connections() {
-
-	  //   p2p_register_connection_type( array(
-	  //       'name'            => 'program_to_membership_plan',
-	  //       'from'            => get_taxonomy( 'wampum_program' )->object_type,
-	  //       // 'from'            => 'wampum_program',
-	  //       'to'              => 'post',
-	  //       'can_create_post' => false,
-	  //       'sortable'        => 'any',
-	  //       // 'admin_box'       => array(
-			// 	// 'show'		=> 'any',
-			// 	// 'context'	=> 'side',
-			// // ),
-	  //       // 'admin_column'   => true,
-	  //       // 'admin_dropdown' => true,
-	  //       // 'reciprocal'     => true,
-	  //       // 'title'          => array(
-	  //       //     'from' => Wampum_Content_Types::plural_name('wampum_step'),
-	  //       //     'to'   => Wampum_Content_Types::singular_name('wampum_step') . ' ' . Wampum_Content_Types::plural_name('wampum_resource'),
-	  //       // ),
-	  //       // 'from_labels' => array(
-	  //       //     'singular_name' => Wampum_Content_Types::plural_name('wampum_resource'),
-	  //       // ),
-	  //       // 'to_labels' => array(
-	  //       //     'singular_name' => __( 'Item', 'wampum' ),
-	  //       //     'search_items'  => __( 'Search items', 'wampum' ),
-	  //       //     'not_found'     => __( 'No items found.', 'wampum' ),
-	  //       //     'create'        => __( 'Create Connections', 'wampum' ),
-	  //       // ),
-	  //   ) );
 
 		// STEPS TO PROGRAMS
 	    p2p_register_connection_type( array(
@@ -209,7 +196,7 @@ class Wampum_Connections {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		wp_register_script( 'wampum-select2',  WAMPUM_PLUGIN_URI . 'js/select2.min.js', array( 'jquery' ), '4.0.1', true );
+		wp_register_script( 'wampum-select2',  WAMPUM_PLUGIN_URL . 'js/select2.min.js', array( 'jquery' ), '4.0.1', true );
 	}
 
 	/**
@@ -221,7 +208,7 @@ class Wampum_Connections {
 	 * @return void
 	 */
 	public function enqueue_styles() {
-		wp_register_style( 'wampum-select2', WAMPUM_PLUGIN_URI . 'css/select2.min.css', array(), '4.0.1' );
+		wp_register_style( 'wampum-select2', WAMPUM_PLUGIN_URL . 'css/select2.min.css', array(), '4.0.1' );
 	}
 
 	/**

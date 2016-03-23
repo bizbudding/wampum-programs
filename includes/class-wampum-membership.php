@@ -17,12 +17,20 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @package Wampum
  */
-class Wampum_Membership {
+final class Wampum_Membership {
 
-	// protected $user_id = '';
+	/**
+	 * @var   Wampum_Membership The one true Wampum_Membership
+	 * @since 1.4
+	 */
+	private static $instance;
 
-	public function __construct() {
-		// $this->user_id = get_current_user_id();
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			// Setup the setup
+			self::$instance = new Wampum_Membership;
+		}
+		return self::$instance;
 	}
 
 	/**
@@ -82,7 +90,7 @@ class Wampum_Membership {
 	 * @return bool
 	 */
 	public static function can_view_step( $user_id, $step_id ) {
-		$program_id = Wampum_Content_Types::get_step_program_id( $step_id );
+		$program_id = Wampum()->content_types->get_step_program_id( $step_id );
 		if ( $program_id ) {
 			return wc_memberships_user_can( $user_id, 'view', array( 'post' => $program_id ) );
 		}

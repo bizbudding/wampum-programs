@@ -28,22 +28,10 @@ function wampum_step_content( $content ) {
 
 add_action( 'wampum_after_content', 'wampum_do_step_progress_link' );
 function wampum_do_step_progress_link() {
-	if ( ! is_user_logged_in() ) {
+	if ( ! is_user_logged_in() && ! is_singular('wampum_step') ) {
 		return;
 	}
-	$data = array(
-			// 'connection_name'	=> 'user_step_progress',
-			'from'				=> get_current_user_id(),
-			'to'				=> get_the_ID(),
-			// 'text_connect'		=> ,
-			// 'text_connected'	=> ,
-		);
-
-	$wampum_user_step_progress = new Wampum_User_Step_Progress($data);
-	// global $wampum_user_step_progress;
-	// echo $wampum_user_step_progress->get_link( get_current_user_id(), get_the_ID() );
-	echo $wampum_user_step_progress->get_link();
-	// echo Wampum_User_Step_Progress::get_link( get_the_ID() );
+	echo Wampum()->step_progress->maybe_get_step_progress_link( get_current_user_id(), get_the_ID() );
 }
 
 add_action( 'wampum_after_content', 'wampum_do_step_prev_next_links' );

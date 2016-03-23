@@ -18,7 +18,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @package Wampum_Account_Page
  * @author  Mike Hemberger
  */
-class Wampum_Account_Page extends JiveDig_Content_Swap {
+final class Wampum_Account_Page extends JiveDig_Content_Swap {
+
+	/** Singleton *************************************************************/
+
+	/**
+	 * @var Wampum_Account_Page The one true Wampum_Account_Page
+	 * @since 1.0.0
+	 */
+	private static $instance;
 
 	protected $prefix = 'wampum_account';
 
@@ -67,9 +75,19 @@ class Wampum_Account_Page extends JiveDig_Content_Swap {
 	 */
 	protected $loading = '<i class="fa fa-spinner fa-pulse"></i>';
 
-	public function __construct() {
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			// Setup the setup
+			self::$instance = new Wampum_Account_Page;
+			// Methods
+			self::$instance->init();
+		}
+		return self::$instance;
+	}
+
+	public function init() {
 		$this->items = apply_filters( 'wampum_account_page_items', $this->items );
-		// $this->script_dir = WAMPUM_PLUGIN_URI . 'js/';
+		// $this->script_dir = WAMPUM_PLUGIN_URL . 'js/';
 		// add_action( 'after_setup_theme', array( $this, 'enable_restful_content' ) );
 		// add_action( 'get_header', array( $this, 'enqueue_scripts' ) );
 	}
@@ -166,7 +184,8 @@ add_action( 'get_header', function() {
 		return;
 	}
 	add_filter( 'body_class', 'wampum_do_account_page_body_class' );
-	add_filter( 'the_content', 'wampum_do_account_page_content' );
+	// add_filter( 'the_content', 'wampum_do_account_page_content' );
+	add_action( 'wampum_after_content', 'wampum_do_account_page_content' );
 });
 // Add custom body class to the head
 function wampum_do_account_page_body_class($classes) {
@@ -174,16 +193,14 @@ function wampum_do_account_page_body_class($classes) {
 	return $classes;
 }
 // Add Account page menu/content
-function wampum_do_account_page_content($content) {
+function wampum_do_account_page_content() {
 	if ( ! is_user_logged_in() ) {
-		global $wampum_membership;
+		// global $wampum_membership;
 		echo '<p>You must be logged in to view your account.</p>';
-		echo $wampum_membership->get_login_form();
+		echo Wampum()->membership->get_login_form();
 		return;
 	}
 	wp_enqueue_style('wampum');
-	global $wampum_account_page;
-	$content .= $wampum_account_page->menu(false);
-	$content .= $wampum_account_page->content(false);
-	return $content;
+	echo Wampum()->account->menu(false);
+	echo Wampum()->account->content(false);
 }
