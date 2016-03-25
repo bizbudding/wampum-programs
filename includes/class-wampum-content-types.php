@@ -317,31 +317,20 @@ final class Wampum_Content_Types {
 	public function get_step_program_id( $step_object_or_id ) {
 		$program = $this->get_step_program( $step_object_or_id );
 		if ( $program ) {
-			// echo '<pre>';
-		    // print_r($program);
-		    // echo '</pre>';
 			return $program->ID;
 		}
 		return false;
 	}
 
 	public function get_step_program( $step_object_or_id ) {
-		// $programs = p2p_type( 'programs_to_steps' )->set_direction( 'to' )->get_connected( $step_object_or_id );
-		// if ( is_object($programs) ) {
-		// 	return array_shift($programs->posts);
-		// }
-
-		// global $wampum_connections;
-		// $items = $wampum_connections->get_adjacent_items( 'programs_to_steps', $step_object_or_id );
+		// Bail if not a step
+		if ( 'wampum_step' !== get_post_type($step_object_or_id) ) {
+			return;
+		}
+		// Get adjacent items
 		$items = Wampum()->connections->get_adjacent_items( 'programs_to_steps', $step_object_or_id );
-		// echo '<pre>';
-	    // print_r($items);
-	    // echo '</pre>';
-		if ( $items['parent'] ) {
-			// echo '<pre>';
-		    // print_r($items['parent']);
-		    // echo '</pre>';
-		    // die();
+		// If parent is a thing
+		if ( isset($items['parent']) && ! empty($items['parent']) ) {
 			return $items['parent'];
 		}
 		return false;
@@ -352,7 +341,6 @@ final class Wampum_Content_Types {
 		$slug = sanitize_title_with_dashes(self::plural_name(self::PROGRAM));
 		return apply_filters( 'wampum_program_base_slug', $slug );
 	}
-
 
 	public function get_step_base_slug($step_id) {
 		$plural_name = sanitize_title_with_dashes($this->plural_name(self::STEP));

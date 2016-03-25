@@ -110,7 +110,7 @@ final class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 		if ( ! is_user_logged_in() ) {
 			return;
 		}
-		$step_program_id = Wampum()->content_types->get_step_program_id( $to );
+		$step_program_id = Wampum()->content->get_step_program_id( $to );
 		if ( ! $this->is_step_progress_enabled( $step_program_id ) ) {
 			return;
 		}
@@ -133,7 +133,7 @@ final class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 	}
 
 	public function get_connection_text( $step_id ) {
-		$program_id = Wampum()->content_types->get_step_program_id( $step_id );
+		$program_id = Wampum()->content->get_step_program_id( $step_id );
 		$settings   = Wampum()->settings->get_step_progress_settings( $program_id );
 		$connect    = ! empty($settings['connect_text']) ? sanitize_text_field($settings['connect_text']) : __( 'Mark Complete', 'wampum' );
 		$connected  = ! empty($settings['connected_text']) ? sanitize_text_field($settings['connected_text']) : __( 'Completed', 'wampum' );

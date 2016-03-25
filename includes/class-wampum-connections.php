@@ -325,25 +325,25 @@ class Wampum_Connections {
 		return $p2p;
 	}
 
-	public static function connection_button( $type, $from, $to, $text_connect, $text_connected ) {
+	public function connection_button( $type, $from, $to, $text_connect, $text_connected ) {
 		$class = ' connect';
 		$text  = $text_connect;
-		if ( self::connection_exists( $type, $from, $to ) ) {
+		if ( $this->connection_exists( $type, $from, $to ) ) {
 			$class = ' connected';
 			$text  = $text_connected;
 		}
 		return '<div class="wampum-connection-wrap"><a data-from-id="' . get_current_user_ID() . '" data-to-id="' . get_the_ID() . '" class="button wampum-connection' . $class . '" href="#">' . $text . '</a></div>';
 	}
 
-	public static function prev_next_connection_links( $connection, $post_id ) {
-		echo self::get_prev_next_connection_links( $connection, $post_id );
+	public function prev_next_connection_links( $connection, $post_id ) {
+		echo $this->get_prev_next_connection_links( $connection, $post_id );
 	}
 
-	public static function get_prev_next_connection_links( $connection, $post_id ) {
+	public function get_prev_next_connection_links( $connection, $post_id ) {
 		// Let's get it started
 		$output = '';
 		// Get parent, previous, and next connected posts
-		$items = self::get_adjacent_items( $connection, $post_id );
+		$items = $this->get_adjacent_items( $connection, $post_id );
 		// Bail if none
 		if ( ! $items ) {
 			return $output;
@@ -361,13 +361,42 @@ class Wampum_Connections {
 		return $output;
 	}
 
-	public static function get_adjacent_items( $connection, $post_id ) {
+	public function get_adjacent_items( $connection, $post_id ) {
 		$items = p2p_type($connection)->get_adjacent_items($post_id);
 		// Bail if none
 		if ( $items ) {
+			// echo '<pre>';
+		 //    print_r($items);
+		 //    echo '</pre>';
 			return $items;
 		}
 		return false;
 	}
+
+	public function get_connected_items( $connection, $object_or_id ) {
+		$connected = get_posts( array(
+			'connected_type'	=> $connection,
+			'connected_items'	=> $object_or_id,
+			'nopaging'			=> true,
+			'suppress_filters'	=> false,
+		) );
+		if ( $connected ) {
+			return $connected;
+		}
+		return false;
+	}
+
+	// public function get_user_connected_items( $connection, $user_object_or_id ) {
+	// 	$items = get_posts( array(
+	// 		'connected_type'	=> $connection,
+	// 		'connected_items'	=> $user_object_or_id,
+	// 		'nopaging'			=> true,
+	// 		'suppress_filters'	=> false,
+	// 	) );
+	// 	if ( $items ) {
+	// 		return $items;
+	// 	}
+	// 	return false;
+	// }
 
 }

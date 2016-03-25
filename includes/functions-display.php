@@ -41,5 +41,5 @@ function wampum_do_step_prev_next_links() {
 	// }
 	// global $wampum_connections;
 	// $content = $wampum_connections->get_prev_next_connection_links( 'programs_to_steps', get_the_ID() );
-	// echo Wampum_Connections::get_prev_next_connection_links( 'programs_to_steps', get_the_ID() );
+	Wampum()->connections->prev_next_connection_links( 'programs_to_steps', get_the_ID() );
 }

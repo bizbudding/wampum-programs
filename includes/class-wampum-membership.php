@@ -90,7 +90,7 @@ final class Wampum_Membership {
 	 * @return bool
 	 */
 	public static function can_view_step( $user_id, $step_id ) {
-		$program_id = Wampum()->content_types->get_step_program_id( $step_id );
+		$program_id = Wampum()->content->get_step_program_id( $step_id );
 		if ( $program_id ) {
 			return wc_memberships_user_can( $user_id, 'view', array( 'post' => $program_id ) );
 		}

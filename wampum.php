@@ -117,7 +117,7 @@ final class Wampum_Setup {
 			self::$instance->setup();
 			// Instantiate Classes
 			self::$instance->account		= Wampum_Account_Page::instance();
-			self::$instance->content_types	= Wampum_Content_Types::instance();
+			self::$instance->content		= Wampum_Content_Types::instance();
 			self::$instance->connections	= Wampum_Connections::instance();
 			self::$instance->membership		= Wampum_Membership::instance();
 			self::$instance->settings 		= Wampum_Settings::instance();

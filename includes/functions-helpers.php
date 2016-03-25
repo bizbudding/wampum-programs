@@ -140,17 +140,17 @@ function wampum_get_template_part( $slug, $name = null, $load = true ) {
 
 function wampum_get_program_steps_list( $program_object_or_id ) {
 	// global $wampum_content_types;
-	return Wampum()->content_types->get_program_steps_list( $program_object_or_id );
+	return Wampum()->content->get_program_steps_list( $program_object_or_id );
 }
 
 function wampum_get_program_steps( $program_object_or_id ) {
 	// global $wampum_content_types;
-	return Wampum()->content_types->get_program_steps( $program_object_or_id );
+	return Wampum()->content->get_program_steps( $program_object_or_id );
 }
 
 function wampum_get_step_program( $step_object_or_id ) {
 	// global $wampum_content_types;
-	return Wampum()->content_types->get_step_program( $step_object_or_id );
+	return Wampum()->content->get_step_program( $step_object_or_id );
 }
 
 function wampum_get_user_programs( $user_id, $args = array() ) {
