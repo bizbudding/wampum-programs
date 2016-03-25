@@ -15,7 +15,7 @@
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:            0.0.5
+ * Version:            0.0.50
  * GitHub Plugin URI:  https://github.com/JiveDig/wampum
  * GitHub Branch:	   master
  */
@@ -28,14 +28,14 @@ if ( ! class_exists( 'Wampum_Setup' ) ) :
 /**
  * Main Wampum_Setup Class.
  *
- * @since 1.4
+ * @since 1.0.0
  */
 final class Wampum_Setup {
 	/** Singleton *************************************************************/
 
 	/**
 	 * @var Wampum_Setup The one true Wampum_Setup
-	 * @since 1.4
+	 * @since 1.0.0
 	 */
 	private static $instance;
 
@@ -200,7 +200,7 @@ final class Wampum_Setup {
 	 * Include required files.
 	 *
 	 * @access private
-	 * @since 1.4
+	 * @since 1.0.0
 	 * @return void
 	 */
 	private function includes() {
