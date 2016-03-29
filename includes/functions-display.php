@@ -12,18 +12,21 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-// add_filter( 'the_content', 'wampum_step_content' );
-function wampum_step_content( $content ) {
-	if ( ! is_main_query() && ! is_singular('wampum_step') ) {
-		return $content;
-	}
-	if ( is_user_logged_in() ) {
-		global $wampum_user_step_progress;
-		$content .= $wampum_user_step_progress->get_step_progress_button( get_the_ID() );
-	}
-	global $wampum_connections;
-	$content .= $wampum_connections->get_prev_next_connection_links( 'programs_to_steps', get_the_ID() );
-	return $content;
+// Force full width content layout
+// add_filter( 'genesis_pre_get_option_site_layout', '__genesis_return_full_width_content' );
+
+// add_action( 'wampum_before_content', 'wampum_before_content_tests' );
+function wampum_before_content_tests() {
+	// if ( ! is_singular('wampum_step') ) {
+	// 	return;
+	// }
+	$object = get_queried_object();
+	// global $wp_query;
+	// p2p_type( 'programs_to_steps' )->each_connected( $wp_query );
+	echo '<pre>';
+    print_r($object);
+    // print_r($object->programs[0]->steps);
+    echo '</pre>';
 }
 
 add_action( 'wampum_after_content', 'wampum_do_step_progress_link' );
@@ -31,15 +34,14 @@ function wampum_do_step_progress_link() {
 	if ( ! is_user_logged_in() && ! is_singular('wampum_step') ) {
 		return;
 	}
+	// echo Wampum()->step_progress->maybe_get_step_progress_link( get_current_user_id(), get_the_ID() );
 	echo Wampum()->step_progress->maybe_get_step_progress_link( get_current_user_id(), get_the_ID() );
 }
 
 add_action( 'wampum_after_content', 'wampum_do_step_prev_next_links' );
 function wampum_do_step_prev_next_links() {
-	// if ( ! is_singular('wampum_step') ) {
-	// 	return $content;
-	// }
-	// global $wampum_connections;
-	// $content = $wampum_connections->get_prev_next_connection_links( 'programs_to_steps', get_the_ID() );
+	if ( ! is_singular('wampum_step') ) {
+		return;
+	}
 	Wampum()->connections->prev_next_connection_links( 'programs_to_steps', get_the_ID() );
 }

@@ -31,29 +31,50 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		// }
 		// Post types to check agains
 		$post_types = array('wampum_program','wampum_step');
-		// Bail if not viewing a step
-		if ( ! in_array(get_post_type(), $post_types) ) {
+		$post_type  = get_post_type();
+		// Bail if not viewing a step or program
+		if ( ! in_array($post_type, $post_types) ) {
 			return;
 		}
 
+		// global $wp_query;
+		$queried_object = get_queried_object();
+		// echo '<pre>';
+	    // var_dump( Wampum()->connections->get_steps_from_program_query( $wp_query ) );
+	    // print_r( $queried_object );
+	    // var_dump( $wp_query->steps );
+	    // echo '</pre>';
 		// Get current post ID
-		$queried_post_id = get_the_ID();
+		// $queried_post_id = get_the_ID();
+		$queried_post_id = $queried_object->ID;
 
-		// Get program
-		if ( 'wampum_program' === get_post_type() ) {
-			$program_id = $queried_post_id;
-		} else {
-			// Get the program this step is from
-			$program_id = Wampum()->content->get_step_program_id( $queried_post_id );
-			// $program_id = 405;
+		// // Get program
+		// if ( 'wampum_program' === get_post_type() ) {
+		// 	$program_id = $queried_post_id;
+		// } else {
+		// 	// Get the program this step is from
+		// 	$program_id = Wampum()->content->get_step_program_id( $queried_post_id );
+		// 	// $program_id = 405;
+		// }
+		// // Get all steps from program
+		// $steps = Wampum()->content->get_program_steps( $program_id );
+
+		$program_id = $steps = '';
+
+		if ( 'wampum_program' === $post_type ) {
+			$program_id	= $queried_post_id;
+			$steps		= Wampum()->connections->get_steps_from_program_query( $queried_object );
+		} elseif ( 'wampum_step' === $post_type ) {
+			// $program_id	= Wampum()->content->get_step_program_id( $queried_post_id );
+			$program_id	= Wampum()->connections->get_program_from_step_query( $queried_object )->ID;
+			$steps		= Wampum()->connections->get_steps_from_step_query( $queried_object );
 		}
-		// Get all steps from program
-		$steps = Wampum()->content->get_program_steps( $program_id );
 
-		// Bail no steps
-		if ( ! $steps ) {
+		// Bail no program or steps
+		if ( ! $program_id || ! $steps ) {
 			return;
 		}
+
 
 		$completed_ids = array();
 
@@ -89,7 +110,6 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 				}
 				// Add class if step is completed
 				if ( in_array($step->ID, $completed_ids) ) {
-				// if ( Wampum_Connections::connection_exists( 'user_step_progress', get_current_user_id(), $step->ID ) ) {
 					$classes .= ' completed';
 				}
 				echo '<li class="' . $classes . '"><a href="' . get_the_permalink( $step ) . '" title="' . get_the_title( $step ) . '">' . get_the_title( $step ) . '</a></li>';

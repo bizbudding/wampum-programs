@@ -55,7 +55,7 @@ final class Wampum_Setup {
 	 *
 	 * @var object | Wampum_Content_Types
 	 */
-	public $content_types;
+	public $content;
 
 	/**
 	 * Wampum Connections Object

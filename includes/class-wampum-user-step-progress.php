@@ -84,16 +84,8 @@ final class Wampum_User_Step_Progress extends P2P_Restful_Connection {
      * @return array
      */
 	public function additional_ajax_data() {
-		// return array(
-		// 	'connect_text'   => $this->link_connect_text,
-		// 	'connected_text' => $this->link_connected_text,
-		// );
-		// if ( ! $this->is_step_progress_page() ) {
-			// return array();
-		// }
-		// step_id
+		// return;
 		return $this->get_connection_text( $this->to );
-		// return self::get_step_progress_connected_text( get_the_ID() );
 	}
 
 	/**
@@ -110,11 +102,26 @@ final class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 		if ( ! is_user_logged_in() ) {
 			return;
 		}
-		$step_program_id = Wampum()->content->get_step_program_id( $to );
-		if ( ! $this->is_step_progress_enabled( $step_program_id ) ) {
+		// Get step program
+		$program = Wampum()->connections->get_program_from_step_query( get_queried_object() );
+		if ( ! $program ) {
 			return;
 		}
-		echo $this->get_step_progress_link( $from, $to );
+		// Get settings
+		$settings = Wampum()->settings->get_step_progress_settings( $program->ID );
+		// Bail if not what we need
+		if ( ! $settings || ! array_key_exists( 'enabled', $settings ) ) {
+			return;
+		}
+		// Bail if step progress link is not enabled
+		if ( 'yes' !== $settings['enabled'] ) {
+			return;
+		}
+		// Get text
+		$connect    = ! empty($settings['connect_text']) ? sanitize_text_field($settings['connect_text']) : __( 'Mark Complete', 'wampum' );
+		$connected  = ! empty($settings['connected_text']) ? sanitize_text_field($settings['connected_text']) : __( 'Completed', 'wampum' );
+		// Return the link, via parent class method
+		return $this->get_link( $from, $to, $connect, $connected );
 	}
 
 	/**
@@ -127,14 +134,18 @@ final class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 	 *
 	 * @return string connection link with data attributes for from/to
 	 */
-	public function get_step_progress_link( $from, $to ) {
-		$text = $this->get_connection_text( $to );
-		return $this->get_link( $from, $to, $text['connect_text'], $text['connected_text'] );
-	}
+	// public function get_step_progress_link( $from, $to ) {
+	// 	$text = $this->get_connection_text( $to );
+	// 	return $this->get_link( $from, $to, $text['connect_text'], $text['connected_text'] );
+	// }
 
-	public function get_connection_text( $step_id ) {
-		$program_id = Wampum()->content->get_step_program_id( $step_id );
-		$settings   = Wampum()->settings->get_step_progress_settings( $program_id );
+	public function get_connection_text( $queried_object ) {
+		$program = Wampum()->connections->get_program_from_step_query( get_queried_object() );
+		if ( ! $program ) {
+			// Must be array for additional_ajax_data()
+			return array();
+		}
+		$settings   = Wampum()->settings->get_step_progress_settings( $program->ID );
 		$connect    = ! empty($settings['connect_text']) ? sanitize_text_field($settings['connect_text']) : __( 'Mark Complete', 'wampum' );
 		$connected  = ! empty($settings['connected_text']) ? sanitize_text_field($settings['connected_text']) : __( 'Completed', 'wampum' );
 		return array(
@@ -144,10 +155,9 @@ final class Wampum_User_Step_Progress extends P2P_Restful_Connection {
 	}
 
 	public function is_step_progress_enabled( $program_id ) {
-		$enabled = Wampum()->settings->get_step_progress_settings( $program_id );
-		// piklist::pre($enabled);
-		if ( $enabled && isset($enabled['enabled']) ) {
-			if ( 'yes' === $enabled['enabled'] ) {
+		$settings = Wampum()->settings->get_step_progress_settings( $program_id );
+		if ( $settings && array_key_exists( 'enabled', $settings ) ) {
+			if ( 'yes' === $settings['enabled'] ) {
 				return true;
 			}
 		}

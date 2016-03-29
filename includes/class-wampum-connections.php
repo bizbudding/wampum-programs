@@ -38,10 +38,14 @@ class Wampum_Connections {
 	}
 
 	function init() {
-		add_action( 'p2p_init', 			 array( $this, 'register_p2p_connections') );
+		add_action( 'p2p_init', 			 array( $this, 'register_p2p_connections' ) );
+		add_action( 'get_header',			 array( $this, 'step_query_connections' ) );
+		add_action( 'get_header',			 array( $this, 'program_query_connections' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 		add_action( 'piklist_save_field-connect_resource_to_step', array( $this, 'connect_resource_to_step' ), 10, 1 );
+		// Plugins | Filters
+		add_filter( 'wpseo_breadcrumb_links', array( $this, 'program_in_yoast_breadcrumbs' ), 10, 1 );
 	}
 
 	/**
@@ -68,10 +72,8 @@ class Wampum_Connections {
 	        'admin_column'   => true,
 	        'admin_dropdown' => true,
 	        'title'          => array(
-	            // 'from' => Wampum_Content_Types::plural_name('wampum_step'),
 	            'from' => Wampum_Content_Types::plural_name('wampum_step'),
 	            'to'   => Wampum_Content_Types::singular_name('wampum_program'),
-	            // 'to'   => 'Program Steps',
 	        ),
 	        'from_labels' => array(
 	            'singular_name' => Wampum_Content_Types::plural_name('wampum_program'),
@@ -185,6 +187,55 @@ class Wampum_Connections {
 	        'admin_dropdown' => false,
 	    ) );
 
+	}
+
+	public function get_steps_from_program_query( $queried_object ) {
+		return $queried_object->steps ? $queried_object->steps : false;
+	}
+
+	public function get_steps_from_step_query( $queried_object ) {
+		$step_program = $this->get_program_from_step_query($queried_object);
+		return $step_program->steps ? $step_program->steps : false;
+	}
+
+	public function get_program_from_step_query( $queried_object ) {
+		return $queried_object->programs ? $queried_object->programs[0] : false;
+	}
+
+	/**
+	 * Add program(s) to step query
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return object default wp_query
+	 */
+	public function step_query_connections() {
+		if ( ! is_singular( 'wampum_step' ) ) {
+			return;
+		}
+		global $wp_query, $post;
+		p2p_type( 'programs_to_steps' )->each_connected( $wp_query, array(), 'programs' );
+		while ( $wp_query->have_posts() ) : $wp_query->the_post();
+		    // Another level of nesting
+		    p2p_type( 'programs_to_steps' )->each_connected( $post->programs, array(), 'steps' );
+		    // Reset
+		    wp_reset_postdata();
+		endwhile;
+	}
+
+	/**
+	 * Add steps to program query
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return object default wp_query
+	 */
+	public function program_query_connections() {
+		if ( ! is_singular( 'wampum_program' ) ) {
+			return;
+		}
+		global $wp_query;
+		p2p_type( 'programs_to_steps' )->each_connected( $wp_query, array(), 'steps' );
 	}
 
 	/**
@@ -384,6 +435,25 @@ class Wampum_Connections {
 			return $connected;
 		}
 		return false;
+	}
+
+	// https://gist.github.com/QROkes/62e07eb167089c366ab9
+	public function program_in_yoast_breadcrumbs( $links ) {
+		// Bail if not singular step
+		if ( ! is_singular('wampum_step') ) {
+			return $links;
+		}
+		// Get step program
+		$step_program = Wampum()->connections->get_program_from_step_query( get_queried_object() );
+		if ( $step_program ) {
+		    $new[] = array(
+		        'url'  => get_the_permalink( $step_program->ID ),
+		        'text' => get_the_title( $step_program->ID ),
+		    );
+		    // Remove middle item and add our new one in its place
+		    array_splice( $links, 1, -1, $new );
+		}
+	    return $links;
 	}
 
 	// public function get_user_connected_items( $connection, $user_object_or_id ) {
