@@ -1,3 +1,8 @@
+#### 0.0.52
+* So much new, i'm terrible at changelogs
+* Connection data in main $wp_query for more efficient calls to get steps and step program
+* Yoast in breadcrumbs
+
 #### 0.0.41
 * Step progress now available per program
 * Refined p2p connection code
