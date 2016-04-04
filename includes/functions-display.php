@@ -42,7 +42,5 @@ function wampum_do_step_prev_next_links() {
 	if ( ! is_singular('wampum_step') ) {
 		return;
 	}
-	global $post;
-	// Wampum()->connections->prev_next_connection_links( 'programs_to_steps', get_the_ID() );
-	Wampum()->connections->prev_next_connection_links( 'programs_to_steps', $post->ID );
+	Wampum()->connections->prev_next_connection_links( 'programs_to_steps', get_the_ID() );
 }
