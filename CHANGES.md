@@ -1,3 +1,6 @@
+#### 0.0.55
+* Add isset() check when attempting to add data to $wp_query
+
 #### 0.0.54
 * Super refined prev/next connection links queries on all wampum singular pages
 
