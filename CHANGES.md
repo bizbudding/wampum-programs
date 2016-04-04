@@ -1,3 +1,9 @@
+#### 0.0.54
+* Super refined prev/next connection links queries on all wampum singular pages
+
+#### 0.0.53
+* Fix for wampum queries running on home page (and every page?)
+
 #### 0.0.52
 * So much new, i'm terrible at changelogs
 * Connection data in main $wp_query for more efficient calls to get steps and step program
