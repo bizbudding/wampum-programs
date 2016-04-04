@@ -75,11 +75,12 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 */
 		public function __construct() {
 			add_action( 'rest_api_init', array( $this, 'register_rest_endpoint' ) );
-			add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'register_script' ) );
 		}
 
 		public function get_link( $from, $to, $link_connect_text, $link_connected_text ) {
 			$this->enqueue_scripts();
+			$this->localize_script();
 			return $this->get_connection_link( $this->connection_name, $from, $to, $link_connect_text, $link_connected_text );
 		}
 
@@ -104,8 +105,18 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 *
 		 * @return void
 	     */
-	    public function register_scripts() {
+	    public function register_script() {
 	        wp_register_script(  $this->connection_name, $this->script_url, array('jquery'), '1.0.0', true );
+	    }
+
+	    /**
+	     * Localize script to pass php data to js
+	     *
+		 * @since  1.0.0
+		 *
+		 * @return void
+	     */
+	    public function localize_script() {
 	        wp_localize_script( $this->connection_name, 'restful_p2p_connection_vars', $this->get_ajax_data() );
 	    }
 

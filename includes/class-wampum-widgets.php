@@ -39,7 +39,6 @@ final class Wampum_Widgets {
 	}
 
 	public function init() {
-		// require_once('widgets/class-wampum-widget-program-steps.php');
 		// Register our new widget
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 	}

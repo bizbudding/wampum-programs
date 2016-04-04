@@ -84,7 +84,6 @@ final class Wampum_User_Step_Progress extends P2P_Restful_Connection {
      * @return array
      */
 	public function additional_ajax_data() {
-		// return;
 		return $this->get_connection_text( $this->to );
 	}
 

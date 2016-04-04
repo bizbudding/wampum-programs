@@ -25,46 +25,30 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 
-		// Bail if not viewing a step
-		// if ( 'wampum_step' !== get_post_type() ) {
-			// return;
-		// }
 		// Post types to check agains
-		$post_types = array('wampum_program','wampum_step');
-		$post_type  = get_post_type();
+		// $post_types = array('wampum_program','wampum_step');
+		// $post_type  = get_post_type();
 		// Bail if not viewing a step or program
-		if ( ! in_array($post_type, $post_types) ) {
+		// if ( ! in_array($post_type, $post_types) ) {
+		// 	return;
+		// }
+
+		if ( ! is_singular( array('wampum_program','wampum_step') ) ) {
 			return;
 		}
 
 		// global $wp_query;
-		$queried_object = get_queried_object();
-		// echo '<pre>';
-	    // var_dump( Wampum()->connections->get_steps_from_program_query( $wp_query ) );
-	    // print_r( $queried_object );
-	    // var_dump( $wp_query->steps );
-	    // echo '</pre>';
-		// Get current post ID
-		// $queried_post_id = get_the_ID();
+		$queried_object  = get_queried_object();
 		$queried_post_id = $queried_object->ID;
-
-		// // Get program
-		// if ( 'wampum_program' === get_post_type() ) {
-		// 	$program_id = $queried_post_id;
-		// } else {
-		// 	// Get the program this step is from
-		// 	$program_id = Wampum()->content->get_step_program_id( $queried_post_id );
-		// 	// $program_id = 405;
-		// }
-		// // Get all steps from program
-		// $steps = Wampum()->content->get_program_steps( $program_id );
 
 		$program_id = $steps = '';
 
-		if ( 'wampum_program' === $post_type ) {
+		// if ( 'wampum_program' === $post_type ) {
+		if ( is_singular('wampum_program') ) {
 			$program_id	= $queried_post_id;
 			$steps		= Wampum()->connections->get_steps_from_program_query( $queried_object );
-		} elseif ( 'wampum_step' === $post_type ) {
+		// } elseif ( 'wampum_step' === $post_type ) {
+		} elseif ( is_singular('wampum_step') ) {
 			// $program_id	= Wampum()->content->get_step_program_id( $queried_post_id );
 			$program_id	= Wampum()->connections->get_program_from_step_query( $queried_object )->ID;
 			$steps		= Wampum()->connections->get_steps_from_step_query( $queried_object );
@@ -74,7 +58,6 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		if ( ! $program_id || ! $steps ) {
 			return;
 		}
-
 
 		$completed_ids = array();
 
