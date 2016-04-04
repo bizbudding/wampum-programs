@@ -346,6 +346,10 @@ final class Wampum_Setup {
 	 * @return string the content with any additional data attached
 	 */
 	function before_content( $content ) {
+		// if ( is_singular(array('wampum_program','wampum_step','wampum_resource') ) && is_main_query() ) {
+		if ( ! is_main_query() ) {
+			return $content;
+		}
 		ob_start();
 		do_action( 'wampum_before_content' );
 		$content = ob_get_clean() . $content;
@@ -365,6 +369,10 @@ final class Wampum_Setup {
 	 * @return string the content with any additional data attached
 	 */
 	function after_content( $content ) {
+		// if ( is_singular(array('wampum_program','wampum_step','wampum_resource') ) && is_main_query() ) {
+		if ( ! is_main_query() ) {
+			return $content;
+		}
 		ob_start();
 		do_action( 'wampum_after_content' );
 		$content .= ob_get_clean();
