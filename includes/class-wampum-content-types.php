@@ -95,7 +95,7 @@ final class Wampum_Content_Types {
 			'rewrite' => array(
 		        'permastruct' => $this->get_program_base_slug() . '/%wampum_program%',
 		    ),
-			'supports' => apply_filters( 'wampum_program_supports', array('title','editor','thumbnail','genesis-cpt-archives-settings') ),
+			'supports' => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
 	    ), $this::default_names()[$program] );
 
 	    // Steps
@@ -103,7 +103,7 @@ final class Wampum_Content_Types {
 	    register_extended_post_type( $step, array(
 			'enter_title_here'	=> 'Enter ' . $this->singular_name($step) . ' Name',
 			'menu_icon'			=> 'dashicons-feedback',
-			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','thumbnail','genesis-cpt-archives-settings') ),
+			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
 			'rewrite' => array(
 		        'permastruct' => $this->get_program_base_slug() . '/%wampum_step_program%/%wampum_step%',
 		    ),
@@ -121,7 +121,7 @@ final class Wampum_Content_Types {
 	    register_extended_post_type( $resource, array(
 			'enter_title_here'	=> 'Enter ' . $this->singular_name($resource) . ' Name',
 			'menu_icon'			=> 'dashicons-feedback',
-			'supports'			=> apply_filters( $resource . '_supports', array('title','editor','genesis-cpt-archives-settings') ),
+			'supports'			=> apply_filters( $resource . '_supports', array('title','editor','excerpt','genesis-cpt-archives-settings') ),
 	    ), $this::default_names()[$resource] );
 
 	}
