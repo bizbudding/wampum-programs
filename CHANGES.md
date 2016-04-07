@@ -1,3 +1,6 @@
+#### 0.0.56
+* Add excerpt support for wampum post types
+
 #### 0.0.55
 * Add isset() check when attempting to add data to $wp_query
 
