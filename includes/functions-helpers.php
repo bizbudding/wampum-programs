@@ -10,6 +10,32 @@
  */
 
 /**
+ * Helper function to get the excerpt with max character length
+ * Example: the_excerpt_max_charlength(140);
+ *
+ * @param  $charlength the amount of characters to include
+ * @return string
+ */
+function wampum_get_truncated_content( $content, $charlength ) {
+
+	$charlength++;
+
+	if ( mb_strlen( $content ) > $charlength ) {
+		$subex	 = mb_substr( $content, 0, $charlength - 5 );
+		$exwords = explode( ' ', $subex );
+		$excut	 = - ( mb_strlen( $exwords[ count( $exwords ) - 1 ] ) );
+		if ( $excut < 0 ) {
+			return mb_substr( $subex, 0, $excut ) . '[&hellip;]';
+		} else {
+			return $subex . '[&hellip;]';
+		}
+		return '[&hellip;]';
+	} else {
+		return $content;
+	}
+}
+
+/**
  * Check if current user can view a specific 'wampum_step'
  *
  * @since  1.0.0
