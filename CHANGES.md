@@ -1,3 +1,6 @@
+#### 0.0.60
+* Cleanup template
+
 #### 0.0.59
 * Account programs bottom margin
 
