@@ -86,9 +86,6 @@
 .post-item .button {
 	-webkit-align-self: center;-ms-flex-item-align: center;align-self: center;
 	background-color: #31e2ad;
-	font-size: 13px;
-	padding: 4px 12px;
-	margin: 6px 3px;
 }
 
 .post-item .button:hover {

@@ -221,6 +221,7 @@ if ( ! class_exists( 'JiveDig_Content_Swap' ) )  {
 					$output .= '</a>';
 				$output .= '</li>';
 			}
+			$output .= '<li class="menu-item logout"><a href="' . wp_logout_url(get_permalink()) . '">Logout</a></li>';
 			$output .= '</ul>';
 			// Return the menu
 			return $output;
