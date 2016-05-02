@@ -1,3 +1,6 @@
+#### 0.0.61
+* Add logout link to my account nav
+
 #### 0.0.60
 * Cleanup template
 
