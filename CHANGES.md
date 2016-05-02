@@ -1,3 +1,6 @@
+#### 0.0.59
+* Account programs bottom margin
+
 #### 0.0.58
 * Remove Flexgrid - should be in theme instead. New programs.php template
 

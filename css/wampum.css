@@ -21,7 +21,8 @@
 	display: -webkit-flex;display: -ms-flexbox;display: flex;
 }
 
-.my-post {
+.my-post,
+.entry-content .my-post {
 	padding: 5px;
 	margin-bottom: -1px;
 	border: 1px solid #e4e4e4;
