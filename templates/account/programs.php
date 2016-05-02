@@ -22,8 +22,6 @@ if ( ! $programs ) {
 
 		foreach ( $programs as $program ) {
 
-			// piklist::pre($program);
-
 			$image_size = apply_filters('wampum_account_programs_image_size', 'thumbnail');
 
 			$image = '';
@@ -42,7 +40,6 @@ if ( ! $programs ) {
 				echo '</span>';
 				echo '<span class="post-item post-actions"><a class="button" href="' . get_permalink( $program->ID ) . '">View</a></span>';
 			echo '</li>';
-
 		}
 
 	echo '</ul>';

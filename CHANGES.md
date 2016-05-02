@@ -1,3 +1,6 @@
+#### 0.0.62
+* Fix get_programs method in memberships class
+
 #### 0.0.61
 * Add logout link to my account nav
 

@@ -46,38 +46,34 @@ final class Wampum_Membership {
 	 *                            use one of 'term_id', 'name', etc (defaults to entire term object)
 	 * @return array
 	 */
-	public function get_programs( $user_id, $data = 'object' ) {
-	// public function get_programs( $user_id ) {
-
-		$programs = get_terms('wampum_program');
-
-		if ( ! $programs ) {
-			return;
+	public function get_programs( $user_id ) {
+		$memberships = wampum_get_user_memberships( $user_id );
+		// Bail if no memberships
+		if ( ! $memberships ) {
+			return false;
 		}
-
-	    foreach ( $programs as $program ) {
-	    	// Get program rules
-	        $rules = wc_memberships()->rules->get_taxonomy_term_content_restriction_rules( 'wampum_program', $program->term_id );
-	        // If no rules, skip this term and move on to the next
-	        if ( ! $rules ) {
-	            // continue;
-	        }
-	        // For each rule add the available object id's to the object_ids array
-	        foreach ( $rules as $rule ) {
-	            // get the membership plan object
-	            $membership_plan = wc_memberships_get_membership_plan( $rule->get_membership_plan_id() );
-	            // check whether the current user has access to the membership plan
-	            $access = wc_memberships_is_user_active_member( $user_id, $membership_plan );
-	            // if the user has access assign the ID to the object ID array
-	            if ( $access ) {
-	                $member_programs[] = $program;
-	                // At least one rule gives access, move on to the next
-	                // continue;
-	            }
-	        }
-
-	    }
-	    return $member_programs;
+		// Set programs as empty array
+		$programs = array();
+		// Loop through memberships
+		foreach ( $memberships as $membership ) {
+			$content = $membership->get_plan()->get_restricted_content();
+			// Bail if no content
+			if ( ! $content ) {
+				return false;
+			}
+			foreach ( $content->posts as $post ) {
+				// Skip if not a program
+				if ( $post->post_type != 'wampum_program' ) {
+					continue;
+				}
+				// Skip if already in our program array
+				if ( in_array( $post, $programs ) ) {
+					continue;
+				}
+				$programs[] = $post;
+			}
+		}
+		return $programs;
 	}
 
 	/**
@@ -107,7 +103,7 @@ final class Wampum_Membership {
 	 *
 	 * @return bool
 	 */
-	public static function can_view( $user_id, $post_id ) {
+	public static function can_view_post( $user_id, $post_id ) {
 		// if ( ! is_user_logged_in() ) {
 		// 	return false;
 		// }

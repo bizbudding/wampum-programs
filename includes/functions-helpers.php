@@ -57,8 +57,8 @@ function wampum_user_can_view_step( $user_id, $step_id ) {
  *
  * @return bool
  */
-function wampum_user_can_view( $user_id, $post_id ) {
-	return Wampum()->membership->can_view( $user_id, $post_id );
+function wampum_user_can_view_post( $user_id, $post_id ) {
+	return Wampum()->membership->can_view_post( $user_id, $post_id );
 }
 
 /**
@@ -179,37 +179,8 @@ function wampum_get_step_program( $step_object_or_id ) {
 	return Wampum()->content->get_step_program( $step_object_or_id );
 }
 
-function wampum_get_user_programs( $user_id, $args = array() ) {
-	// $args = array(
-	// 	'posts_per_page'   => 5,
-	// 	'offset'           => 0,
-	// 	'category'         => '',
-	// 	'category_name'    => '',
-	// 	'orderby'          => 'date',
-	// 	'order'            => 'DESC',
-	// 	'include'          => '',
-	// 	'exclude'          => '',
-	// 	'meta_key'         => '',
-	// 	'meta_value'       => '',
-	// 	'post_type'        => 'post',
-	// 	'post_mime_type'   => '',
-	// 	'post_parent'      => '',
-	// 	'author'	   => '',
-	// 	'post_status'      => 'publish',
-	// 	'suppress_filters' => true
-	// );
-	$args['post_type'] = 'wampum_program';
-	$posts = get_posts( $args );
-	if ( ! $posts ) {
-		return;
-	}
-	$programs = array();
-	foreach ( $posts as $post ) {
-		if ( wampum_user_can_view( $user_id, $post->ID ) ) {
-			$programs[] = $post;
-		}
-	}
-	return $programs;
+function wampum_get_user_programs( $user_id ) {
+	return Wampum()->membership->get_programs( $user_id );
 }
 
 // function wampum_get_connection_button( $type, $from, $to, $text_connected, $text_disconnected ) {
