@@ -40,8 +40,7 @@ if ( isset($_GET['order']) ) {
 	}
 
 	// Back to all orders notice
-	global $wampum_account_page;
-	$message = '<a href="' . $wampum_account_page->get_menu_item_url('orders') . '">' . __( 'Back to all orders', 'wampum' ) . '</a>';
+	$message = '<a href="' . Wampum()->account->get_menu_item_url('orders') . '">' . __( 'Back to all orders', 'wampum' ) . '</a>';
 	wc_print_notice( $message, 'notice' );
 
 	wc_get_template( 'myaccount/view-order.php', array(
