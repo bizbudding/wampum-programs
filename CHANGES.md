@@ -1,3 +1,6 @@
+#### 0.0.57
+* Update Flexgrid to v1.2.1, fix method error in orders.php template
+
 #### 0.0.56
 * Add excerpt support for wampum post types
 
