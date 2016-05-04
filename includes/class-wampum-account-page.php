@@ -189,7 +189,7 @@ add_action( 'get_header', function() {
 });
 // Add custom body class to the head
 function wampum_do_account_page_body_class($classes) {
-	$classes[] = 'woocommerce';
+	$classes[] = 'wampum-account woocommerce';
 	return $classes;
 }
 // Add Account page menu/content

@@ -88,6 +88,7 @@ class Wampum_Connections {
 	            'not_found'     => __( 'No items found.', 'wampum' ),
 	            'create'        => __( 'Connect to ', 'wampum' ) . Wampum_Content_Types::singular_name('wampum_step'),
 	        ),
+	        'fields' => apply_filters( 'wampum_programs_to_steps_connection_fields', array() ),
 	    ) );
 
 	    // RESOURCES TO STEPS
@@ -119,6 +120,7 @@ class Wampum_Connections {
 	            'not_found'     => __( 'No items found.', 'wampum' ),
 	            'create'        => __( 'Connect a ', 'wampum' ) . Wampum_Content_Types::singular_name('wampum_resource'),
 	        ),
+	        'fields' => apply_filters( 'wampum_steps_to_resources_connection_fields', array() ),
 	    ) );
 
 	    // RESOURCES TO PROGRAMS
@@ -150,6 +152,7 @@ class Wampum_Connections {
 	            'not_found'     => __( 'No items found.', 'wampum' ),
 	            'create'        => __( 'Connect to ', 'wampum' ) . Wampum_Content_Types::singular_name('wampum_resource'),
 	        ),
+	        'fields' => apply_filters( 'wampum_programs_to_resources_connection_fields', array() ),
 	    ) );
 
 	    // USERS TO STEPS (incomplete/complete or viewed)

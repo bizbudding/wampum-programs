@@ -1,3 +1,6 @@
+#### 0.0.63
+* Set all wampum post types has_archive to false with a filter to change
+
 #### 0.0.62
 * Fix get_programs method in memberships class
 
