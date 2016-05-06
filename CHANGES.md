@@ -1,3 +1,7 @@
+#### 0.0.64
+* Fix action links in account
+* Fix accidental display of restricted programs in account and via single post
+
 #### 0.0.63
 * Set all wampum post types has_archive to false with a filter to change
 
