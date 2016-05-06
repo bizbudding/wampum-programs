@@ -30,6 +30,7 @@ final class Wampum_Membership {
 			// Setup the setup
 			self::$instance = new Wampum_Membership;
 			self::$instance->init();
+			self::$instance->redirects();
 		}
 		return self::$instance;
 	}
@@ -40,6 +41,11 @@ final class Wampum_Membership {
 		 */
 		add_filter( 'wc_memberships_my_memberships_column_names', array( $this, 'wampum_account_membership_action_links' ), 10, 1 );
 		add_action( 'wc_memberships_my_memberships_column_wampum-membership-actions', array( $this, 'wampum_do_membership_template_action_buttons' ) );
+	}
+
+	public function redirects() {
+		// Redirect to testimonials archive if trying to access single testimonial
+		add_action( 'template_redirect', array( $this, 'access_redirect' ) );
 	}
 
 	public function wampum_account_membership_action_links( $names ) {
@@ -76,6 +82,42 @@ final class Wampum_Membership {
 				} );
 			} );
 		");
+	}
+
+	/**
+	 * Redirect steps/programs if they are restricted and user doesn't have access
+	 *
+	 * @return void
+	 */
+	public function access_redirect() {
+	    if ( ! is_user_logged_in() ) {
+	    	return;
+	    }
+	    if ( ! is_singular( array( 'wampum_program','wampum_step') ) ) {
+	    	return;
+	    }
+
+    	$post_id = get_the_ID();
+	    if ( is_singular('wampum_step') ) {
+	    	$post_id = Wampum()->content->get_step_program_id( get_queried_object() );
+	    }
+
+	    // Bail if the program is not restricted at all
+	    if ( ! Wampum()->membership->is_post_content_restricted( $post_id ) ) {
+	    	return;
+	    }
+
+	    $post_object = get_post($post_id);
+
+	    $user_id  = get_current_user_id();
+	    $programs = $this->get_programs( $user_id );
+
+	    // Get out of there, you don't have access!
+	    if ( ! in_array( $post_object, $programs ) ) {
+		    wp_redirect( home_url() );
+		    exit();
+	    }
+	    return;
 	}
 
 	/**
@@ -130,7 +172,21 @@ final class Wampum_Membership {
 	}
 
 	/**
+	 * Check if a post/page content is restricted
+	 * Should work on all post types
+	 *
+	 * From wc-memberships-template-functions.php
+	 *
+	 * @param 	int   $post_id Optional. Defaults to current post
+	 * @return 	bool  True, if content has restriction rules, false otherwise
+	 */
+	public function is_post_content_restricted( $post_id ) {
+		return wc_memberships_is_post_content_restricted( $post_id );
+	}
+
+	/**
 	 * Get membership actions
+	 * Used in /templates/account/memberships.php
 	 *
 	 * Code taken from Woo Memberships wc-memberships-template-functions.php
 	 *
@@ -163,7 +219,7 @@ final class Wampum_Membership {
 	}
 
 	/**
-	 * THIS IS NOT WORKING - TESTED IN /templates/account/memberships-custom.php
+	 * THIS IS NOT WORKING AND CURRENTLY NOT USED - TESTED IN /templates/account/memberships-custom.php
 	 * Get membership subscription
 	 * Check if ( class_exists('WC_Subscriptions') ) before using this, I think?
 	 *
@@ -173,9 +229,9 @@ final class Wampum_Membership {
 	public function get_membership_subscription_column( WC_Memberships_User_Membership $membership ) {
 		// $subscription = wc_memberships()->user_memberships->subscriptions->get_user_membership_subscription( $membership->get_id() );
 		$subscription = WC_Memberships_Integration_Subscriptions()->get_user_membership_subscription( $membership->get_id() );
-		echo '<pre>';
-	    print_r($subscription);
-	    echo '</pre>';
+		// echo '<pre>';
+	    // print_r($subscription);
+	    // echo '</pre>';
 		if ( $subscription && in_array( $membership->get_status(), array( 'active', 'free_trial' ) ) ) {
 			$next_payment = $subscription->get_time( 'next_payment' );
 		}
@@ -190,7 +246,22 @@ final class Wampum_Membership {
 		return $output;
 	}
 
+	public static function can_view_program( $user_id, $program_id ) {
+		$programs = $this->get_programs( $user_id );
+		if ( ! $programs ) {
+			return false;
+		}
+		foreach ( $programs as $program ) {
+			if ( $program->ID == $program_id ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
+	 * NOT WORKING AND NOT USED
+	 *
 	 * Check if current user can view a specific post/cpt
 	 *
 	 * @since  1.0.0
@@ -200,12 +271,9 @@ final class Wampum_Membership {
 	 * @return bool
 	 */
 	public static function can_view_step( $user_id, $step_id ) {
-		// $program_id = Wampum()->content->get_step_program_id( $step_id );
-		$program  = Wampum()->connections->get_program_from_step_query( get_queried_object() );
-		if ( $program ) {
-			return wc_memberships_user_can( $user_id, 'view', array( 'post' => $program->ID ) );
-		}
-		return false;
+		$step = get_post($step_id);
+		$program = '';
+		return;
 	}
 
 	/**
