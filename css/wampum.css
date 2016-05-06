@@ -13,35 +13,35 @@
     border-radius: 3px;
 }
 
-.my-posts {
+.account-items {
 }
 
-.my-post-heading,
-.my-post {
+.account-heading,
+.account-item {
 	display: -webkit-flex;display: -ms-flexbox;display: flex;
 }
 
-.my-post,
-.entry-content .my-post {
+.account-item,
+.entry-content .account-item {
 	padding: 5px;
 	margin-bottom: -1px;
 	border: 1px solid #e4e4e4;
 }
 
-.my-post:first-child {
+.account-item:first-child {
 	border-radius: 3px 3px 0 0;
 }
 
-.my-post:last-child {
+.account-item:last-child {
 	border-radius: 0 0 3px 3px;
 }
 
-.post-heading {
+.account-heading {
 	font-weight: 600;
 }
 
-.post-heading,
-.post-item {
+/* .account-heading, */
+.item-col {
 	display: -webkit-flex;display: -ms-flexbox;display: flex;
 	-webkit-flex-direction: column;-ms-flex-direction: column;flex-direction: column;
 	-webkit-justify-content: center;-ms-flex-pack: center;justify-content: center;
@@ -49,65 +49,65 @@
 	padding: 8px;
 }
 
-.post-heading.post-image,
-.post-item.post-image {
+/* .account-heading.item-image, */
+.item-col.item-image {
 	min-width: 120px;
 	max-width: 120px;
 	text-align: center;
 }
 
-.post-item.post-image img {
+.item-col.item-image img {
 	display: block;
 	padding: 0;
 	margin: 0;
 	vertical-align: middle;
 }
 
-.post-heading.post-content,
-.post-item.post-content {
+/* .account-heading.item-content, */
+.item-col.item-content {
 	-webkit-flex-grow: 2;-ms-flex-positive: 2;flex-grow: 2;
 	color: #2f353e;
 }
 
-.post-item.post-content a {
+.item-col.item-content a {
 	color: #515151;
 	font-size: 20px;
 	font-weight: bold;
 }
 
-.entry-content .post-content a:hover {
+.entry-content .item-content a:hover {
 	color: #31e2ad;
 }
 
-.post-item.post-actions {
+.item-col.item-actions {
 	-webkit-justify-content: right;-ms-flex-pack: right;justify-content: right;
 }
 
-.post-item .button {
+.item-col .button {
 	-webkit-align-self: center;-ms-flex-item-align: center;align-self: center;
 	background-color: #31e2ad;
 }
 
-.post-item .button:hover {
+.item-col .button:hover {
 	background-color: #1cc492;
 }
 
 @media only screen and (max-width: 768px) {
 
-	.post-heading {
+	.account-heading {
 		display: none;
 		visibility: hidden;
 	}
 
-	.my-post,
-	.post-item {
+	.account-item,
+	.item-col {
 		display: block;
 		width: 100%;
 	}
-	.post-item.post-content a {
+	.item-col.item-content a {
 		display: block;
 	}
-	.post-item.post-actions {
+	.item-col.item-actions {
 		text-align: left;
 	}
 

@@ -29,15 +29,57 @@ final class Wampum_Membership {
 		if ( ! isset( self::$instance ) ) {
 			// Setup the setup
 			self::$instance = new Wampum_Membership;
+			self::$instance->init();
 		}
 		return self::$instance;
 	}
 
+	public function init() {
+		/**
+		 * @uses  /woocommerce-memberships/includes/wc-memberships-template-functions.php
+		 */
+		add_filter( 'wc_memberships_my_memberships_column_names', array( $this, 'wampum_account_membership_action_links' ), 10, 1 );
+		add_action( 'wc_memberships_my_memberships_column_wampum-membership-actions', array( $this, 'wampum_do_membership_template_action_buttons' ) );
+	}
+
+	public function wampum_account_membership_action_links( $names ) {
+		// return $default_actions;
+		// echo '<pre>';
+	    // print_r($names);
+	    // echo '</pre>';
+		unset($names['membership-actions']);
+		$names['wampum-membership-actions'] = 'Actions';
+
+		// Remove the 'View' button until we figure out what to do
+		// unset($default_actions['view']);
+		// return $default_actions;
+		// echo '<pre>';
+		// print_r($names);
+	    // echo '</pre>';
+	    return $names;
+	}
+
+	public function wampum_do_membership_template_action_buttons( $membership ) {
+		// echo Wampum()->membership->get_membership_actions( $membership );
+		$actions = $this->get_membership_actions( $membership );
+		$item_actions = '';
+		foreach ( $actions as $key => $value ) {
+			$item_actions .= '<a class="button ' . sanitize_html_class(strtolower($value['name'])) . '" href="' . esc_url($value['url']) . '">' . esc_html($value['name']) . '</a>';
+		}
+		echo $item_actions;
+		// Ask confirmation before cancelling a membership
+		echo wc_enqueue_js("
+			jQuery( document ).ready( function() {
+				$( '.wampum-membership-actions' ).on( 'click', '.button.cancel', function( e ) {
+					e.stopImmediatePropagation();
+					return confirm( '" . esc_html__( 'Are you sure that you want to cancel your membership?', 'wampum' ) . "' );
+				} );
+			} );
+		");
+	}
+
 	/**
-	 * TODO: REWRITE IF USING PROGRAMS AS A CPT!!!!!!!!!
-	 *
-	 *
-	 * Get a members purchased programs
+	 * Get a member's purchased programs
 	 *
 	 * @since  1.0.0
 	 *
@@ -56,6 +98,17 @@ final class Wampum_Membership {
 		$programs = array();
 		// Loop through memberships
 		foreach ( $memberships as $membership ) {
+			// Allowed statuses
+			// View all statuses in woocommerce-memberships/includes/class-wc-memberships-user-memberships.php
+		    $allowed_statuses = array(
+		    	'wcm-active',
+		    	'wcm-complimentary',
+	    	);
+	    	// Skip if not allowed to view based on status
+	    	if ( ! in_array( $membership->status, $allowed_statuses ) ) {
+	    		continue;
+	    	}
+	    	// Get the membership plan's restricted content
 			$content = $membership->get_plan()->get_restricted_content();
 			// Bail if no content
 			if ( ! $content ) {
@@ -74,6 +127,67 @@ final class Wampum_Membership {
 			}
 		}
 		return $programs;
+	}
+
+	/**
+	 * Get membership actions
+	 *
+	 * Code taken from Woo Memberships wc-memberships-template-functions.php
+	 *
+	 * @param $membership object
+	 */
+	public function get_membership_actions( $membership ) {
+		$actions = array();
+		// Renew: Show only for expired memberships that can be renewed
+		if ( $membership->is_expired() && $membership->get_plan()->has_products() ) {
+			$actions['renew'] = array(
+				'url'  => $membership->get_renew_membership_url(),
+				'name' => __( 'Renew', 'wampum' ),
+			);
+		}
+		// Cancel: Do not show for cancelled, expired or pending cancellation
+		if ( ( ! $membership->is_cancelled() && 'pending' !== $membership->get_status() ) && ! $membership->is_expired() && current_user_can( 'wc_memberships_cancel_membership', $membership->get_id() ) ) {
+			$actions['cancel'] = array(
+				'url'  => $membership->get_cancel_membership_url(),
+				'name' => __( 'Cancel', 'wampum' ),
+			);
+		}
+		// View: Do not show for cancelled, paused memberships or memberships without a Members Area
+		// if ( ! $membership->is_paused() && ! $membership->is_cancelled() && ! empty ( $members_area ) && is_array( $members_area ) ) {
+		// 	$actions['view'] = array(
+		// 		'url' => wc_memberships_get_members_area_url( $membership->get_plan_id(), $members_area[0] ),
+		// 		'name' => __( 'View', 'woocommerce-memberships' ),
+		// 	);
+		// }
+		return $actions;
+	}
+
+	/**
+	 * THIS IS NOT WORKING - TESTED IN /templates/account/memberships-custom.php
+	 * Get membership subscription
+	 * Check if ( class_exists('WC_Subscriptions') ) before using this, I think?
+	 *
+	 * @param  [type] $membership [description]
+	 * @return [type]             [description]
+	 */
+	public function get_membership_subscription_column( WC_Memberships_User_Membership $membership ) {
+		// $subscription = wc_memberships()->user_memberships->subscriptions->get_user_membership_subscription( $membership->get_id() );
+		$subscription = WC_Memberships_Integration_Subscriptions()->get_user_membership_subscription( $membership->get_id() );
+		echo '<pre>';
+	    print_r($subscription);
+	    echo '</pre>';
+		if ( $subscription && in_array( $membership->get_status(), array( 'active', 'free_trial' ) ) ) {
+			$next_payment = $subscription->get_time( 'next_payment' );
+		}
+		$output  = '';
+		$output .= '<span class="item-col item-end-date">';
+			if ( $subscription && ! empty( $next_payment ) ) {
+				$output .= date_i18n( wc_date_format(), $next_payment );
+			} else {
+				$output .= esc_html( 'N/A', 'woocommerce-memberships' );
+			}
+		$output .= '</span>';
+		return $output;
 	}
 
 	/**

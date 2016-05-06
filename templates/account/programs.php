@@ -18,7 +18,7 @@ if ( ! $programs ) {
 	echo "<p>{$text}</p>";
 } else {
 
-	echo '<ul class="my-posts" style="margin-left:0;">';
+	echo '<ul class="account-items" style="margin-left:0;">';
 
 		foreach ( $programs as $program ) {
 
@@ -32,13 +32,13 @@ if ( ! $programs ) {
 					get_the_post_thumbnail( $program->ID, $image_size )
 				);
 			}
-			echo '<li class="my-post">';
-				echo '<span class="post-item post-image">' . $image . '</span>';
-				echo '<span class="post-item post-content">';
-					echo '<a href="' . get_permalink( $program->ID ) . '">' . $program->post_title . '</a>';
-					echo wampum_get_truncated_content($program->post_excerpt, 140);
+			echo '<li class="account-item">';
+				echo '<span class="item-col item-image">' . $image . '</span>';
+				echo '<span class="item-col item-content">';
+					echo '<span class="item-title"><a href="' . get_permalink( $program->ID ) . '">' . $program->post_title . '</a></span>';
+					echo '<span class="item-description">' . wampum_get_truncated_content($program->post_excerpt, 140) . '</span>';
 				echo '</span>';
-				echo '<span class="post-item post-actions"><a class="button" href="' . get_permalink( $program->ID ) . '">View</a></span>';
+				echo '<span class="item-col item-actions"><a class="button" href="' . get_permalink( $program->ID ) . '">View</a></span>';
 			echo '</li>';
 		}
 
