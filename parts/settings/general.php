@@ -5,6 +5,7 @@
  * Order: 10
  */
 
+// This was disabled after 0.0.63 beta when we decided to go with default Woo account dashboard
 piklist('field', array(
     'type'     => 'select',
     'field'    => 'account_page',
@@ -23,15 +24,3 @@ piklist('field', array(
         )
     ),
 ));
-
-// piklist('field', array(
-//     'type'     => 'checkbox',
-//     'field'    => 'account_page_items',
-//     'label'    => __('Account Page Items', 'wampum'),
-//     'choices'  => array(
-//         'programs'      => 'Programs',
-//         'caldera'       => 'Caldera',
-//         'woo'           => 'Woo',
-//         'subscriptions' => 'Subscriptions',
-//     ),
-// ));

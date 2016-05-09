@@ -1,3 +1,6 @@
+#### 1.0.0
+* Official release on a live production site!!!!
+
 #### 0.0.64
 * Fix action links in account
 * Fix accidental display of restricted programs in account and via single post

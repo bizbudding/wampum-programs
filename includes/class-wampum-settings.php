@@ -38,8 +38,14 @@ final class Wampum_Settings {
 		return self::$instance;
 	}
 
+	/**
+	 * Remove settings page
+	 * As of 0.0.63 beta we stopped using a custom account menu in favor of default Woo
+	 *
+	 * @return void
+	 */
 	public function init() {
-		add_filter( 'piklist_admin_pages', array( $this, 'settings_page' ) );
+		// add_filter( 'piklist_admin_pages', array( $this, 'settings_page' ) );
 	}
 
 	// Add an admin settings page

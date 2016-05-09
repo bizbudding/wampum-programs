@@ -15,7 +15,7 @@
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:            0.0.64
+ * Version:            1.0.0
  * GitHub Plugin URI:  https://github.com/JiveDig/wampum
  * GitHub Branch:	   master
  */
@@ -116,7 +116,6 @@ final class Wampum_Setup {
 			self::$instance->includes();
 			self::$instance->setup();
 			// Instantiate Classes
-			self::$instance->account		= Wampum_Account_Page::instance();
 			self::$instance->content		= Wampum_Content_Types::instance();
 			self::$instance->connections	= Wampum_Connections::instance();
 			self::$instance->membership		= Wampum_Membership::instance();
@@ -166,7 +165,7 @@ final class Wampum_Setup {
 
 		// Plugin version.
 		if ( ! defined( 'WAMPUM_VERSION' ) ) {
-			define( 'WAMPUM_VERSION', '0.0.64' );
+			define( 'WAMPUM_VERSION', '1.0.0' );
 		}
 
 		// Plugin Folder Path.
@@ -204,15 +203,15 @@ final class Wampum_Setup {
 	 * @return void
 	 */
 	private function includes() {
+		// require_once WAMPUM_INCLUDES_DIR . 'lib/class-jivedig-content-swap.php';
+		// require_once WAMPUM_INCLUDES_DIR . 'lib/class-jivedig-post-manager.php';
 		// Vendor
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-tgm-plugin-activation.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-gamajo-template-loader.php';
-		require_once WAMPUM_INCLUDES_DIR . 'lib/class-jivedig-content-swap.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-p2p-restful-connection.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-cpts.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-taxos.php';
 		// Classes
-		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-account-page.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-content-types.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-connections.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-membership.php';
@@ -323,6 +322,8 @@ final class Wampum_Setup {
 
 	/**
 	 * Register stylesheets for later use
+	 * REMOVED AFTER 0.0.64 when we when with Woo default account dashboard
+	 *
 	 * Use via wp_enqueue_style('wampum'); in a template
 	 *
 	 * @since  1.0.0
@@ -330,7 +331,7 @@ final class Wampum_Setup {
 	 * @return null
 	 */
 	public function register_stylesheets() {
-	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css' );
+	    // wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css' );
 	}
 
 	/**
