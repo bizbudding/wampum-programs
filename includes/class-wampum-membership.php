@@ -36,11 +36,23 @@ final class Wampum_Membership {
 	}
 
 	public function init() {
+		add_action( 'plugins_loaded', array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
 		/**
 		 * @uses  /woocommerce-memberships/includes/wc-memberships-template-functions.php
 		 */
-		add_filter( 'wc_memberships_my_memberships_column_names', array( $this, 'wampum_account_membership_action_links' ), 10, 1 );
-		add_action( 'wc_memberships_my_memberships_column_wampum-membership-actions', array( $this, 'wampum_do_membership_template_action_buttons' ) );
+		// add_filter( 'wc_memberships_my_memberships_column_names', array( $this, 'wampum_account_membership_action_links' ), 10, 1 );
+		// add_action( 'wc_memberships_my_memberships_column_wampum-membership-actions', array( $this, 'wampum_do_membership_template_action_buttons' ) );
+	}
+
+	/**
+	 * Do not load backward compatibility support in Subscriptions 2.0
+	 *
+	 * @since  1.0.0
+	 *
+	 * @link  https://support.woothemes.com/hc/en-us/articles/205214466
+	 */
+	function woo_subscriptions_remove_deprecation_handlers() {
+		add_filter( 'woocommerce_subscriptions_load_deprecation_handlers', '__return_false' );
 	}
 
 	public function redirects() {
