@@ -1,3 +1,6 @@
+#### 1.0.01
+* Remove custom account code
+
 #### 1.0.0
 * Official release on a live production site!!!!
 
