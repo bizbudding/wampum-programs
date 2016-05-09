@@ -30,18 +30,13 @@ final class Wampum_Membership {
 			// Setup the setup
 			self::$instance = new Wampum_Membership;
 			self::$instance->init();
-			self::$instance->redirects();
 		}
 		return self::$instance;
 	}
 
 	public function init() {
-		add_action( 'plugins_loaded', array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
-		/**
-		 * @uses  /woocommerce-memberships/includes/wc-memberships-template-functions.php
-		 */
-		// add_filter( 'wc_memberships_my_memberships_column_names', array( $this, 'wampum_account_membership_action_links' ), 10, 1 );
-		// add_action( 'wc_memberships_my_memberships_column_wampum-membership-actions', array( $this, 'wampum_do_membership_template_action_buttons' ) );
+		add_action( 'plugins_loaded', 	 array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
+		add_action( 'template_redirect', array( $this, 'access_redirect' ) );
 	}
 
 	/**
@@ -49,51 +44,12 @@ final class Wampum_Membership {
 	 *
 	 * @since  1.0.0
 	 *
-	 * @link  https://support.woothemes.com/hc/en-us/articles/205214466
+	 * @link   https://support.woothemes.com/hc/en-us/articles/205214466
+	 *
+	 * @return void
 	 */
 	function woo_subscriptions_remove_deprecation_handlers() {
 		add_filter( 'woocommerce_subscriptions_load_deprecation_handlers', '__return_false' );
-	}
-
-	public function redirects() {
-		// Redirect to testimonials archive if trying to access single testimonial
-		add_action( 'template_redirect', array( $this, 'access_redirect' ) );
-	}
-
-	public function wampum_account_membership_action_links( $names ) {
-		// return $default_actions;
-		// echo '<pre>';
-	    // print_r($names);
-	    // echo '</pre>';
-		unset($names['membership-actions']);
-		$names['wampum-membership-actions'] = 'Actions';
-
-		// Remove the 'View' button until we figure out what to do
-		// unset($default_actions['view']);
-		// return $default_actions;
-		// echo '<pre>';
-		// print_r($names);
-	    // echo '</pre>';
-	    return $names;
-	}
-
-	public function wampum_do_membership_template_action_buttons( $membership ) {
-		// echo Wampum()->membership->get_membership_actions( $membership );
-		$actions = $this->get_membership_actions( $membership );
-		$item_actions = '';
-		foreach ( $actions as $key => $value ) {
-			$item_actions .= '<a class="button ' . sanitize_html_class(strtolower($value['name'])) . '" href="' . esc_url($value['url']) . '">' . esc_html($value['name']) . '</a>';
-		}
-		echo $item_actions;
-		// Ask confirmation before cancelling a membership
-		echo wc_enqueue_js("
-			jQuery( document ).ready( function() {
-				$( '.wampum-membership-actions' ).on( 'click', '.button.cancel', function( e ) {
-					e.stopImmediatePropagation();
-					return confirm( '" . esc_html__( 'Are you sure that you want to cancel your membership?', 'wampum' ) . "' );
-				} );
-			} );
-		");
 	}
 
 	/**
@@ -228,34 +184,6 @@ final class Wampum_Membership {
 		// 	);
 		// }
 		return $actions;
-	}
-
-	/**
-	 * THIS IS NOT WORKING AND CURRENTLY NOT USED - TESTED IN /templates/account/memberships-custom.php
-	 * Get membership subscription
-	 * Check if ( class_exists('WC_Subscriptions') ) before using this, I think?
-	 *
-	 * @param  [type] $membership [description]
-	 * @return [type]             [description]
-	 */
-	public function get_membership_subscription_column( WC_Memberships_User_Membership $membership ) {
-		// $subscription = wc_memberships()->user_memberships->subscriptions->get_user_membership_subscription( $membership->get_id() );
-		$subscription = WC_Memberships_Integration_Subscriptions()->get_user_membership_subscription( $membership->get_id() );
-		// echo '<pre>';
-	    // print_r($subscription);
-	    // echo '</pre>';
-		if ( $subscription && in_array( $membership->get_status(), array( 'active', 'free_trial' ) ) ) {
-			$next_payment = $subscription->get_time( 'next_payment' );
-		}
-		$output  = '';
-		$output .= '<span class="item-col item-end-date">';
-			if ( $subscription && ! empty( $next_payment ) ) {
-				$output .= date_i18n( wc_date_format(), $next_payment );
-			} else {
-				$output .= esc_html( 'N/A', 'woocommerce-memberships' );
-			}
-		$output .= '</span>';
-		return $output;
 	}
 
 	public static function can_view_program( $user_id, $program_id ) {
