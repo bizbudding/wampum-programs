@@ -1,12 +1,12 @@
 <?php
-/*
-Title: Add Step Resources
-Post Type: wampum_step
-Capability: edit_posts
-Context: normal
-Priority: default
-Meta box: true
-*/
+/**
+ * Title: Add Step Resources
+ * Post Type: wampum_step
+ * Capability: edit_posts
+ * Context: normal
+ * Priority: default
+ * Meta box: true
+ */
 
 // Enqueue our scripts (previously registered)
 wp_enqueue_script('wampum-select2');

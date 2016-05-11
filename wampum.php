@@ -10,6 +10,7 @@
  * Plugin Name:        Wampum
  * Description: 	   The core Wampum plugin
  * Plugin URI:         https://github.com/JiveDig/wampum
+ * Plugin Type: 	   Piklist
  * Author:             Mike Hemberger
  * Author URI:         http://bizbudding.com
  * Text Domain:        wampum
