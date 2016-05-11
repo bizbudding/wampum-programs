@@ -75,9 +75,17 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		}
 
 		extract( $args );
-		$title = apply_filters( 'widget_title', $instance['title'] );
 
 		echo $before_widget;
+
+		// Build title
+		$title = esc_attr( $instance['title'] );
+		if ( 1 == $instance['title_from_program'] ) {
+			$title = get_the_title( $program_id );
+			if ( 1 == $instance['title_link'] ) {
+				$title = '<a href="' . get_permalink( $program_id ) . '">' . apply_filters( 'wampum_steps_widget_title', $title ) . '</a>';
+			}
+		}
 
 		if ( ! empty( $title ) ) {
 			echo $before_title . $title . $after_title;
@@ -115,7 +123,11 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 		$instance = array();
-		$instance['title'] = strip_tags( $new_instance['title'] );
+		// $instance['title'] = strip_tags( $new_instance['title'] );
+		/* Strip tags (if needed) and update the widget settings. */
+		$instance['title'] 				= esc_attr( $new_instance['title'] );
+		$instance['title_from_program'] = (int) $new_instance['title_from_program'];
+		$instance['title_link']			= (int) $new_instance['title_link'];
 		return $instance;
 	}
 
@@ -127,16 +139,23 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 	 * @param array $instance Previously saved values from database.
 	 */
 	public function form( $instance ) {
-		if ( isset( $instance[ 'title' ] ) ) {
-			$title = $instance[ 'title' ];
-		}
-		else {
-			$title = __( 'New title', 'amc' );
-		}
+		// Set up some default widget settings.
+		$defaults = array( 'title' => '', 'title_from_program' => 0, 'title_link' => 0 );
+		$instance = wp_parse_args( (array) $instance, $defaults );
 		?>
 		<p>
 			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
-			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
+		</p>
+
+		<p>
+			<input class="checkbox" type="checkbox" value="1" <?php checked( $instance['title_from_program'], 1 ); ?> id="<?php echo $this->get_field_id( 'title_from_program' ); ?>" name="<?php echo $this->get_field_name( 'title_from_program' ); ?>" />
+			<label for="<?php echo $this->get_field_id( 'title_from_program' ); ?>"><?php _e( 'Use program name as widget title.', 'wampum' );?></label>
+		</p>
+
+		<p>
+			<input class="checkbox" type="checkbox" value="1" <?php checked( $instance['title_link'], 1 ); ?> id="<?php echo $this->get_field_id( 'title_link' ); ?>" name="<?php echo $this->get_field_name( 'title_link' ); ?>" />
+			<label for="<?php echo $this->get_field_id( 'title_link' ); ?>"><?php _e( 'Make title a link', 'wampum' ); echo '<br /><em>('; _e( 'only if "Use program name as widget title." is checked', 'wampum' ); echo ')</em></label>';?>
 		</p>
 		<?php
 	}
