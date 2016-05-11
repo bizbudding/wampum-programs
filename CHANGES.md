@@ -1,3 +1,6 @@
+#### 1.0.1
+* Fix resource metabox not showing up
+
 #### 1.0.01
 * Remove custom account code
 
