@@ -12,6 +12,18 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+add_action( 'wampum_after_content', 'wampum_do_program_resource_list' );
+function wampum_do_program_resource_list() {
+	if ( ! is_singular('wampum_program') ) {
+		return;
+	}
+	global $wp_query;
+	echo '<pre>';
+    print_r($wp_query);
+    echo '</pre>';
+	// Wampum()->connections->prev_next_connection_links( 'programs_to_steps', get_the_ID() );
+}
+
 add_action( 'wampum_after_content', 'wampum_do_step_progress_link' );
 function wampum_do_step_progress_link() {
 	if ( ! is_user_logged_in() && ! is_singular('wampum_step') ) {

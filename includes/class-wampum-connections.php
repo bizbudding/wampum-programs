@@ -240,13 +240,16 @@ class Wampum_Connections {
 			return;
 		}
 		global $wp_query, $post;
+		// Programs
 		p2p_type( 'programs_to_steps' )->each_connected( $wp_query, array(), 'programs' );
 		while ( $wp_query->have_posts() ) : $wp_query->the_post();
-		    // Another level of nesting
+		    // Program Steps
 		    p2p_type( 'programs_to_steps' )->each_connected( $post->programs, array(), 'steps' );
 		    // Reset
 		    wp_reset_postdata();
 		endwhile;
+		// Resources
+		p2p_type( 'steps_to_resources' )->each_connected( $wp_query, array(), 'resources' );
 	}
 
 	/**
@@ -261,7 +264,10 @@ class Wampum_Connections {
 			return;
 		}
 		global $wp_query;
+		// Steps
 		p2p_type( 'programs_to_steps' )->each_connected( $wp_query, array(), 'steps' );
+		// Resources
+		p2p_type( 'programs_to_resources' )->each_connected( $wp_query, array(), 'resources' );
 	}
 
 	/**

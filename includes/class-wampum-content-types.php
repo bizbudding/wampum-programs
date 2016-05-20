@@ -327,9 +327,12 @@ final class Wampum_Content_Types {
 	 * @return array|objects|bool
 	 */
 	public function get_program_steps($program_object_or_id) {
+		// TRY TO USE get_steps_from_{post_type}_query in class-wampum-connections.php - it's MUCH faster
+		//
 		// TODO: CHANGE THIS TO get_steps_from_step_query() and get_steps_from_program_query()
 		// CHECK IF IS OBJECT, IF ID THEN GET OBJECT FROM ID FIRST
 		// CHECK IF POST TYPE IS STEP OR PROGRAM AND GET STEPS WITH EACH METHOD
+		//
 		$connected = get_posts( array(
 			'connected_type'	=> 'programs_to_steps',
 			'connected_items'	=> $program_object_or_id,
@@ -341,34 +344,6 @@ final class Wampum_Content_Types {
 		}
 		return false;
 	}
-
-	// function step_single_template($template){
-	// 	global $post;
-	//     if ( 'wampum_step' === $post->post_type  ) {
-	//     	$file = 'single-step.php';
-	//     	if ( file_exists( get_stylesheet_directory_uri() . 'wampum/' . $file ) ) {
-	//     		return get_stylesheet_directory_uri() . 'wampum/' . $file;
-	//     	}
-	//     	if ( file_exists( WAMPUM_TEMPLATES_DIR . $file ) ) {
-	//     		return WAMPUM_TEMPLATES_DIR . $file;
-	//     	}
-	//     }
-	//     return $template;
-	// }
-
-	// function step_archive_template($template){
-	// 	global $post;
-	//     if ( 'wampum_step' === $post->post_type  ) {
-	//     	$file = 'archive-step.php';
-	//     	if ( file_exists( get_stylesheet_directory_uri() . $file ) ) {
-	//     		return get_stylesheet_directory_uri() . $file;
-	//     	}
-	//     	if ( file_exists( WAMPUM_TEMPLATES_DIR . $file ) ) {
-	//     		return WAMPUM_TEMPLATES_DIR . $file;
-	//     	}
-	//     }
-	//     return $template;
-	// }
 
 	/**
 	 * Get singular post type name
