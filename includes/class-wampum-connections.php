@@ -197,13 +197,22 @@ class Wampum_Connections {
 		return isset($queried_object->steps) ? $queried_object->steps : false;
 	}
 
+	public function get_program_from_step_query( $queried_object ) {
+		return isset($queried_object->programs) ? $queried_object->programs[0] : false;
+	}
+
 	public function get_steps_from_step_query( $queried_object ) {
 		$step_program = $this->get_program_from_step_query($queried_object);
 		return isset($step_program->steps) ? $step_program->steps : false;
 	}
 
-	public function get_program_from_step_query( $queried_object ) {
-		return isset($queried_object->programs) ? $queried_object->programs[0] : false;
+	public function get_resources_from_program_query( $queried_object ) {
+		return isset($queried_object->resources) ? $queried_object->resources : false;
+	}
+
+	public function get_resources_from_step_query( $queried_object ) {
+		$step_program = $this->get_program_from_step_query($queried_object);
+		return isset($step_program->resources) ? $step_program->resources : false;
 	}
 
 	/**
