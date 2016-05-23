@@ -1,3 +1,6 @@
+#### 1.1.1
+* Add download button to single resources
+
 #### 1.1.0
 * Auto-display connected resources on programs and steps
 

@@ -91,3 +91,22 @@ function wampum_do_step_prev_next_links() {
 	}
 	Wampum()->connections->prev_next_connection_links( 'programs_to_steps', get_the_ID() );
 }
+
+/**
+ * Display Resources on single resources
+ *
+ * @since  1.1.1
+ *
+ * @return null|mixed
+ */
+add_action( 'wampum_after_content', 'wampum_do_resource_button' );
+function wampum_do_resource_button() {
+	if ( ! is_singular('wampum_resource') ) {
+		return;
+	}
+	$file = get_post_meta( get_the_ID(), 'wampum_resource_files', true );
+	if ( ! $file ) {
+		return;
+	}
+	echo '<p><a target="_blank" class="button wampum-resource-button" href="' . wp_get_attachment_url($file) . '">Download</a></p>';
+}

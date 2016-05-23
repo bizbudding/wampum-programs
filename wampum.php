@@ -16,7 +16,7 @@
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:            1.1.0
+ * Version:            1.1.1
  * GitHub Plugin URI:  https://github.com/JiveDig/wampum
  * GitHub Branch:	   master
  */
@@ -166,7 +166,7 @@ final class Wampum_Setup {
 
 		// Plugin version.
 		if ( ! defined( 'WAMPUM_VERSION' ) ) {
-			define( 'WAMPUM_VERSION', '1.1.0' );
+			define( 'WAMPUM_VERSION', '1.1.1' );
 		}
 
 		// Plugin Folder Path.
