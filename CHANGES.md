@@ -1,3 +1,6 @@
+#### 1.1.0
+* Auto-display connected resources on programs and steps
+
 #### 1.0.2
 * Update program steps widget to show optionally program name as widget title, and optionally link title to the program
 

@@ -211,8 +211,7 @@ class Wampum_Connections {
 	}
 
 	public function get_resources_from_step_query( $queried_object ) {
-		$step_program = $this->get_program_from_step_query($queried_object);
-		return isset($step_program->resources) ? $step_program->resources : false;
+		return isset($queried_object->resources) ? $queried_object->resources : false;
 	}
 
 	/**
