@@ -36,7 +36,7 @@ function wampum_do_program_resource_list() {
 	}
 
 	// Bail if no resources
-	if ( ! is_array($resources) ) {
+	if ( ! is_array($resources) || empty($resources) ) {
 		return;
 	}
 

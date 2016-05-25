@@ -1,3 +1,8 @@
+#### 1.2.0
+* Add featured image support for resources
+* Change resource table list to flexbox tables
+* Fixed resource table header showing when program/step had no resources
+
 #### 1.1.1
 * Add download button to single resources
 
