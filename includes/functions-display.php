@@ -40,23 +40,36 @@ function wampum_do_program_resource_list() {
 		return;
 	}
 
-    echo '<ul class="wampum-resource-list woocommerce table-table" style="margin-left:0;">';
+    echo '<ul class="wampum-resource-list ftable" style="margin-left:0;">';
 
-        echo '<li class="table-tr">';
-            echo '<span class="table-th table-title">' . Wampum()->content->singular_name(get_post_type()) . ' ' . Wampum()->content->plural_name('wampum_resource') . '</span>';
-            echo '<span class="table-th table-actions">Actions</span>';
+        echo '<li class="ftable-row">';
+            echo '<span class="ftable-header">' . Wampum()->content->singular_name(get_post_type()) . ' ' . Wampum()->content->plural_name('wampum_resource') . '</span>';
         echo '</li>';
 
 		foreach ( $resources as $resource ) {
-			$buttons = '<a class="button list-button alignleft" href="' . get_permalink($resource->ID) . '">View</a>';
 
+			$buttons = '';
 			$file = get_post_meta( $resource->ID, 'wampum_resource_files', true );
 			if ( $file ) {
-				$buttons .= '<a target="_blank" class="button list-button alignright" href="' . wp_get_attachment_url($file) . '">Download</a>';
+				$buttons .= '<a target="_blank" class="button ftable-button ftable-button-right" href="' . wp_get_attachment_url($file) . '">Download</a>';
 			}
-			$title   = '<a class="table-td table-title" href="' . get_permalink($resource->ID) . '">' . $resource->post_title . '</a>';
-			$actions = '<span class="table-td table-actions">' . $buttons . '</span>';
-			echo '<li class="table-tr">' . $title . $actions . '</li>';
+			$buttons .= '<a class="button ftable-button ftable-button-left" href="' . get_permalink($resource->ID) . '">View</a>';
+
+			$image   = '';
+			if ( has_post_thumbnail( $resource->ID ) ) {
+				$image = sprintf( '<a class="ftable-cell ftable-image" href="%s" title="%s">%s</a>',
+					get_permalink(),
+					the_title_attribute( 'echo=0' ),
+					get_the_post_thumbnail( $resource->ID, 'thumbnail' )
+				);
+			}
+			$title = sprintf( '<a class="ftable-cell ftable-title" href="%s" title="%s">%s</a>',
+				get_permalink($resource->ID),
+				the_title_attribute( 'echo=0' ),
+				$resource->post_title
+			);
+			$actions = '<span class="ftable-cell ftable-actions">' . $buttons . '</span>';
+			echo '<li class="ftable-row">' . $image . $title . $actions . '</li>';
 		}
 
 	echo '</ul>';

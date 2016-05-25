@@ -124,7 +124,7 @@ final class Wampum_Content_Types {
 			'enter_title_here'	=> 'Enter ' . $this->singular_name($resource) . ' Name',
 			'menu_icon'			=> 'dashicons-feedback',
 		    'has_archive' 		=> apply_filters( 'wampum_resource_has_archive', false ),
-			'supports'			=> apply_filters( $resource . '_supports', array('title','editor','excerpt','genesis-cpt-archives-settings') ),
+			'supports'			=> apply_filters( $resource . '_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
 	    ), $this::default_names()[$resource] );
 
 	}
