@@ -49,7 +49,8 @@ function wampum_user_can_view_step( $user_id, $step_id ) {
 }
 
 /**
- * Check if current user can view a specific post/cpt
+ * Check if current user can view a specific post
+ * I think it only works with posts, maybe pages, but not CPT's
  *
  * @since  1.0.0
  *
