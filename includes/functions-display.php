@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 add_action( 'woocommerce_before_my_account', 'wampum_do_account_programs', 4 );
 function wampum_do_account_programs() {
 
-	echo '<h2>' . __( 'My', 'wampum' ) . Wampum()->content->plural_name('wampum_program') . '</h2>';
+	echo '<h2>' . __( 'My', 'wampum' ) . ' ' . Wampum()->content->plural_name('wampum_program') . '</h2>';
 
 	$data = wampum_get_user_programs( get_current_user_id() );
 

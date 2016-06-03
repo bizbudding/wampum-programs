@@ -1,3 +1,6 @@
+#### 1.2.4
+* Fix missing space between 'My Programs' on account page
+
 #### 1.2.3
 * Add version number when registering stylesheet
 
