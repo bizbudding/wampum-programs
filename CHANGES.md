@@ -1,3 +1,6 @@
+#### 1.2.3
+* Add version number when registering stylesheet
+
 #### 1.2.2
 * Update Gamajo Template Loader to 1.2.0
 * Add parameter to allow wampum_get_template_part() helper function to pass $data into template

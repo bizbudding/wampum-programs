@@ -331,7 +331,7 @@ final class Wampum_Setup {
 	 * @return null
 	 */
 	public function register_stylesheets() {
-	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css' );
+	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css', array(), WAMPUM_VERSION );
 	}
 
 	/**
