@@ -16,7 +16,7 @@
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:            1.2.0
+ * Version:            1.2.2
  * GitHub Plugin URI:  https://github.com/JiveDig/wampum
  * GitHub Branch:	   master
  */
@@ -166,7 +166,7 @@ final class Wampum_Setup {
 
 		// Plugin version.
 		if ( ! defined( 'WAMPUM_VERSION' ) ) {
-			define( 'WAMPUM_VERSION', '1.1.1' );
+			define( 'WAMPUM_VERSION', '1.2.2' );
 		}
 
 		// Plugin Folder Path.
@@ -323,7 +323,6 @@ final class Wampum_Setup {
 
 	/**
 	 * Register stylesheets for later use
-	 * REMOVED AFTER 0.0.64 when we when with Woo default account dashboard
 	 *
 	 * Use via wp_enqueue_style('wampum'); in a template
 	 *
@@ -332,7 +331,7 @@ final class Wampum_Setup {
 	 * @return null
 	 */
 	public function register_stylesheets() {
-	    // wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css' );
+	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css' );
 	}
 
 	/**

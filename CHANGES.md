@@ -1,3 +1,13 @@
+#### 1.2.2
+* Update Gamajo Template Loader to 1.2.0
+* Add parameter to allow wampum_get_template_part() helper function to pass $data into template
+* Convert resource lists and program lists to template parts
+* Change faux tables to new wampum specific markup for flexbox tables
+* Bring back wampum.css stylesheet for base styles of tables and other future styling
+
+#### 1.2.1
+* Fix restricted programs/steps being visible if user is logged out
+
 #### 1.2.0
 * Add featured image support for resources
 * Change resource table list to flexbox tables

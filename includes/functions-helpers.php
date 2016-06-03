@@ -154,14 +154,20 @@ function wampum_get_user_memberships( $user_id = null, $args = array() ) {
  *
  * @since  1.0.0
  *
- * @param  string  $slug
- * @param  string  $name
- * @param  boolean $load
+ * @param  string  		 $slug
+ * @param  string  		 $name
+ * @param  boolean 		 $load
+ * @param  string|array  $data  optional array of data to pass into template
+ *
+ * $data param MUST be called $data, not any other variable name
+ * $data MUST be an array
  *
  * @return mixed
  */
-function wampum_get_template_part( $slug, $name = null, $load = true ) {
-    // global $wampum_template_loader;
+function wampum_get_template_part( $slug, $name = null, $load = true, $data = '' ) {
+    if ( is_array($data) ) {
+	    Wampum()->templates->set_template_data( $data );
+	}
     Wampum()->templates->get_template_part( $slug, $name, $load );
 }
 

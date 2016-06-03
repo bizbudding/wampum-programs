@@ -12,6 +12,54 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+add_action( 'woocommerce_before_my_account', 'wampum_do_account_programs', 4 );
+function wampum_do_account_programs() {
+
+	echo '<h2>' . __( 'My', 'wampum' ) . Wampum()->content->plural_name('wampum_program') . '</h2>';
+
+	$data = wampum_get_user_programs( get_current_user_id() );
+
+	if ( ! $data ) {
+		$text = 'You don\'t have access to any ' . Wampum()->content->plural_name('wampum_program') . ' yet.';
+		$text = apply_filters( 'wampum_account_programs_no_programs_text', $text );
+		echo "<p>{$text}</p>";
+	} else {
+
+	// Get the account-programs.php template
+	wampum_get_template_part( 'account', 'programs', true, $data );
+
+	 //    echo '<ul class="wampum-programs-list ftable" style="margin-left:0;">';
+
+	 //        echo '<li class="ftable-row">';
+	 //            echo '<span class="ftable-header">Program</span>';
+	 //        echo '</li>';
+
+		// 	foreach ( $programs as $program ) {
+
+		// 		$image_size = apply_filters('wampum_account_programs_image_size', 'thumbnail');
+
+		// 		$image = '';
+		// 		if ( has_post_thumbnail( $program->ID ) ) {
+		// 		    $image = sprintf( '<a class="ftable-cell ftable-image" href="%s" title="%s">%s</a>',
+		// 				get_permalink( $program->ID ),
+		// 				the_title_attribute( 'echo=0' ),
+		// 				get_the_post_thumbnail( $program->ID, $image_size )
+		// 			);
+		// 		}
+		// 		$desc 	 = wampum_get_truncated_content($program->post_excerpt, 140);
+		// 		$title   = '<span class="ftable-cell ftable-title"><a href="' . get_permalink( $program->ID ) . '">' . $program->post_title . '</a>' . $desc . '</span>';
+		// 		$buttons = '<a class="button ftable-button" href="' . get_permalink($program->ID) . '">View</a>';
+		// 		$actions = '<span class="ftable-cell ftable-actions">' . $buttons . '</span>';
+		// 		echo '<li class="ftable-row">' . $image . $title . $actions . '</li>';
+		// 	}
+
+		// echo '</ul>';
+
+	}
+
+	do_action('wampum_account_after_programs');
+}
+
 /**
  * Display Resources on Programs and Steps
  *
@@ -27,52 +75,21 @@ function wampum_do_program_resource_list() {
 		return;
 	}
 
-	$resources = '';
+	$data = '';
 	// Get the resources
 	if ( is_singular('wampum_program') ) {
-		$resources = Wampum()->connections->get_resources_from_program_query( get_queried_object() );
+		$data = Wampum()->connections->get_resources_from_program_query( get_queried_object() );
 	} elseif ( is_singular('wampum_step') ) {
-		$resources = Wampum()->connections->get_resources_from_step_query( get_queried_object() );
+		$data = Wampum()->connections->get_resources_from_step_query( get_queried_object() );
 	}
 
 	// Bail if no resources
-	if ( ! is_array($resources) || empty($resources) ) {
+	if ( ! is_array($data) || empty($data) ) {
 		return;
 	}
+	// Get the resource-list.php template
+	wampum_get_template_part( 'resource', 'list', true, $data );
 
-    echo '<ul class="wampum-resource-list ftable" style="margin-left:0;">';
-
-        echo '<li class="ftable-row">';
-            echo '<span class="ftable-header">' . Wampum()->content->singular_name(get_post_type()) . ' ' . Wampum()->content->plural_name('wampum_resource') . '</span>';
-        echo '</li>';
-
-		foreach ( $resources as $resource ) {
-
-			$buttons = '';
-			$file = get_post_meta( $resource->ID, 'wampum_resource_files', true );
-			if ( $file ) {
-				$buttons .= '<a target="_blank" class="button ftable-button ftable-button-right" href="' . wp_get_attachment_url($file) . '">Download</a>';
-			}
-			$buttons .= '<a class="button ftable-button ftable-button-left" href="' . get_permalink($resource->ID) . '">View</a>';
-
-			$image   = '';
-			if ( has_post_thumbnail( $resource->ID ) ) {
-				$image = sprintf( '<a class="ftable-cell ftable-image" href="%s" title="%s">%s</a>',
-					get_permalink(),
-					the_title_attribute( 'echo=0' ),
-					get_the_post_thumbnail( $resource->ID, 'thumbnail' )
-				);
-			}
-			$title = sprintf( '<a class="ftable-cell ftable-title" href="%s" title="%s">%s</a>',
-				get_permalink($resource->ID),
-				the_title_attribute( 'echo=0' ),
-				$resource->post_title
-			);
-			$actions = '<span class="ftable-cell ftable-actions">' . $buttons . '</span>';
-			echo '<li class="ftable-row">' . $image . $title . $actions . '</li>';
-		}
-
-	echo '</ul>';
 }
 
 /**

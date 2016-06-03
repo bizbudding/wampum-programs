@@ -58,10 +58,13 @@ final class Wampum_Membership {
 	 * @return void
 	 */
 	public function access_redirect() {
-	    if ( ! is_user_logged_in() ) {
+
+	    if ( ! is_singular( array( 'wampum_program','wampum_step') ) ) {
 	    	return;
 	    }
-	    if ( ! is_singular( array( 'wampum_program','wampum_step') ) ) {
+
+	    // Bail if super user
+	    if ( is_user_logged_in() && current_user_can('wc_memberships_access_all_restricted_content') ) {
 	    	return;
 	    }
 
@@ -75,6 +78,14 @@ final class Wampum_Membership {
 	    	return;
 	    }
 
+	    $redirect_url = home_url();
+
+	    // Bail if user is not logged in, since they can't have access if
+	    if ( ! is_user_logged_in() ) {
+		    wp_redirect( $redirect_url );
+		    exit();
+	    }
+
 	    $post_object = get_post($post_id);
 
 	    $user_id  = get_current_user_id();
@@ -82,7 +93,7 @@ final class Wampum_Membership {
 
 	    // Get out of there, you don't have access!
 	    if ( ! in_array( $post_object, $programs ) ) {
-		    wp_redirect( home_url() );
+		    wp_redirect( $redirect_url );
 		    exit();
 	    }
 	    return;
