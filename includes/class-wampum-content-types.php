@@ -97,6 +97,18 @@ final class Wampum_Content_Types {
 		    ),
 		    'has_archive' => apply_filters( 'wampum_program_has_archive', false ),
 			'supports' 	  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
+		  //   'admin_cols'  => array(
+				// 'programs_to_steps' => array(
+				//     'title'      => $this->plural_name(self::STEP),
+				//     'connection' => 'programs_to_steps',
+				//     'link'       => 'edit',
+				// ),
+				// 'programs_to_resources' => array(
+				//     'title'      => $this->plural_name(self::RESOURCE),
+				//     'connection' => 'programs_to_resources',
+				//     'link'       => 'edit',
+				// ),
+		  //   ),
 	    ), $this::default_names()[$program] );
 
 	    // Steps
@@ -104,18 +116,23 @@ final class Wampum_Content_Types {
 	    register_extended_post_type( $step, array(
 			'enter_title_here'	=> 'Enter ' . $this->singular_name($step) . ' Name',
 			'menu_icon'			=> 'dashicons-feedback',
-			'rewrite' => array(
+			'rewrite'			=> array(
 		        'permastruct' => $this->get_program_base_slug() . '/%wampum_step_program%/%wampum_step%',
 		    ),
 		    'has_archive' 		=> apply_filters( 'wampum_step_has_archive', false ),
 			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
-		    'admin_cols' 		=> array(
-		        // A post field column
-	            'post_date' => array(
-	                'title'      => __( 'Publish Date', 'Date', 'pixie-article' ),
-	                'post_field' => 'post_date',
-	            ),
-		    ),
+		    // 'admin_cols' 		=> array(
+				// 'programs_to_steps' => array(
+				//     'title'      => $this->plural_name(self::PROGRAM),
+				//     'connection' => 'programs_to_steps',
+				//     'link'       => 'edit',
+				// ),
+				// 'steps_to_resources' => array(
+				//     'title'      => $this->plural_name(self::RESOURCE),
+				//     'connection' => 'steps_to_resources',
+				//     'link'       => 'edit',
+				// ),
+		    // ),
 	    ), $this::default_names()[$step] );
 
 	    // Resources
