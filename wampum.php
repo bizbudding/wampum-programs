@@ -237,14 +237,18 @@ final class Wampum_Setup {
 	}
 
 	public function setup() {
+		// Dependencies
 		add_action( 'tgmpa_register', array( $this, 'dependencies' ) );
+
 		// Bail if Posts to Posts or Piklist are not active
 		if ( ! ( function_exists( 'p2p_register_connection_type' ) || class_exists('Piklist') ) ) {
 			add_action( 'admin_init', array( $this, 'deactivate' ) );
 			return;
 		}
+
 		// Genesis & WooCommerce Connect
 		add_theme_support( 'genesis-connect-woocommerce' );
+
 		// If front end
 		if ( ! is_admin() ) {
 			// Register stylesheet
@@ -342,7 +346,6 @@ final class Wampum_Setup {
 	 */
 	public function register_stylesheets() {
 	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css', array(), WAMPUM_VERSION );
-	    wp_register_style( 'magnific-popup', WAMPUM_PLUGIN_URL . 'css/magnific-popup.css', array(), WAMPUM_VERSION );
 	}
 
 	/**
@@ -355,7 +358,7 @@ final class Wampum_Setup {
 	 * @return null
 	 */
 	public function register_scripts() {
-	    wp_register_script( 'magnific-popup', WAMPUM_PLUGIN_URL . 'js/jquery.magnific-popup.min.js', array('jquery'), WAMPUM_VERSION, true );
+	    // wp_register_script( 'magnific-popup', WAMPUM_PLUGIN_URL . 'js/jquery.magnific-popup.min.js', array('jquery'), WAMPUM_VERSION, true );
 	}
 
 	/**

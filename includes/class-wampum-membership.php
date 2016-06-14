@@ -35,11 +35,9 @@ final class Wampum_Membership {
 	}
 
 	public function init() {
-		add_action( 'plugins_loaded', 	 array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
-
-		// add_action( 'template_redirect', array( $this, 'access_redirect' ) );
-		// add_action( 'genesis_entry_content', array( $this, 'access_redirect' ) );
-		add_action( 'wp_head', array( $this, 'access_redirect' ) );
+		add_action( 'plugins_loaded', 	      array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
+		add_filter( 'auth_cookie_expiration', array( $this, 'stay_logged_in' ) );
+		add_action( 'wp_head', 				  array( $this, 'access_redirect' ) );
 	}
 
 	/**
@@ -51,13 +49,104 @@ final class Wampum_Membership {
 	 *
 	 * @return void
 	 */
-	function woo_subscriptions_remove_deprecation_handlers() {
+	private function woo_subscriptions_remove_deprecation_handlers() {
 		add_filter( 'woocommerce_subscriptions_load_deprecation_handlers', '__return_false' );
 	}
 
-    function test_this_restricted_message_filter( $message, $post_id, $products ) {
+	/**
+	 * Stay logged in for n number of weeks
+	 *
+	 * @since  1.3.0
+	 *
+	 * @param  int  $expirein  number of weeks to stay logged in for
+	 *
+	 * @return int  time in seconds to stay logged in
+	 */
+	private function stay_logged_in( $expirein ) {
+		$weeks = 24;
+		$weeks = apply_filters( 'wampum_stay_logged_in', $weeks );
+		return WEEK_IN_SECONDS * $weeks; // 24 weeks in seconds
+	}
 
-		$open = '<div class="wampum-noaccess-message">';
+	/**
+	 * Redirect steps/programs if they are restricted and user doesn't have access
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return void
+	 */
+	public function access_redirect() {
+
+	    if ( ! is_singular( array( 'wampum_program','wampum_step') ) ) {
+	    	return;
+	    }
+
+	    // Bail if super user
+	    if ( is_user_logged_in() && current_user_can('wc_memberships_access_all_restricted_content') ) {
+	    	return;
+	    }
+
+    	$post_id = get_the_ID();
+	    if ( is_singular('wampum_step') ) {
+	    	$post_id = Wampum()->content->get_step_program_id( get_queried_object() );
+	    }
+
+	    // Bail if the program is not restricted at all
+	    if ( ! Wampum()->membership->is_post_content_restricted( $post_id ) ) {
+	    	return;
+	    }
+
+	    // If user is logged in, check if they have access to the program
+	    if ( is_user_logged_in() ) {
+
+		    $post_object = get_post($post_id);
+		    $user_id     = get_current_user_id();
+		    $programs    = $this->get_programs( $user_id );
+
+		    // Bail, user has access
+		    if ( in_array( $post_object, $programs ) ) {
+		    	return;
+		    }
+
+		}
+
+	    // Add the step program restricted message to steps
+	    if ( is_singular('wampum_step') ) {
+		    add_filter( 'the_content', array( $this, 'step_restricted_message' ) );
+		}
+
+	    // Filter the restricted message
+	    add_filter( 'wc_memberships_content_restricted_message', array( $this, 'noaccess_restricted_message' ), 10, 3 );
+
+	    // Add styles
+	    $this->noaccess_styles();
+
+	}
+
+    /**
+     * When viewing a step, we need to get the restricted message for the restricted program associated with that step
+     *
+     * @since  1.3.0
+     *
+     * @return mixed
+     */
+	public function step_restricted_message( $content ) {
+    	$post_id = Wampum()->content->get_step_program_id( get_queried_object() );
+		return wc_memberships()->frontend->get_content_restricted_message($post_id);
+	}
+
+    /**
+     * Get the restricted message, with product link(s) and maybe login form
+     *
+     * @since  1.3.0
+     *
+     * @return mixed
+     */
+    function noaccess_restricted_message( $message, $post_id, $products ) {
+
+    	$open  = '<div class="wampum-noaccess-container">';
+    	$open .= '<div class="wampum-noaccess-wrap">';
+		$open .= '<div class="wampum-noaccess-message">';
 
 			$home = '<a style="float:left;" href="' . home_url() . '">← Go Home</a>';
 
@@ -100,69 +189,27 @@ final class Wampum_Membership {
 
 			}
 
+    	$close  = '</div>';
+    	$close .= '</div>';
     	$close .= '</div>';
 
 	    return $open . $links . $message . $close;
     }
 
-	/**
-	 * Redirect steps/programs if they are restricted and user doesn't have access
-	 *
-	 * @return void
-	 */
-	public function access_redirect() {
-
-	    if ( ! is_singular( array( 'wampum_program','wampum_step') ) ) {
-	    	return;
-	    }
-
-	    // Bail if super user
-	    if ( is_user_logged_in() && current_user_can('wc_memberships_access_all_restricted_content') ) {
-	    	return;
-	    }
-
-    	$post_id = get_the_ID();
-	    if ( is_singular('wampum_step') ) {
-	    	$post_id = Wampum()->content->get_step_program_id( get_queried_object() );
-	    }
-
-	    // Bail if the program is not restricted at all
-	    if ( ! Wampum()->membership->is_post_content_restricted( $post_id ) ) {
-	    	return;
-	    }
-
-	    // $redirect_url = home_url();
-
-	    // // Bail if user is not logged in, since they can't have access if
-	    // if ( ! is_user_logged_in() ) {
-	    	// return;
-		   //  wp_redirect( $redirect_url );
-		   //  exit();
-	    // }
-
-	    // If user is logged in, check if they have access to the program
-	    if ( is_user_logged_in() ) {
-
-		    $post_object = get_post($post_id);
-		    $user_id     = get_current_user_id();
-		    $programs    = $this->get_programs( $user_id );
-
-		    // Bail, user has access
-		    if ( in_array( $post_object, $programs ) ) {
-		    	return;
-		    }
-
-		}
-
-	    // Filter the restricted message
-	    add_filter( 'wc_memberships_content_restricted_message', array( $this, 'test_this_restricted_message_filter' ), 10, 3 );
-
+    /**
+     * Get styles for no access overlay and message
+     *
+     * @since  1.3.0
+     *
+     * @return string|css
+     */
+    public function noaccess_styles() {
 	    ?>
 	    <style type="text/css">
 	    	body {
 	    		overflow: hidden !important;
 	    	}
-			.woocommerce {
+			.wampum-noaccess-container {
 			    background-color: rgba(250,250,250,0.98);
 			    top: 0;
 			    left: 0;
@@ -174,11 +221,8 @@ final class Wampum_Membership {
 			    overflow: hidden;
 			    -webkit-backface-visibility: hidden;
 			}
-			.woocommerce .woocommerce-info::before {
-				display: none;
-				visibility: hidden;
-			}
-		    .woocommerce .wc-memberships-restriction-message {
+
+		    .wampum-noaccess-wrap {
 			    background-color: transparent;
 			    text-align: center;
 			    position: absolute;
@@ -228,7 +272,7 @@ final class Wampum_Membership {
 			}
 		</style>
 		<?php
-	}
+    }
 
 	/**
 	 * Get a member's purchased programs
@@ -359,7 +403,7 @@ final class Wampum_Membership {
 	}
 
 	/**
-	 * Check if current user can view a specific post/cpt
+	 * Check if current user can view a specific post
 	 *
 	 * @since  1.0.0
 	 *
@@ -368,9 +412,6 @@ final class Wampum_Membership {
 	 * @return bool
 	 */
 	public static function can_view_post( $user_id, $post_id ) {
-		// if ( ! is_user_logged_in() ) {
-		// 	return false;
-		// }
 		return wc_memberships_user_can( $user_id, 'view', array( 'post' => $post_id ) );
 	}
 
