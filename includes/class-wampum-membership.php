@@ -35,9 +35,26 @@ final class Wampum_Membership {
 	}
 
 	public function init() {
-		add_action( 'plugins_loaded', 	      array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
+		// Filters
 		add_filter( 'auth_cookie_expiration', array( $this, 'stay_logged_in' ) );
+		// Hooks
+		add_action( 'plugins_loaded', 	      array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
 		add_action( 'wp_head', 				  array( $this, 'access_redirect' ) );
+	}
+
+	/**
+	 * Stay logged in for n number of weeks
+	 *
+	 * @since  1.3.0
+	 *
+	 * @param  int  $expirein  number of seconds to stay logged in for
+	 *
+	 * @return int  time in seconds to stay logged in
+	 */
+	public function stay_logged_in( $expirein ) {
+		$seconds = 31556926; // 1 year in seconds
+		$seconds = apply_filters( 'wampum_stay_logged_in', $seconds );
+		return $seconds;
 	}
 
 	/**
@@ -49,23 +66,8 @@ final class Wampum_Membership {
 	 *
 	 * @return void
 	 */
-	private function woo_subscriptions_remove_deprecation_handlers() {
+	public function woo_subscriptions_remove_deprecation_handlers() {
 		add_filter( 'woocommerce_subscriptions_load_deprecation_handlers', '__return_false' );
-	}
-
-	/**
-	 * Stay logged in for n number of weeks
-	 *
-	 * @since  1.3.0
-	 *
-	 * @param  int  $expirein  number of weeks to stay logged in for
-	 *
-	 * @return int  time in seconds to stay logged in
-	 */
-	private function stay_logged_in( $expirein ) {
-		$weeks = 24;
-		$weeks = apply_filters( 'wampum_stay_logged_in', $weeks );
-		return WEEK_IN_SECONDS * $weeks; // 24 weeks in seconds
 	}
 
 	/**
@@ -92,7 +94,7 @@ final class Wampum_Membership {
 	    }
 
 	    // Bail if the program is not restricted at all
-	    if ( ! Wampum()->membership->is_post_content_restricted( $post_id ) ) {
+	    if ( ! $this->is_post_content_restricted( $post_id ) ) {
 	    	return;
 	    }
 
@@ -110,12 +112,10 @@ final class Wampum_Membership {
 
 		}
 
-	    // Add the step program restricted message to steps
-	    if ( is_singular('wampum_step') ) {
-		    add_filter( 'the_content', array( $this, 'step_restricted_message' ) );
-		}
+	    // This adds the restricted message to the content, while stripping out the default Woo markup around the notice
+	    add_filter( 'the_content', array( $this, 'get_restricted_message' ) );
 
-	    // Filter the restricted message
+	    // Add our custom wampum restricted message, with markup
 	    add_filter( 'wc_memberships_content_restricted_message', array( $this, 'noaccess_restricted_message' ), 10, 3 );
 
 	    // Add styles
@@ -130,8 +130,11 @@ final class Wampum_Membership {
      *
      * @return mixed
      */
-	public function step_restricted_message( $content ) {
-    	$post_id = Wampum()->content->get_step_program_id( get_queried_object() );
+	public function get_restricted_message( $content ) {
+    	$post_id = get_the_ID();
+	    if ( is_singular('wampum_step') ) {
+	    	$post_id = Wampum()->content->get_step_program_id( get_queried_object() );
+	    }
 		return wc_memberships()->frontend->get_content_restricted_message($post_id);
 	}
 
@@ -148,14 +151,14 @@ final class Wampum_Membership {
     	$open .= '<div class="wampum-noaccess-wrap">';
 		$open .= '<div class="wampum-noaccess-message">';
 
-			$home = '<a style="float:left;" href="' . home_url() . '">← Go Home</a>';
+			$home = '<a style="float:left;" href="' . home_url() . '">← Home</a>';
 
 			$account = '';
 			if ( is_user_logged_in() ) {
 				$account = '<a style="float:right;" href="' . get_permalink( get_option('woocommerce_myaccount_page_id') ) . '">My Account →</a>';
 			}
 
-			$links = '<p style="text-align:center;overflow:hidden;">' . $home . $account . '</p>';
+			$links = '<div class="noaccess-links">' . $home . $account . '</div>';
 
 				if ( $products ) {
 
@@ -180,11 +183,12 @@ final class Wampum_Membership {
 		    // Show login form if not logged in
 		    if ( ! is_user_logged_in() ) {
 
-		    	$message .= '<h2>Already have access?</h2>';
 
 				$message .= '<div class="noaccess-login">';
-					$message .= '<h3>Login</h3>';
-					$message .= wp_login_form( array( 'echo' => false ) );
+					// $message .= '<h3>Login</h3>';
+			    	$message .= '<h2>Already have access?</h2>';
+					$message .= '<a style="float:none;display:block;" class="button" href="' . $this->get_restricted_content_redirect_url( get_the_ID() ) . '">Login</a>';
+					// $message .= wp_login_form( array( 'echo' => false ) );
 				$message .= '</div>';
 
 			}
@@ -195,6 +199,26 @@ final class Wampum_Membership {
 
 	    return $open . $links . $message . $close;
     }
+
+	/**
+	 * Get a formatted login url with restricted content redirect URL
+	 *
+	 * If content is neither a singular content or a taxonomy term will default to user account page
+	 *
+	 * @since 1.4.0
+	 * @return string Escaped url
+	 */
+	public function get_restricted_content_redirect_url( $post_id ) {
+
+		$url = wc_get_page_permalink( 'myaccount' );
+
+		$url = add_query_arg( array(
+			'wcm_redirect_to' => 'post',
+			'wcm_redirect_id' => $post_id,
+		), $url );
+
+		return esc_url( $url );
+	}
 
     /**
      * Get styles for no access overlay and message
@@ -230,17 +254,20 @@ final class Wampum_Membership {
 			    height: 100%;
 			    left: 0;
 			    top: 0;
-			    padding: 10px 20px 30px!important;
+			    padding: 10px !important;
 			    margin: 0 !important;
 			    box-sizing: border-box;
 			    overflow: auto;
 			}
 			.wampum-noaccess-message {
+				background-color: #fff;
+				border: 1px solid #e6e6e6;
 			    position: relative;
 			    max-width: 400px;
 			    top: 40%;
 				-webkit-transform: translate(0, -50%);transform: translate(0, -50%);
 			    height: auto;
+			    padding: 30px;
 			    margin: 30px auto;
 			    z-index: 1045;
 			}
@@ -248,27 +275,27 @@ final class Wampum_Membership {
 				font-size: 24px;
 				margin-bottom: 8px;
 			}
+			.noaccess-links {
+				text-align: center;
+				margin-bottom: 18px;
+				overflow: hidden;
+			}
 			.noaccess-products {
 				margin: 30px 0;
 			}
-			.noaccess-product,
-			.noaccess-login p {
+			.noaccess-product {
 				margin-bottom: 8px !important;
 				overflow: hidden !important;
 			}
-			.noaccess-login {
-				background-color: #fff;
-				text-align: left;
-				padding: 20px;
-				border: 1px solid #e6e6e6;
-				border-radius: 3px;
-			}
 			.noaccess-product .button,
-			.noaccess-login input[type="submit"] {
+			.noaccess-login .button {
 				display: block !important;
 				width: 100% !important;
 				line-height: 1.2 !important;
 				white-space: normal !important;
+			}
+			.noaccess-login {
+				margin-top: 20px;
 			}
 		</style>
 		<?php
