@@ -36,7 +36,10 @@ final class Wampum_Membership {
 
 	public function init() {
 		add_action( 'plugins_loaded', 	 array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
-		add_action( 'template_redirect', array( $this, 'access_redirect' ) );
+
+		// add_action( 'template_redirect', array( $this, 'access_redirect' ) );
+		// add_action( 'genesis_entry_content', array( $this, 'access_redirect' ) );
+		add_action( 'wp_head', array( $this, 'access_redirect' ) );
 	}
 
 	/**
@@ -51,6 +54,56 @@ final class Wampum_Membership {
 	function woo_subscriptions_remove_deprecation_handlers() {
 		add_filter( 'woocommerce_subscriptions_load_deprecation_handlers', '__return_false' );
 	}
+
+    function test_this_restricted_message_filter( $message, $post_id, $products ) {
+
+		$open = '<div class="wampum-noaccess-message">';
+
+			$home = '<a style="float:left;" href="' . home_url() . '">← Go Home</a>';
+
+			$account = '';
+			if ( is_user_logged_in() ) {
+				$account = '<a style="float:right;" href="' . get_permalink( get_option('woocommerce_myaccount_page_id') ) . '">My Account →</a>';
+			}
+
+			$links = '<p style="text-align:center;overflow:hidden;">' . $home . $account . '</p>';
+
+				if ( $products ) {
+
+					$message .= '<div class="noaccess-products">';
+
+						$message .= '<h2>Get Access Now</h2>';
+
+				    	foreach ( $products as $product_id ) {
+
+		 					$product = new WC_Product($product_id);
+
+			    			$message .= '<p class="noaccess-product">';
+			 					$message .= '<a class="button" href="' . get_permalink($product_id) . '">' . get_the_title( $product_id ) . ' - ' . $product->get_price_html() . '</a>';
+			    				$message .= $product->post_excerpt;
+							$message .= '</p>';
+						}
+
+					$message .= '</div>';
+
+		    	}
+
+		    // Show login form if not logged in
+		    if ( ! is_user_logged_in() ) {
+
+		    	$message .= '<h2>Already have access?</h2>';
+
+				$message .= '<div class="noaccess-login">';
+					$message .= '<h3>Login</h3>';
+					$message .= wp_login_form( array( 'echo' => false ) );
+				$message .= '</div>';
+
+			}
+
+    	$close .= '</div>';
+
+	    return $open . $links . $message . $close;
+    }
 
 	/**
 	 * Redirect steps/programs if they are restricted and user doesn't have access
@@ -78,25 +131,103 @@ final class Wampum_Membership {
 	    	return;
 	    }
 
-	    $redirect_url = home_url();
+	    // $redirect_url = home_url();
 
-	    // Bail if user is not logged in, since they can't have access if
-	    if ( ! is_user_logged_in() ) {
-		    wp_redirect( $redirect_url );
-		    exit();
-	    }
+	    // // Bail if user is not logged in, since they can't have access if
+	    // if ( ! is_user_logged_in() ) {
+	    	// return;
+		   //  wp_redirect( $redirect_url );
+		   //  exit();
+	    // }
 
-	    $post_object = get_post($post_id);
+	    // If user is logged in, check if they have access to the program
+	    if ( is_user_logged_in() ) {
 
-	    $user_id  = get_current_user_id();
-	    $programs = $this->get_programs( $user_id );
+		    $post_object = get_post($post_id);
+		    $user_id     = get_current_user_id();
+		    $programs    = $this->get_programs( $user_id );
 
-	    // Get out of there, you don't have access!
-	    if ( ! in_array( $post_object, $programs ) ) {
-		    wp_redirect( $redirect_url );
-		    exit();
-	    }
-	    return;
+		    // Bail, user has access
+		    if ( in_array( $post_object, $programs ) ) {
+		    	return;
+		    }
+
+		}
+
+	    // Filter the restricted message
+	    add_filter( 'wc_memberships_content_restricted_message', array( $this, 'test_this_restricted_message_filter' ), 10, 3 );
+
+	    ?>
+	    <style type="text/css">
+	    	body {
+	    		overflow: hidden !important;
+	    	}
+			.woocommerce {
+			    background-color: rgba(250,250,250,0.98);
+			    top: 0;
+			    left: 0;
+			    width: 100%;
+			    height: 100%;
+			    overflow: hidden;
+			    position: fixed;
+			    z-index: 1043;
+			    overflow: hidden;
+			    -webkit-backface-visibility: hidden;
+			}
+			.woocommerce .woocommerce-info::before {
+				display: none;
+				visibility: hidden;
+			}
+		    .woocommerce .wc-memberships-restriction-message {
+			    background-color: transparent;
+			    text-align: center;
+			    position: absolute;
+			    width: 100%;
+			    height: 100%;
+			    left: 0;
+			    top: 0;
+			    padding: 10px 20px 30px!important;
+			    margin: 0 !important;
+			    box-sizing: border-box;
+			    overflow: auto;
+			}
+			.wampum-noaccess-message {
+			    position: relative;
+			    max-width: 400px;
+			    top: 40%;
+				-webkit-transform: translate(0, -50%);transform: translate(0, -50%);
+			    height: auto;
+			    margin: 30px auto;
+			    z-index: 1045;
+			}
+			.wampum-noaccess-message h2 {
+				font-size: 24px;
+				margin-bottom: 8px;
+			}
+			.noaccess-products {
+				margin: 30px 0;
+			}
+			.noaccess-product,
+			.noaccess-login p {
+				margin-bottom: 8px !important;
+				overflow: hidden !important;
+			}
+			.noaccess-login {
+				background-color: #fff;
+				text-align: left;
+				padding: 20px;
+				border: 1px solid #e6e6e6;
+				border-radius: 3px;
+			}
+			.noaccess-product .button,
+			.noaccess-login input[type="submit"] {
+				display: block !important;
+				width: 100% !important;
+				line-height: 1.2 !important;
+				white-space: normal !important;
+			}
+		</style>
+		<?php
 	}
 
 	/**
@@ -247,6 +378,7 @@ final class Wampum_Membership {
 		$args = array(
 			'echo'           => false,
 			// 'remember'       => true,
+			'redirect'		 => $redirect,
 			// 'redirect'       => ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 			// 'form_id'        => 'wampum-loginform',
 			'id_username'    => 'user_login',

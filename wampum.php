@@ -41,15 +41,6 @@ final class Wampum_Setup {
 	private static $instance;
 
 	/**
-	 * Wampum Account Page Object
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var object | Wampum_Account_Page
-	 */
-	public $account;
-
-	/**
 	 * Wampum Content Types Object
 	 *
 	 * @since 1.0.0
@@ -75,6 +66,24 @@ final class Wampum_Setup {
 	 * @var object | Wampum_Membership
 	 */
 	public $membership;
+
+	/**
+	 * Wampum Settings Object
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var object | Wampum_Settings
+	 */
+	public $settings;
+
+	/**
+	 * Wampum Step Progress Object
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var object | Wampum_User_Step_Progress
+	 */
+	public $step_progress;
 
 	/**
 	 * Wampum Template Loader Object
@@ -240,6 +249,7 @@ final class Wampum_Setup {
 		if ( ! is_admin() ) {
 			// Register stylesheet
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_stylesheets' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
 			// Setup front end hooks
 			add_filter( 'the_content', array( $this, 'before_content' ) );
 			add_filter( 'the_content', array( $this, 'after_content' ) );
@@ -332,6 +342,20 @@ final class Wampum_Setup {
 	 */
 	public function register_stylesheets() {
 	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css', array(), WAMPUM_VERSION );
+	    wp_register_style( 'magnific-popup', WAMPUM_PLUGIN_URL . 'css/magnific-popup.css', array(), WAMPUM_VERSION );
+	}
+
+	/**
+	 * Register scripts for later use
+	 *
+	 * Use via wp_enqueue_script('magnific-popup'); in a template
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return null
+	 */
+	public function register_scripts() {
+	    wp_register_script( 'magnific-popup', WAMPUM_PLUGIN_URL . 'js/jquery.magnific-popup.min.js', array('jquery'), WAMPUM_VERSION, true );
 	}
 
 	/**
