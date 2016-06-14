@@ -131,11 +131,14 @@ final class Wampum_Membership {
      * @return mixed
      */
 	public function get_restricted_message( $content ) {
-    	$post_id = get_the_ID();
-	    if ( is_singular('wampum_step') ) {
-	    	$post_id = Wampum()->content->get_step_program_id( get_queried_object() );
-	    }
-		return wc_memberships()->frontend->get_content_restricted_message($post_id);
+    	if ( is_main_query() ) {
+	    	$post_id = get_the_ID();
+		    if ( is_singular('wampum_step') ) {
+		    	$post_id = Wampum()->content->get_step_program_id( get_queried_object() );
+		    }
+			$content .= wc_memberships()->frontend->get_content_restricted_message($post_id);
+		}
+		return $content;
 	}
 
     /**
@@ -147,57 +150,63 @@ final class Wampum_Membership {
      */
     function noaccess_restricted_message( $message, $post_id, $products ) {
 
+    	// MESSAGE
+    	$message = '<div class="noaccess-message">' . $message . '</div>';
+
+    	// OPEN
     	$open  = '<div class="wampum-noaccess-container">';
     	$open .= '<div class="wampum-noaccess-wrap">';
-		$open .= '<div class="wampum-noaccess-message">';
+		$open .= '<div class="wampum-noaccess-content">';
 
-			$home = '<a style="float:left;" href="' . home_url() . '">← Home</a>';
-
+			// LINKS
+			$home    = '<a style="float:left;" href="' . home_url() . '">← Home</a>';
 			$account = '';
 			if ( is_user_logged_in() ) {
 				$account = '<a style="float:right;" href="' . get_permalink( get_option('woocommerce_myaccount_page_id') ) . '">My Account →</a>';
 			}
-
 			$links = '<div class="noaccess-links">' . $home . $account . '</div>';
 
-				if ( $products ) {
+			// SELL
+			$sell = '';
 
-					$message .= '<div class="noaccess-products">';
+			if ( $products ) {
 
-						$message .= '<h2>Get Access Now</h2>';
+				$sell .= '<div class="noaccess-products">';
 
-				    	foreach ( $products as $product_id ) {
+					$sell .= '<h2>Get Access Now</h2>';
 
-		 					$product = new WC_Product($product_id);
+			    	foreach ( $products as $product_id ) {
 
-			    			$message .= '<p class="noaccess-product">';
-			 					$message .= '<a class="button" href="' . get_permalink($product_id) . '">' . get_the_title( $product_id ) . ' - ' . $product->get_price_html() . '</a>';
-			    				$message .= $product->post_excerpt;
-							$message .= '</p>';
-						}
+	 					$product = new WC_Product($product_id);
 
-					$message .= '</div>';
+		    			$sell .= '<div class="noaccess-product">';
+		 					$sell .= '<a class="button" href="' . get_permalink($product_id) . '">' . get_the_title( $product_id ) . ' - ' . $product->get_price_html() . '</a>';
+		    				$sell .= $product->post_excerpt;
+						$sell .= '</div>';
+					}
 
-		    	}
+				$sell .= '</div>';
 
-		    // Show login form if not logged in
+	    	}
+
+		    // LOGIN
+		    $login = '';
+
 		    if ( ! is_user_logged_in() ) {
 
-
-				$message .= '<div class="noaccess-login">';
-					// $message .= '<h3>Login</h3>';
-			    	$message .= '<h2>Already have access?</h2>';
-					$message .= '<a style="float:none;display:block;" class="button" href="' . $this->get_restricted_content_redirect_url( get_the_ID() ) . '">Login</a>';
-					// $message .= wp_login_form( array( 'echo' => false ) );
-				$message .= '</div>';
+				$login .= '<div class="noaccess-login">';
+			    	$login .= '<h2>Already have access?</h2>';
+					$login .= '<a style="float:none;display:block;" class="button" href="' . $this->get_restricted_content_redirect_url( get_the_ID() ) . '">Login</a>';
+				$login .= '</div>';
 
 			}
 
+		// CLOSE
     	$close  = '</div>';
     	$close .= '</div>';
     	$close .= '</div>';
 
-	    return $open . $links . $message . $close;
+	    return $open . $links . $message . $sell . $login . $close;
     }
 
 	/**
@@ -234,7 +243,7 @@ final class Wampum_Membership {
 	    		overflow: hidden !important;
 	    	}
 			.wampum-noaccess-container {
-			    background-color: rgba(250,250,250,0.98);
+			    background-color: rgba(250,250,250,0.9);
 			    top: 0;
 			    left: 0;
 			    width: 100%;
@@ -247,7 +256,6 @@ final class Wampum_Membership {
 			}
 
 		    .wampum-noaccess-wrap {
-			    background-color: transparent;
 			    text-align: center;
 			    position: absolute;
 			    width: 100%;
@@ -259,7 +267,7 @@ final class Wampum_Membership {
 			    box-sizing: border-box;
 			    overflow: auto;
 			}
-			.wampum-noaccess-message {
+			.wampum-noaccess-content {
 				background-color: #fff;
 				border: 1px solid #e6e6e6;
 			    position: relative;
@@ -267,32 +275,31 @@ final class Wampum_Membership {
 			    top: 40%;
 				-webkit-transform: translate(0, -50%);transform: translate(0, -50%);
 			    height: auto;
-			    padding: 30px;
+			    padding: 10px 30px;
 			    margin: 30px auto;
 			    z-index: 1045;
 			}
-			.wampum-noaccess-message h2 {
+			.wampum-noaccess-content h2 {
 				font-size: 24px;
 				margin-bottom: 8px;
 			}
-			.noaccess-links {
-				text-align: center;
-				margin-bottom: 18px;
+			.noaccess-links,
+			.noaccess-message,
+			.noaccess-products,
+			.noaccess-login {
+				padding: 15px 0;
 				overflow: hidden;
 			}
-			.noaccess-products {
-				margin: 30px 0;
-			}
 			.noaccess-product {
-				margin-bottom: 8px !important;
-				overflow: hidden !important;
+				margin-bottom: 8px;
+				overflow: hidden;
 			}
 			.noaccess-product .button,
 			.noaccess-login .button {
-				display: block !important;
-				width: 100% !important;
-				line-height: 1.2 !important;
-				white-space: normal !important;
+				display: block;
+				width: 100%;
+				line-height: 1.2;
+				white-space: normal;
 			}
 			.noaccess-login {
 				margin-top: 20px;
