@@ -486,7 +486,7 @@ class Wampum_Connections {
 			return $links;
 		}
 		// Get step program
-		$step_program = Wampum()->connections->get_program_from_step_query( get_queried_object() );
+		$step_program = $this->get_program_from_step_query( get_queried_object() );
 		if ( $step_program ) {
 		    $new[] = array(
 		        'url'  => get_the_permalink( $step_program->ID ),

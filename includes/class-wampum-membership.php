@@ -273,7 +273,7 @@ final class Wampum_Membership {
 			    position: relative;
 			    max-width: 400px;
 			    top: 40%;
-				-webkit-transform: translate(0, -50%);transform: translate(0, -50%);
+				-webkit-transform: translate(0, -40%);transform: translate(0, -40%);
 			    height: auto;
 			    padding: 10px 30px;
 			    margin: 30px auto;
