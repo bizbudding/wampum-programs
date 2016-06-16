@@ -70,121 +70,23 @@ final class Wampum_Content_Types {
 
 	public function init() {
 		// Actions
-<<<<<<< Updated upstream
-		add_action( 'init', 			array( $this, 'add_rewrite_tags' ), 0, 2 );
-		add_action( 'init', 			array( $this, 'register_post_types'), 0 );
-=======
-		add_action( 'init', 			array( $this, 'register_post_types'), 0 );
-
-		add_action( 'registered_post_type', array( $this, 'registered_post_type' ), 1, 2 );
-		add_filter( 'post_type_link',       array( $this, 'post_type_link_new' ), 1, 4 );
-
-		add_action( 'init', 			array( $this, 'add_rewrite_tags' ), 0, 2 );
->>>>>>> Stashed changes
-		// add_action( 'init', array( $this, 'register_taxonomies') );
-
+		add_action( 'init', 		  		array( $this, 'register_post_types'), 0 );
+		// add_action( 'registered_post_type', array( $this, 'add_permastruct' ), 1, 2 );
+		//
 		// Filters
+		add_filter( 'post_type_link', 		array( $this, 'post_type_link' ), 1, 3 );
+		add_filter( 'redirect_canonical',	array( $this, 'redirect_steps' ), 10, 2 );
 
-		// add_action( 'init', 		   array( $this, 'ads_rewrite' ) );
-<<<<<<< Updated upstream
-		add_filter( 'post_type_link',  array( $this, 'post_type_link' ), 10, 2 );
-=======
-		// add_filter( 'post_type_link',  array( $this, 'post_type_link' ), 2, 2 );
->>>>>>> Stashed changes
 
 		// Support
 		add_post_type_support( 'wc_membership_plan', 'post-thumbnails' );
 	}
 
-	// function ads_rewrite() {
-	// 	global $wp_rewrite;
-	// 	// $queryarg = 'post_type=ads&p=';
-	// 	// $wp_rewrite->add_rewrite_tag('%cpt_id%', '([^/]+)', $queryarg);
-	// 	$wp_rewrite->add_rewrite_tag( '%wampum_program%', '([^/]+)' );
-	// 	$wp_rewrite->add_rewrite_tag( '%wampum_step_program%', '([^/]+)' );
-	// 	$wp_rewrite->add_rewrite_tag( '%wampum_step%', '([^/]+)' );
-	// 	$wp_rewrite->add_permastruct( 'wampum_step_program', '/%wampum_step_program%/', false );
-	// }
-
-	// function wampum_permalinks( $post_link, $id = 0, $leavename, $sample ) {
-	// 	global $wp_rewrite;
-	// 	$post = &get_post($id);
-	// 	if ( is_wp_error( $post ) )
-	// 		return $post;
-	// 	$newlink = $wp_rewrite->get_extra_permastruct('myposttype');
-	// 	$newlink = str_replace("%post_id%", $post->ID, $newlink);
-	// 	$newlink = home_url(user_trailingslashit($newlink));
-	// 	return $newlink;
-	// }
-
-
-	/**
-	 * Action fired after a CPT is registered in order to set up the custom permalink structure for the post type.
-	 *
-	 * @param string $post_type Post type name.
-	 * @param object $args      Arguments used to register the post type.
-	 */
-	public function registered_post_type( $post_type, stdClass $args ) {
-		if ( self::STEP != $post_type ) {
-			return;
-		}
-		// add_rewrite_tag( '%wampum_step_program%', '([^/]+)' );
-		// $struct = str_replace( "%{$this->post_type}_slug%", $this->post_slug, $args->rewrite['permastruct'] );
-		// $struct = str_replace( '%postname%', "%{$this->post_type}%", $struct );
-		// add_permastruct( $this->post_type, $struct, $args->rewrite );
-		add_permastruct( 'wampum_step_program', '%wampum_step_program%' );
-	}
-
-	/**
-	 * Filter the post type permalink in order to populate its rewrite tags.
-	 *
-	 * @param  string  $post_link The post's permalink.
-	 * @param  WP_Post $post      The post in question.
-	 * @param  bool    $leavename Whether to keep the post name.
-	 * @param  bool    $sample    Is it a sample permalink.
-	 * @return string             The post's permalink.
-	 */
-	public function post_type_link_new( $post_link, WP_Post $post, $leavename, $sample ) {
-		# If it's not our post type, bail out:
-		if ( self::STEP != $post->post_type ) {
-			return $post_link;
-		}
-
-		$replacements = array();
-
-		if ( false !== strpos( $post_link, '%wampum_step_program%' ) ) {
-			// $replacements['%wampum_step_program%'] = $this->get_step_program_slug($post);
-			$replacements['%wampum_step_program%'] = 'this-is-my-custom-slug';
-		}
-
-		$post_link = str_replace( array_keys( $replacements ), $replacements, $post_link );
-		return $post_link;
-	}
-
-	// function ads_rewrite() {
-	// 	global $wp_rewrite;
-	// 	// $queryarg = 'post_type=ads&p=';
-	// 	// $wp_rewrite->add_rewrite_tag('%cpt_id%', '([^/]+)', $queryarg);
-	// 	$wp_rewrite->add_rewrite_tag( '%wampum_program%', '([^/]+)' );
-	// 	$wp_rewrite->add_rewrite_tag( '%wampum_step_program%', '([^/]+)' );
-	// 	$wp_rewrite->add_rewrite_tag( '%wampum_step%', '([^/]+)' );
-	// 	$wp_rewrite->add_permastruct( 'wampum_step_program', '/%wampum_step_program%/', false );
-	// }
-
-	// function wampum_permalinks( $post_link, $id = 0, $leavename, $sample ) {
-	// 	global $wp_rewrite;
-	// 	$post = &get_post($id);
-	// 	if ( is_wp_error( $post ) )
-	// 		return $post;
-	// 	$newlink = $wp_rewrite->get_extra_permastruct('myposttype');
-	// 	$newlink = str_replace("%post_id%", $post->ID, $newlink);
-	// 	$newlink = home_url(user_trailingslashit($newlink));
-	// 	return $newlink;
-	// }
-
-
 	/**
 	 * Register custom post stypes
+	 *
+	 * @see  	http://wordpress.stackexchange.com/questions/83531/custom-post-type-404s-with-rewriting-even-after-resetting-permalinks
+	 * @see  	https://github.com/johnbillion/extended-cpts/wiki/Custom-permalink-structures
 	 *
 	 * @since   1.0.0
 	 *
@@ -192,55 +94,22 @@ final class Wampum_Content_Types {
 	 */
 	public function register_post_types() {
 
-	    // register_extended_post_type( 'wampum_program', array(
-		// 	'enter_title_here' => 'Enter Program Name',
-		// 	'menu_icon'		   => 'dashicons-feedback',
-		//     'rewrite' => array(
-		//         'permastruct' => '/foo/%post_id%/%wampum_program%',
-		//     ),
-		//     'has_archive' => apply_filters( 'wampum_program_has_archive', false ),
-		// 	'supports' 	  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
-		// ), array(
-		//     'singular' => 'Program',
-		//     'plural'   => 'Programssss',
-		// ) );
+		// Add rewrite tags
+		$this->add_rewrite_tags();
+		// Add rewrite rules
+		$this->add_rewrite_rules();
 
 		// Programs
 		$program = self::PROGRAM;
 	    register_extended_post_type( $program, array(
 			'enter_title_here' => 'Enter ' . $this->singular_name($program) . ' Name',
 			'menu_icon'		   => 'dashicons-feedback',
-<<<<<<< Updated upstream
-			'rewrite' => array(
-		        // 'permastruct' => $this->get_program_base_slug() . '/%wampum_program%',
-		        'permastruct' => $this->get_program_base_slug() . '/%postname%',
-		        // 'slug' => $this->get_program_base_slug() . '/%wampum_program%',
-=======
-		    'rewrite' => array(
-		        'permastruct' => $this->get_program_base_slug() . '/%post_id%/%wampum_program%',
->>>>>>> Stashed changes
-		    ),
-			// 'rewrite' => array(
-		        // 'permastruct' => $this->get_program_base_slug() . '/%wampum_program%',
-		        // 'permastruct' => $this->get_program_base_slug() . '/%postname%',
-		        // 'slug' => $this->get_program_base_slug() . '/%wampum_program%',
+		    'rewrite' 		   => array(
+		        'permastruct' => '/' . $this->get_program_base_slug() . '/%wampum_program%',
 		        // 'slug' => $this->get_program_base_slug(),
-		        // 'slug' => 'program',
-		    // ),
+		    ),
 		    'has_archive' => apply_filters( 'wampum_program_has_archive', false ),
 			'supports' 	  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
-		  //   'admin_cols'  => array(
-				// 'programs_to_steps' => array(
-				//     'title'      => $this->plural_name(self::STEP),
-				//     'connection' => 'programs_to_steps',
-				//     'link'       => 'edit',
-				// ),
-				// 'programs_to_resources' => array(
-				//     'title'      => $this->plural_name(self::RESOURCE),
-				//     'connection' => 'programs_to_resources',
-				//     'link'       => 'edit',
-				// ),
-		  //   ),
 	    ), $this::default_names()[$program] );
 
 	    // Steps
@@ -248,38 +117,24 @@ final class Wampum_Content_Types {
 	    register_extended_post_type( $step, array(
 			'enter_title_here'	=> 'Enter ' . $this->singular_name($step) . ' Name',
 			'menu_icon'			=> 'dashicons-feedback',
-<<<<<<< Updated upstream
-			'rewrite'			=> array(
-		        // 'permastruct' => $this->get_program_base_slug() . '/%wampum_step_program%/%wampum_step%',
-		        'permastruct' => $this->get_program_base_slug() . '/%wampum_program%/%postname%',
-		        // 'slug' => $this->get_program_base_slug() . '/%wampum_step_program%',
-		        // 'slug' => $this->get_program_base_slug() . '/%wampum_program%',
-=======
-		    'rewrite' => array(
-		        'permastruct' => $this->get_program_base_slug() . '/%post_id%/%wampum_step_program%/%wampum_step%/',
->>>>>>> Stashed changes
+		    'rewrite' 			=> array(
+		        'permastruct' => '/' . $this->get_program_base_slug() . '/%wampum_step_program%/%wampum_step%',
+		        // 'slug' => $this->get_program_base_slug() . '%wampum_step_program%',
 		    ),
-			// 'rewrite'			=> array(
-		        // 'permastruct' => $this->get_program_base_slug() . '/%wampum_step_program%/%wampum_step%',
-		        // 'permastruct' => $this->get_program_base_slug() . '/%wampum_program%/',
-		        // 'slug' => $this->get_program_base_slug() . '/%wampum_step_program%',
-		        // 'slug' => $this->get_program_base_slug() . '/%wampum_program%',
-		        // 'slug' => $this->get_program_base_slug(),
-		    // ),
 		    'has_archive' 		=> apply_filters( 'wampum_step_has_archive', false ),
 			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
-		    // 'admin_cols' 		=> array(
-				// 'programs_to_steps' => array(
-				//     'title'      => $this->plural_name(self::PROGRAM),
-				//     'connection' => 'programs_to_steps',
-				//     'link'       => 'edit',
-				// ),
-				// 'steps_to_resources' => array(
-				//     'title'      => $this->plural_name(self::RESOURCE),
-				//     'connection' => 'steps_to_resources',
-				//     'link'       => 'edit',
-				// ),
-		    // ),
+		    'admin_cols' 		=> array(
+				'programs_to_steps' => array(
+				    'title'      => $this->plural_name(self::PROGRAM),
+				    'connection' => 'programs_to_steps',
+				    'link'       => 'edit',
+				),
+				'steps_to_resources' => array(
+				    'title'      => $this->plural_name(self::RESOURCE),
+				    'connection' => 'steps_to_resources',
+				    'link'       => 'edit',
+				),
+		    ),
 	    ), $this::default_names()[$step] );
 
 	    // Resources
@@ -291,147 +146,96 @@ final class Wampum_Content_Types {
 			'supports'			=> apply_filters( $resource . '_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
 	    ), $this::default_names()[$resource] );
 
+	    // REMOVE THIS BEFORE YOU PUSH THIS LIVE!!!!!!!!!!!!!!
+	    flush_rewrite_rules();
+
 	}
 
 	/**
-	 * Register custom taxonomies
-	 * Replace programs metabox with Piklist generated metabox
+	 * Add rewrite tags
 	 *
-	 * @since   1.0.0
-	 *
-	 * @return  void
-	 */
-	public function register_taxonomies() {
-		// Programs
-	    // register_extended_taxonomy( self::PROGRAM, array('wc_membership_plan',self::STEP), array(
-	    	// 'meta_box' => false,
-            // 'rewrite'  => array( 'slug' => 'programs' ),
-            // 'show_ui' => false,
-        // ), $this::default_names()[self::PROGRAM] );
-	}
-
-	/**
-	 * Add rewrite tags to available permalinks tags
+	 * @see    http://wordpress.stackexchange.com/questions/175110/nested-cpt-urls-posts-2-posts
+	 * @see    http://wordpress.stackexchange.com/questions/61105/nested-custom-post-types-with-permalinks
 	 *
 	 * @since  1.0.0
 	 *
 	 * @return void
 	 */
 	public function add_rewrite_tags() {
-<<<<<<< Updated upstream
-		// add_rewrite_tag( '%wampum_step_program%', '([^/]+)' );
-		add_rewrite_tag( '%wampum_program%', '([^/]+)' );
-=======
-	    // add_rewrite_rule("^books/([^/]+)/([^/]+)/?",'index.php?post_type=wampum_step&genre=$matches[1]&book=$matches[2]','top');
-	    // add_rewrite_rule("^programs/([^/]+)/?",'index.php?post_type=wampum_step','top');
 		add_rewrite_tag( '%wampum_step_program%', '([^/]+)' );
-		// add_rewrite_tag( '%wampum_program%', '([^/]+)' );
->>>>>>> Stashed changes
-		// add_rewrite_tag( '%wampum_step%', '([^/]+)' );
 	}
 
 	/**
-	 * Rewrite permalinks for better content structure
+	 * Add rewrite rules
 	 *
-	 * TODO: Set Yoast SEO breadcrumbs to match this new structure???
+	 * @see    http://wordpress.stackexchange.com/questions/175110/nested-cpt-urls-posts-2-posts
+	 * @see    http://wordpress.stackexchange.com/questions/61105/nested-custom-post-types-with-permalinks
 	 *
-	 * @since  1.0.0
+	 * @since  TBD
 	 *
-	 * @link   http://kellenmace.com/remove-custom-post-type-slug-from-permalinks/
-	 *
-	 * @param  idk    $post_link  the default post link
-	 * @param  object $post       the post object
-	 *
-	 * @return string|url
+	 * @return void
 	 */
-	// public function custom_permalinks( $post_link, $post ) {
-	// 	if ( 'publish' !== $post->post_status ) {
-	//         return $post_link;
-	// 	}
-	//     if ( self::PROGRAM === $post->post_type ) {
-	// 	    $post_link = str_replace( $post->post_type, $this->get_program_base_slug(), $post_link );
-	//     }
-	//     if ( self::STEP === $post->post_type ) {
-	// 	    $post_link = str_replace( '%wampum_step_program%', $this->get_step_program_slug($post->ID), $post_link );
-	//     }
-	//     return $post_link;
-	// }
-
-	public function post_type_link( $url, $post ) {
-	    // Bail if we can't find the rewrite tag
-	    // if ( strpos('%wampum_program%', $url ) === FALSE ) {
-<<<<<<< Updated upstream
-	    if ( strpos( $url, '%wampum_program%' ) === FALSE ) {
-=======
-	    if ( strpos( $url, '%wampum_step_program%' ) === FALSE ) {
->>>>>>> Stashed changes
-			return $url;
-	    }
-	    // Make sure our object and ID are set correctly
-	    if ( is_object($post) ) {
-			$post_id = $post->ID;
-	    } else {
-			$post_id = $post;
-			$post	 = get_post($post_id);
-	    }
-	    // Bail if not a post object or not a published post
-	    if ( ! is_object($post) || 'publish' !== $post->post_status ) {
-			return $url;
-	    }
-	    if ( $post->post_type == self::STEP ) {
-			// $mystring = 'abc';
-			// $findme   = 'a';
-			// $pos = strpos($mystring, $findme);
-			// $bodytag = str_replace("%body%", "black", "<body text='%body%'>");
-<<<<<<< Updated upstream
-			$slug = $this->get_step_program_slug($post);
-			$slug = 'some-program';
-			$url  = str_replace( '%wampum_program%', $slug, $url );
-=======
-			// $slug = $this->get_step_program_slug($post);
-			$slug = 'some-program';
-			$url  = str_replace( '%wampum_step_program%', $slug, $url );
->>>>>>> Stashed changes
-	    }
-	  //   if ( $post->post_type == self::PROGRAM ) {
-			// $slug = $this->get_program_base_slug($post->ID);
-			// $url  = str_replace( '%wampum_program%', $slug, $url );
-	  //   }
-	    return $url;
+	public function add_rewrite_rules() {
+	    add_rewrite_rule( '^' . $this->get_program_base_slug() . '/([^/]*)/([^/]*)/?','index.php?' . self::STEP . '=$matches[2]','top' );
+		// add_rewrite_rule( '^' . $this->get_program_base_slug() . '/[^/]+/([^/]+)/?$', 'index.php?' . self::STEP . '=$matches[1]', 'top' );
 	}
 
 	/**
-	 * Have WordPress match postname to any of our public post types (post, page, race)
-	 * All of our public post types can have /post-name/ as the slug, so they better be unique across all posts
-	 * By default, core only accounts for posts and pages where the slug is /post-name/
+	 * Action fired after a CPT is registered in order to set up the custom permalink structure for the post type.
+	 * Borrowed from Extended CPTs
+	 *
+	 * @see   https://github.com/johnbillion/extended-cpts/blob/master/extended-cpts.php#L590
+	 *
+	 * @param string $post_type Post type name.
+	 * @param object $args      Arguments used to register the post type.
+	 *
+	 * @return void
 	 */
-	// public function parse_request_trick( $query ) {
-	//     if ( ! $query->is_main_query() || is_admin() ) {
-	//         return $query;
-	//     }
-	//     // Only noop our very specific rewrite rule match
-	//     if ( 2 != count( $query->query ) || ! isset( $query->query['page'] ) ) {
-	//         return $query;
-	//     }
-	//     // 'name' will be set if post permalinks are just post_name, otherwise the page rule will match
-	//     if ( ! empty( $query->query['name'] ) ) {
-	//         $query->set( 'post_type', array( 'post', 'page', self::PROGRAM, self::STEP ) );
-	//     }
-	//     return $query;
-	// }
+	public function add_permastruct( $post_type, stdClass $args ) {
+		if ( self::STEP != $post_type ) {
+			return;
+		}
+		add_permastruct( 'wampum_step_program', '%wampum_step_program%' );
+	}
 
-	// public function get_post_meta( $key = '' ) {
-	//     if ( ! $key ) {
-	//         return $this->post_meta;
-	//     }
-	//     if ( array_key_exists( $key, (array) $this->post_meta ) ) {
-	//         return $this->post_meta[ $key ];
-	//     }
-	//     return false;
-	//     // $this->post_meta = get_post_meta( $this->post_id, $key );
+	/**
+	 * Filter the post type permalink in order to populate its rewrite tags.
+	 * Borrowed from Extended CPTs
+	 *
+	 * @see    https://github.com/johnbillion/extended-cpts/blob/master/extended-cpts.php#L608
+	 *
+	 * @since  TBD
+	 *
+	 * @param  string   $post_link  The post's permalink.
+	 * @param  WP_Post  $post       The post in question.
+	 * @param  bool     $leavename  Whether to keep the post name.
+	 * @param  bool     $sample     Is it a sample permalink.
+	 *
+	 * @return string             The post's permalink.
+	 */
+	public function post_type_link( $post_link, WP_Post $post, $leavename ) {
+		// If it's not our post type, bail out
+		if ( self::STEP != $post->post_type ) {
+			return $post_link;
+		}
 
-	//     // return $this->post_meta[ $key ];
-	// }
+		$replacements = array();
+
+		if ( false !== strpos( $post_link, '%wampum_step_program%' ) ) {
+			// $replacements['%wampum_step_program%'] = $this->get_step_program_slug($post);
+			$replacements['%wampum_step_program%'] = $this->get_step_program_slug($post);
+		}
+
+		$post_link = str_replace( array_keys( $replacements ), $replacements, $post_link );
+		return $post_link;
+	}
+
+	function redirect_steps( $redirect_url, $requested_url ) {
+		if ( ! is_singular(self::STEP) ) {
+			return $requested_url;
+		}
+		return $redirect_url;
+	}
 
 	/**
 	 * Get the first (and hopefully only) connected program slug
@@ -469,8 +273,12 @@ final class Wampum_Content_Types {
 
 	/**
 	 * Get the step program
+	 *
+	 * @since  1.0.0
+	 *
 	 * @param  object|id  $step_object_or_id
-	 * @return object?    the program objects
+	 *
+	 * @return object     the program objects
 	 */
 	public function get_step_program( $step_object_or_id ) {
 		// Bail if not a step

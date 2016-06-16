@@ -198,7 +198,7 @@ class Wampum_Connections {
 	}
 
 	public function get_program_from_step_query( $queried_object ) {
-		return isset($queried_object->programs) ? $queried_object->programs[0] : false;
+		return !empty($queried_object->programs) ? $queried_object->programs[0] : false;
 	}
 
 	public function get_steps_from_step_query( $queried_object ) {
@@ -216,6 +216,7 @@ class Wampum_Connections {
 
 	/**
 	 * Add adjacent items to step query
+	 * NOT WORKING?!?!?
 	 *
 	 * @since  1.0.0
 	 *
@@ -258,6 +259,8 @@ class Wampum_Connections {
 		endwhile;
 		// Resources
 		p2p_type( 'steps_to_resources' )->each_connected( $wp_query, array(), 'resources' );
+		// Adjacent Items
+		set_query_var( 'programs_to_steps_adjacent', p2p_type('programs_to_steps')->get_adjacent_items($post->ID) );
 	}
 
 	/**
@@ -439,6 +442,9 @@ class Wampum_Connections {
 		if ( ! $items ) {
 			return $output;
 		}
+		// Prevents things from breaking if step is not connected to a program
+		$items['previous'] = isset($items['previous']) ? $items['previous'] : '';
+		$items['next'] 	   = isset($items['next']) ? $items['next'] : '';
 		// Set markup for links
 		$prev = $items['previous'] ? '<div class="pagination-previous alignleft"><a href="' . get_permalink( $items['previous'] ) . '">' . get_the_title( $items['previous'] ) . '</a></div>' : '';
 		$next = $items['next'] ? '<div class="pagination-next alignright"><a href="' . get_permalink( $items['next'] ) . '">' . get_the_title( $items['next'] ) . '</a></div>' : '';
@@ -453,12 +459,7 @@ class Wampum_Connections {
 	}
 
 	public function get_adjacent_items( $connection, $post_id ) {
-		if ( 'wampum_step' === get_post_type($post_id) ) {
-			global $wp_query;
-			$items = $wp_query->adjacent;
-		} else {
-			$items = p2p_type($connection)->get_adjacent_items($post_id);
-		}
+		$items = p2p_type($connection)->get_adjacent_items($post_id);
 		// Bail if none
 		if ( $items ) {
 			return $items;

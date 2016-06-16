@@ -43,14 +43,12 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 
 		$program_id = $steps = '';
 
-		// if ( 'wampum_program' === $post_type ) {
 		if ( is_singular('wampum_program') ) {
 			$program_id	= $queried_post_id;
 			$steps		= Wampum()->connections->get_steps_from_program_query( $queried_object );
-		// } elseif ( 'wampum_step' === $post_type ) {
 		} elseif ( is_singular('wampum_step') ) {
-			// $program_id	= Wampum()->content->get_step_program_id( $queried_post_id );
-			$program_id	= Wampum()->connections->get_program_from_step_query( $queried_object )->ID;
+			$program	= Wampum()->connections->get_program_from_step_query( $queried_object );
+			$program_id = isset($program->ID) ? $program->ID : '';
 			$steps		= Wampum()->connections->get_steps_from_step_query( $queried_object );
 		}
 
