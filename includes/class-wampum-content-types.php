@@ -171,7 +171,7 @@ final class Wampum_Content_Types {
 	 * @see    http://wordpress.stackexchange.com/questions/175110/nested-cpt-urls-posts-2-posts
 	 * @see    http://wordpress.stackexchange.com/questions/61105/nested-custom-post-types-with-permalinks
 	 *
-	 * @since  TBD
+	 * @since  1.3.0
 	 *
 	 * @return void
 	 */
@@ -181,6 +181,8 @@ final class Wampum_Content_Types {
 	}
 
 	/**
+	 * NOT CURRENTLY IN USE!!!!
+	 *
 	 * Action fired after a CPT is registered in order to set up the custom permalink structure for the post type.
 	 * Borrowed from Extended CPTs
 	 *
@@ -204,7 +206,7 @@ final class Wampum_Content_Types {
 	 *
 	 * @see    https://github.com/johnbillion/extended-cpts/blob/master/extended-cpts.php#L608
 	 *
-	 * @since  TBD
+	 * @since  1.3.0
 	 *
 	 * @param  string   $post_link  The post's permalink.
 	 * @param  WP_Post  $post       The post in question.

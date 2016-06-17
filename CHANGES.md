@@ -1,3 +1,7 @@
+#### 1.3.0
+* Add no access overlay, message, and buttons to programs and steps
+* Rebuild rewrite rules to get closer to working correctly
+
 #### 1.2.4
 * Fix missing space between 'My Programs' on account page
 
