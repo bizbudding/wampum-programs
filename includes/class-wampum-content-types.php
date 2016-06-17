@@ -105,8 +105,8 @@ final class Wampum_Content_Types {
 			'enter_title_here' => 'Enter ' . $this->singular_name($program) . ' Name',
 			'menu_icon'		   => 'dashicons-feedback',
 		    'rewrite' 		   => array(
-		        'permastruct' => '/' . $this->get_program_base_slug() . '/%wampum_program%',
-		        // 'slug' => $this->get_program_base_slug(),
+		        // 'permastruct' => '/' . $this->get_program_base_slug() . '/%wampum_program%',
+		        'slug' => $this->get_program_base_slug(),
 		    ),
 		    'has_archive' => apply_filters( 'wampum_program_has_archive', false ),
 			'supports' 	  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
@@ -118,23 +118,23 @@ final class Wampum_Content_Types {
 			'enter_title_here'	=> 'Enter ' . $this->singular_name($step) . ' Name',
 			'menu_icon'			=> 'dashicons-feedback',
 		    'rewrite' 			=> array(
-		        'permastruct' => '/' . $this->get_program_base_slug() . '/%wampum_step_program%/%wampum_step%',
-		        // 'slug' => $this->get_program_base_slug() . '%wampum_step_program%',
+		        // 'permastruct' => '/' . $this->get_program_base_slug() . '/%wampum_step_program%/%wampum_step%',
+		        'slug' => $this->get_program_base_slug() . '/%wampum_step_program%',
 		    ),
 		    'has_archive' 		=> apply_filters( 'wampum_step_has_archive', false ),
 			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
-		    'admin_cols' 		=> array(
-				'programs_to_steps' => array(
-				    'title'      => $this->plural_name(self::PROGRAM),
-				    'connection' => 'programs_to_steps',
-				    'link'       => 'edit',
-				),
-				'steps_to_resources' => array(
-				    'title'      => $this->plural_name(self::RESOURCE),
-				    'connection' => 'steps_to_resources',
-				    'link'       => 'edit',
-				),
-		    ),
+		  //   'admin_cols' 		=> array(
+				// 'programs_to_steps' => array(
+				//     'title'      => $this->plural_name(self::PROGRAM),
+				//     'connection' => 'programs_to_steps',
+				//     'link'       => 'edit',
+				// ),
+				// 'steps_to_resources' => array(
+				//     'title'      => $this->plural_name(self::RESOURCE),
+				//     'connection' => 'steps_to_resources',
+				//     'link'       => 'edit',
+				// ),
+		  //   ),
 	    ), $this::default_names()[$step] );
 
 	    // Resources
@@ -176,8 +176,8 @@ final class Wampum_Content_Types {
 	 * @return void
 	 */
 	public function add_rewrite_rules() {
-	    add_rewrite_rule( '^' . $this->get_program_base_slug() . '/([^/]*)/([^/]*)/?','index.php?' . self::STEP . '=$matches[2]','top' );
-		// add_rewrite_rule( '^' . $this->get_program_base_slug() . '/[^/]+/([^/]+)/?$', 'index.php?' . self::STEP . '=$matches[1]', 'top' );
+	    // add_rewrite_rule( '^' . $this->get_program_base_slug() . '/([^/]*)/([^/]*)/?','index.php?' . self::STEP . '=$matches[2]','top' );
+		add_rewrite_rule( '^' . $this->get_program_base_slug() . '/[^/]+/([^/]+)/?$', 'index.php?' . self::STEP . '=$matches[1]', 'top' );
 	}
 
 	/**
