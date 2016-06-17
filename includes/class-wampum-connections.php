@@ -38,12 +38,12 @@ class Wampum_Connections {
 	}
 
 	function init() {
-		add_action( 'p2p_init', 			 array( $this, 'register_p2p_connections' ) );
-		add_action( 'wp',			 		 array( $this, 'step_query_adjacent' ) );
-		add_action( 'wp',			 		 array( $this, 'step_query_connections' ) );
-		add_action( 'wp',			 		 array( $this, 'program_query_connections' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+		add_action( 'p2p_init', 			  array( $this, 'register_p2p_connections' ) );
+		add_action( 'wp',			 		  array( $this, 'step_query_adjacent' ) );
+		add_action( 'wp',			 		  array( $this, 'step_query_connections' ) );
+		add_action( 'wp',			 		  array( $this, 'program_query_connections' ) );
+		add_action( 'admin_enqueue_scripts',  array( $this, 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts',  array( $this, 'enqueue_styles' ) );
 		add_action( 'piklist_save_field-connect_resource_to_step', array( $this, 'connect_resource_to_step' ), 10, 1 );
 		// Plugins | Filters
 		add_filter( 'wpseo_breadcrumb_links', array( $this, 'program_in_yoast_breadcrumbs' ), 10, 1 );
