@@ -79,7 +79,7 @@ final class Wampum_Membership {
 	 */
 	public function access_redirect() {
 
-	    if ( ! is_singular( array( 'wampum_program','wampum_step') ) ) {
+	    if ( ! is_singular('wampum_program') ) {
 	    	return;
 	    }
 
@@ -89,28 +89,33 @@ final class Wampum_Membership {
 	    }
 
     	$post_id = get_the_ID();
-	    if ( is_singular('wampum_step') ) {
-	    	$post_id = Wampum()->content->get_step_program_id( get_queried_object() );
-	    }
+
+    	if ( wampum_is_step() ) {
+    		$post_id = wampum_get_step_program_id( $post_id );
+    	}
+
+    	if ( wampum_can_view( $post_id ) ) {
+    		return;
+    	}
 
 	    // Bail if the program is not restricted at all
-	    if ( ! $this->is_post_content_restricted( $post_id ) ) {
-	    	return;
-	    }
+	 //    if ( ! $this->is_post_content_restricted( $post_id ) ) {
+	 //    	return;
+	 //    }
 
-	    // If user is logged in, check if they have access to the program
-	    if ( is_user_logged_in() ) {
+	 //    // If user is logged in, check if they have access to the program
+	 //    if ( is_user_logged_in() ) {
 
-		    $post_object = get_post($post_id);
-		    $user_id     = get_current_user_id();
-		    $programs    = $this->get_programs( $user_id );
+		//     $post_object = get_post($post_id);
+		//     $user_id     = get_current_user_id();
+		//     $programs    = $this->get_programs( $user_id );
 
-		    // Bail, user has access
-		    if ( in_array( $post_object, $programs ) ) {
-		    	return;
-		    }
+		//     // Bail, user has access
+		//     if ( in_array( $post_object, $programs ) ) {
+		//     	return;
+		//     }
 
-		}
+		// }
 
 	    // This adds the restricted message to the content, while stripping out the default Woo markup around the notice
 	    add_filter( 'the_content', array( $this, 'get_restricted_message' ) );
@@ -133,8 +138,8 @@ final class Wampum_Membership {
 	public function get_restricted_message( $content ) {
     	if ( is_main_query() ) {
 	    	$post_id = get_the_ID();
-		    if ( is_singular('wampum_step') ) {
-		    	$post_id = Wampum()->content->get_step_program_id( get_queried_object() );
+		    if ( wampum_is_step() ) {
+		    	$post_id = wampum_get_step_program_id( get_the_ID() );
 		    }
 			$content .= wc_memberships()->frontend->get_content_restricted_message($post_id);
 		}
@@ -308,8 +313,16 @@ final class Wampum_Membership {
 		<?php
     }
 
+    public function get_program_ids() {
+
+    }
+
 	/**
 	 * Get a member's purchased programs
+	 *
+	 * ************************
+	 * DO WE EVEN NEED THIS ANYMORE, SINCE USING wampum_can_view() ????????
+	 * ************************
 	 *
 	 * @since  1.0.0
 	 *
@@ -368,9 +381,9 @@ final class Wampum_Membership {
 	 * @param 	int   $post_id Optional. Defaults to current post
 	 * @return 	bool  True, if content has restriction rules, false otherwise
 	 */
-	public function is_post_content_restricted( $post_id ) {
-		return wc_memberships_is_post_content_restricted( $post_id );
-	}
+	// public function is_post_content_restricted( $post_id ) {
+	// 	return wc_memberships_is_post_content_restricted( $post_id );
+	// }
 
 	/**
 	 * Get membership actions
@@ -406,50 +419,29 @@ final class Wampum_Membership {
 		return $actions;
 	}
 
-	public static function can_view_program( $user_id, $program_id ) {
-		$programs = $this->get_programs( $user_id );
-		if ( ! $programs ) {
-			return false;
-		}
-		foreach ( $programs as $program ) {
-			if ( $program->ID == $program_id ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	/**
-	 * NOT WORKING AND NOT USED
+	 * CONVERT THIS TO wp_list_pluck() and check if in_array()
 	 *
-	 * Check if current user can view a specific post/cpt
-	 *
-	 * @since  1.0.0
-	 *
-	 * @param  int  $post_id  ID of the post to check access to
-	 *
-	 * @return bool
+	 * @param  [type] $user_id    [description]
+	 * @param  [type] $program_id [description]
+	 * @return [type]             [description]
 	 */
-	public static function can_view_step( $user_id, $step_id ) {
-		$step = get_post($step_id);
-		$program = '';
-		return;
-	}
+	// public function can_view( $user_id, $wampum_program_id ) {
+	// 	if ( is_singular('wampum_program') ) {
+	// 		$programs = $this->get_programs( $user_id );
+	// 		if ( ! $programs ) {
+	// 			return false;
+	// 		}
+	// 		foreach ( $programs as $program ) {
+	// 			if ( $program->ID == $program_id ) {
+	// 				return true;
+	// 			}
+	// 		}
+	// 	}
+	// 	return false;
+	// }
 
-	/**
-	 * Check if current user can view a specific post
-	 *
-	 * @since  1.0.0
-	 *
-	 * @param  int  $post_id  ID of the post to check access to
-	 *
-	 * @return bool
-	 */
-	public static function can_view_post( $user_id, $post_id ) {
-		return wc_memberships_user_can( $user_id, 'view', array( 'post' => $post_id ) );
-	}
-
-	public static function get_login_form( $args ) {
+	public function get_login_form( $args ) {
 		$args = array(
 			'echo'           => false,
 			// 'remember'       => true,

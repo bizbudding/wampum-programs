@@ -10,7 +10,7 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 	 		'wampum_widget_program_steps', // Base ID
-			'Wampum - ' . Wampum()->content->plural_name('wampum_step'), // Name
+			'Wampum - ' . wampum_get_plural_name('wampum_step'), // Name
 			array( 'description' => __( 'Show steps of a program', 'wampum' ), ) // Args
 		);
 	}

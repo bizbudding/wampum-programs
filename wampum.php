@@ -56,7 +56,7 @@ final class Wampum_Setup {
 	 *
 	 * @var object | Wampum_Connections
 	 */
-	public $connections;
+	// public $connections;
 
 	/**
 	 * Wampum Membership Object
@@ -127,7 +127,7 @@ final class Wampum_Setup {
 			self::$instance->setup();
 			// Instantiate Classes
 			self::$instance->content		= Wampum_Content_Types::instance();
-			self::$instance->connections	= Wampum_Connections::instance();
+			// self::$instance->connections	= Wampum_Connections::instance();
 			self::$instance->membership		= Wampum_Membership::instance();
 			self::$instance->settings 		= Wampum_Settings::instance();
 			self::$instance->step_progress 	= Wampum_User_Step_Progress::instance();
@@ -223,7 +223,7 @@ final class Wampum_Setup {
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-taxos.php';
 		// Classes
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-content-types.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-connections.php';
+		// require_once WAMPUM_INCLUDES_DIR . 'class-wampum-connections.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-membership.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-settings.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-user-step-progress.php';
@@ -237,6 +237,10 @@ final class Wampum_Setup {
 	}
 
 	public function setup() {
+
+		register_activation_hook( __FILE__, array( $this, 'activate' ) );
+		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
+
 		// Dependencies
 		add_action( 'tgmpa_register', array( $this, 'dependencies' ) );
 
@@ -308,6 +312,10 @@ final class Wampum_Setup {
 	 	tgmpa( $plugins, $config );
 	}
 
+	public function activate() {
+		flush_rewrite_rules();
+	}
+
 	/**
 	 * Deactivates the plugin if Genesis isn't running
 	 *
@@ -315,6 +323,7 @@ final class Wampum_Setup {
 	 */
 	public function deactivate() {
 		deactivate_plugins( WAMPUM_BASENAME );
+		flush_rewrite_rules();
 		add_action( 'admin_notices', array( $this, 'error_message' ) );
 	}
 

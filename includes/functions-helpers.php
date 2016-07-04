@@ -9,6 +9,100 @@
  * @license   GPL-2.0+
  */
 
+function wampum_is_program() {
+	return Wampum()->content->is_program();
+}
+
+function wampum_is_step() {
+	return Wampum()->content->is_step();
+}
+
+function wampum_get_step_program_id( $step_id ) {
+	return Wampum()->content->get_step_program_id( $step_id );
+}
+
+/**
+ * Check if a user can view a piece of content on the site
+ *
+ * @see 	class-wc-memberships-capabilities.php Woocommerce Memberships
+ * @uses    get_user_access_start_time()
+ *
+ * @param   int  $post_id The post ID to check access to
+ *
+ * @return  bool
+ */
+function wampum_can_view( $post_id ) {
+	$args = array(
+		// 'rule_type'          => array( 'content_restriction', 'product_restriction' ),
+		// 'user_id'            => get_current_user_id(),
+		// 'content_type'       => null,
+		// 'content_type_name'  => null,
+		'object_id'          => $post_id,
+		'access_type'        => 'view',
+	);
+	return wc_memberships()->get_capabilities_instance()->get_user_access_start_time( $args );
+}
+
+/**
+ * Check if current user can view a specific post
+ *
+ * @since   1.0.0
+ *
+ * @param   int  $post_id  (optional)  The post ID to check access to
+ *
+ * @return  bool
+ */
+function wampum_can_view_post( $post_id = null ) {
+	if ( ! $post_id ) {
+		global $post;
+		$post_id = isset( $post->ID ) ? $post->ID : false;
+	}
+	if ( wampum_is_step() ) {
+		$post_id = wampum_get_step_program_id( $post_id );
+	}
+	return wc_memberships_user_can( $user_id, 'view', array( 'post' => $post_id ) );
+}
+
+/**
+ * Get singular post type name
+ *
+ * @since  1.0.0
+ *
+ * @param  string  $post_type  registered post type name
+ *
+ * @return string
+ */
+function wampum_get_singular_name( $post_type, $lowercase = false ) {
+	return Wampum()->content->get_singular_name( $post_type, $lowercase );
+}
+
+/**
+ * Get plural post type name
+ *
+ * @since  1.0.0
+ *
+ * @param  string  $post_type  registered post type name
+ *
+ * @return string
+ */
+function wampum_get_plural_name( $post_type, $lowercase = false ) {
+	return Wampum()->content->get_plural_name( $post_type, $lowercase );
+}
+
+/**
+ * Get plural post type name
+ * TODO: Allow for taxonomy name?
+ *
+ * @since  1.0.0
+ *
+ * @param  string  $post_type  registered post type name
+ *
+ * @return string
+ */
+function wampum_get_slug( $post_type ) {
+	return Wampum()->content->get_slug( $post_type );
+}
+
 /**
  * Helper function to get the excerpt with max character length
  * Example: the_excerpt_max_charlength(140);
@@ -44,9 +138,9 @@ function wampum_get_truncated_content( $content, $charlength ) {
  *
  * @return bool
  */
-function wampum_user_can_view_step( $user_id, $step_id ) {
-	return Wampum()->membership->can_view_step( $user_id, $step_id );
-}
+// function wampum_user_can_view_step( $user_id, $step_id ) {
+// 	return Wampum()->membership->can_view_step( $user_id, $step_id );
+// }
 
 /**
  * Check if current user can view a specific post
@@ -58,9 +152,9 @@ function wampum_user_can_view_step( $user_id, $step_id ) {
  *
  * @return bool
  */
-function wampum_user_can_view_post( $user_id, $post_id ) {
-	return Wampum()->membership->can_view_post( $user_id, $post_id );
-}
+// function wampum_user_can_view_post( $user_id, $post_id ) {
+// 	return Wampum()->membership->can_view_post( $user_id, $post_id );
+// }
 
 /**
  * Check if user is an active member of a particular membership plan
@@ -171,26 +265,19 @@ function wampum_get_template_part( $slug, $name = null, $load = true, $data = ''
     Wampum()->templates->get_template_part( $slug, $name, $load );
 }
 
-function wampum_get_program_steps_list( $program_object_or_id ) {
-	// global $wampum_content_types;
-	return Wampum()->content->get_program_steps_list( $program_object_or_id );
-}
-
-function wampum_get_program_steps( $program_object_or_id ) {
-	// global $wampum_content_types;
-	return Wampum()->content->get_program_steps( $program_object_or_id );
-}
-
-function wampum_get_step_program( $step_object_or_id ) {
-	// global $wampum_content_types;
-	return Wampum()->content->get_step_program( $step_object_or_id );
-}
-
-function wampum_get_user_programs( $user_id ) {
-	return Wampum()->membership->get_programs( $user_id );
-}
-
-// function wampum_get_connection_button( $type, $from, $to, $text_connected, $text_disconnected ) {
-// 	global $wampum_connections;
-// 	return $wampum_connections->connection_button( $type, $from, $to, $text_connected, $text_disconnected );
+// function wampum_get_program_steps_list( $program_object_or_id ) {
+// 	return Wampum()->content->get_program_steps_list( $program_object_or_id );
 // }
+
+// function wampum_get_program_steps( $program_object_or_id ) {
+// 	return Wampum()->content->get_program_steps( $program_object_or_id );
+// }
+
+// function wampum_get_step_program( $step_object_or_id ) {
+// 	return Wampum()->content->get_step_program( $step_object_or_id );
+// }
+
+// function wampum_get_user_programs( $user_id ) {
+// 	return Wampum()->membership->get_programs( $user_id );
+// }
+

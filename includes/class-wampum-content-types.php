@@ -21,39 +21,10 @@ final class Wampum_Content_Types {
 	/** Singleton *************************************************************/
 
 	/**
-	 * @var Wampum_Content_Types The one true Wampum_Content_Types
-	 * @since 1.0.0
+	 * @var 	Wampum_Content_Types The one true Wampum_Content_Types
+	 * @since 	1.0.0
 	 */
 	private static $instance;
-
-	// protected $post_meta;
-
-	/**
-	 * Name of registered post type.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @type string
-	 */
-	const STEP = 'wampum_step';
-
-	/**
-	 * Name of registered post type.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @type string
-	 */
-	const RESOURCE = 'wampum_resource';
-
-	/**
-	 * Name of registered taxonomy.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @type string
-	 */
-	const PROGRAM = 'wampum_program';
 
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
@@ -70,14 +41,7 @@ final class Wampum_Content_Types {
 
 	public function init() {
 		// Actions
-		add_action( 'init', 		  		array( $this, 'register_post_types'), 0 );
-		// add_action( 'registered_post_type', array( $this, 'add_permastruct' ), 1, 2 );
-		//
-		// Filters
-		add_filter( 'post_type_link', 		array( $this, 'post_type_link' ), 1, 3 );
-		add_filter( 'redirect_canonical',	array( $this, 'redirect_steps' ), 10, 2 );
-
-
+		add_action( 'init', array( $this, 'register_post_types'), 0 );
 		// Support
 		add_post_type_support( 'wc_membership_plan', 'post-thumbnails' );
 	}
@@ -94,153 +58,53 @@ final class Wampum_Content_Types {
 	 */
 	public function register_post_types() {
 
-		// Add rewrite tags
-		$this->add_rewrite_tags();
-		// Add rewrite rules
-		$this->add_rewrite_rules();
-
 		// Programs
-		$program = self::PROGRAM;
-	    register_extended_post_type( $program, array(
-			'enter_title_here' => 'Enter ' . $this->singular_name($program) . ' Name',
-			'menu_icon'		   => 'dashicons-feedback',
-		    'rewrite' 		   => array(
-		        // 'permastruct' => '/' . $this->get_program_base_slug() . '/%wampum_program%',
-		        'slug' => $this->get_program_base_slug(),
-		    ),
-		    'has_archive' => apply_filters( 'wampum_program_has_archive', false ),
-			'supports' 	  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
-	    ), $this::default_names()[$program] );
-
-	    // Steps
-	    $step = self::STEP;
-	    register_extended_post_type( $step, array(
-			'enter_title_here'	=> 'Enter ' . $this->singular_name($step) . ' Name',
-			'menu_icon'			=> 'dashicons-feedback',
-		    'rewrite' 			=> array(
-		        // 'permastruct' => '/' . $this->get_program_base_slug() . '/%wampum_step_program%/%wampum_step%',
-		        'slug' => $this->get_program_base_slug() . '/%wampum_step_program%',
-		    ),
-		    'has_archive' 		=> apply_filters( 'wampum_step_has_archive', false ),
-			'supports'			=> apply_filters( 'wampum_step_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
-		  //   'admin_cols' 		=> array(
-				// 'programs_to_steps' => array(
-				//     'title'      => $this->plural_name(self::PROGRAM),
-				//     'connection' => 'programs_to_steps',
-				//     'link'       => 'edit',
-				// ),
-				// 'steps_to_resources' => array(
-				//     'title'      => $this->plural_name(self::RESOURCE),
-				//     'connection' => 'steps_to_resources',
-				//     'link'       => 'edit',
-				// ),
-		  //   ),
-	    ), $this::default_names()[$step] );
+	    register_extended_post_type( 'wampum_program', array(
+			'enter_title_here' 	  => 'Enter ' . $this->get_singular_name('wampum_program') . ' Name',
+			'menu_icon'		   	  => 'dashicons-feedback',
+			'exclude_from_search' => true,
+			'hierarchical'		  => true,
+		    'has_archive' 		  => apply_filters( 'wampum_program_has_archive', false ),
+			'supports' 	  		  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
+			'rewrite' 			  => array( 'slug' => $this->get_slug('wampum_program') ),
+	    ), $this->get_default_names()['wampum_program'] );
 
 	    // Resources
-	    $resource = self::RESOURCE;
-	    register_extended_post_type( $resource, array(
-			'enter_title_here'	=> 'Enter ' . $this->singular_name($resource) . ' Name',
+	    register_extended_post_type( 'wampum_resource', array(
+			'enter_title_here'	=> 'Enter ' . $this->get_singular_name('wampum_resource') . ' Name',
 			'menu_icon'			=> 'dashicons-feedback',
 		    'has_archive' 		=> apply_filters( 'wampum_resource_has_archive', false ),
-			'supports'			=> apply_filters( $resource . '_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
-	    ), $this::default_names()[$resource] );
+			'supports'			=> apply_filters( 'wampum_resource_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
+			'rewrite' 		    => array( 'slug' => $this->get_slug('wampum_resource') ),
+	    ), $this->get_default_names()['wampum_resource'] );
 
 	    // REMOVE THIS BEFORE YOU PUSH THIS LIVE!!!!!!!!!!!!!!
 	    flush_rewrite_rules();
 
 	}
 
-	/**
-	 * Add rewrite tags
-	 *
-	 * @see    http://wordpress.stackexchange.com/questions/175110/nested-cpt-urls-posts-2-posts
-	 * @see    http://wordpress.stackexchange.com/questions/61105/nested-custom-post-types-with-permalinks
-	 *
-	 * @since  1.0.0
-	 *
-	 * @return void
-	 */
-	public function add_rewrite_tags() {
-		add_rewrite_tag( '%wampum_step_program%', '([^/]+)' );
-	}
-
-	/**
-	 * Add rewrite rules
-	 *
-	 * @see    http://wordpress.stackexchange.com/questions/175110/nested-cpt-urls-posts-2-posts
-	 * @see    http://wordpress.stackexchange.com/questions/61105/nested-custom-post-types-with-permalinks
-	 *
-	 * @since  1.3.0
-	 *
-	 * @return void
-	 */
-	public function add_rewrite_rules() {
-	    // add_rewrite_rule( '^' . $this->get_program_base_slug() . '/([^/]*)/([^/]*)/?','index.php?' . self::STEP . '=$matches[2]','top' );
-		add_rewrite_rule( '^' . $this->get_program_base_slug() . '/[^/]+/([^/]+)/?$', 'index.php?' . self::STEP . '=$matches[1]', 'top' );
-	}
-
-	/**
-	 * NOT CURRENTLY IN USE!!!!
-	 *
-	 * Action fired after a CPT is registered in order to set up the custom permalink structure for the post type.
-	 * Borrowed from Extended CPTs
-	 *
-	 * @see   https://github.com/johnbillion/extended-cpts/blob/master/extended-cpts.php#L590
-	 *
-	 * @param string $post_type Post type name.
-	 * @param object $args      Arguments used to register the post type.
-	 *
-	 * @return void
-	 */
-	public function add_permastruct( $post_type, stdClass $args ) {
-		if ( self::STEP != $post_type ) {
-			return;
+	public function is_program() {
+		if ( is_singular('wampum_program') ) {
+			global $post;
+			if ( $post->post_parent > 0 ) {
+				return true;
+			}
 		}
-		add_permastruct( 'wampum_step_program', '%wampum_step_program%' );
+		return false;
+	}
+
+	public function is_step() {
+		if ( is_singular('wampum_program') ) {
+			global $post;
+			if ( $post->post_parent = 0 ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
-	 * Filter the post type permalink in order to populate its rewrite tags.
-	 * Borrowed from Extended CPTs
-	 *
-	 * @see    https://github.com/johnbillion/extended-cpts/blob/master/extended-cpts.php#L608
-	 *
-	 * @since  1.3.0
-	 *
-	 * @param  string   $post_link  The post's permalink.
-	 * @param  WP_Post  $post       The post in question.
-	 * @param  bool     $leavename  Whether to keep the post name.
-	 * @param  bool     $sample     Is it a sample permalink.
-	 *
-	 * @return string             The post's permalink.
-	 */
-	public function post_type_link( $post_link, WP_Post $post, $leavename ) {
-		// If it's not our post type, bail out
-		if ( self::STEP != $post->post_type ) {
-			return $post_link;
-		}
-
-		$replacements = array();
-
-		if ( false !== strpos( $post_link, '%wampum_step_program%' ) ) {
-			// $replacements['%wampum_step_program%'] = $this->get_step_program_slug($post);
-			$replacements['%wampum_step_program%'] = $this->get_step_program_slug($post);
-		}
-
-		$post_link = str_replace( array_keys( $replacements ), $replacements, $post_link );
-		return $post_link;
-	}
-
-	function redirect_steps( $redirect_url, $requested_url ) {
-		if ( ! is_singular(self::STEP) ) {
-			return $requested_url;
-		}
-		return $redirect_url;
-	}
-
-	/**
-	 * Get the first (and hopefully only) connected program slug
+	 * Get ID of a step program
 	 *
 	 * @since  1.0.0
 	 *
@@ -248,76 +112,25 @@ final class Wampum_Content_Types {
 	 *
 	 * @return string|bool
 	 */
-	public function get_step_program_slug( $step_object_or_id ) {
-		$program = $this->get_step_program( $step_object_or_id );
-		if ( $program ) {
-			return $program->post_name;
-		}
-		return sanitize_title_with_dashes($this->plural_name(self::STEP));
-	}
-
-	/**
-	 * Get the first (and hopefully only) connected program ID
-	 *
-	 * @since  1.0.0
-	 *
-	 * @param  object|int   $step_object_or_id  the post object or ID to get connected item from
-	 *
-	 * @return string|bool
-	 */
-	public function get_step_program_id( $step_object_or_id ) {
-		$program = $this->get_step_program( $step_object_or_id );
-		if ( $program ) {
-			return $program->ID;
+	public function get_step_program_id( $step_id ) {
+		$step = get_post($step_id);
+		if ( $step->post_parent > 0 ) {
+			return $step->post_parent;
 		}
 		return false;
-	}
-
-	/**
-	 * Get the step program
-	 *
-	 * @since  1.0.0
-	 *
-	 * @param  object|id  $step_object_or_id
-	 *
-	 * @return object     the program objects
-	 */
-	public function get_step_program( $step_object_or_id ) {
-		// Bail if not a step
-		// if ( 'wampum_step' !== get_post_type($step_object_or_id) ) {
-		// 	return;
-		// }
-		// Get adjacent items
-		$items = Wampum()->connections->get_adjacent_items( 'programs_to_steps', $step_object_or_id );
-		// If parent is a thing
-		if ( isset($items['parent']) && ! empty($items['parent']) ) {
-			return $items['parent'];
-		}
-		return false;
-	}
-
-	public function get_program_base_slug() {
-		$slug = sanitize_title_with_dashes(self::plural_name(self::PROGRAM));
-		return apply_filters( 'wampum_program_base_slug', $slug );
-	}
-
-	public function get_step_base_slug( $step_id)  {
-		$plural_name = sanitize_title_with_dashes( $this->plural_name(self::STEP) );
-		$slug = $this->get_step_program_slug($step_id) ? $this->get_step_program_slug($step_id) : $plural_name;
-		return apply_filters( 'wampum_step_base_slug', $slug );
 	}
 
 	public function get_program_steps_list( $program_object_or_id ) {
-		$output = '';
-		$steps = $this->get_program_steps($program_object_or_id);
-		if ( $steps ) {
-			$output .= '<ul>';
-			foreach ( $steps as $step ) {
-				$output .= '<li><a href="' . get_permalink($step->ID) . '">' . $step->post_title . '</a></li>';
-			}
-			$output .= '</ul>';
-		}
-		return $output;
+		// $output = '';
+		// $steps = $this->get_program_steps($program_object_or_id);
+		// if ( $steps ) {
+		// 	$output .= '<ul>';
+		// 	foreach ( $steps as $step ) {
+		// 		$output .= '<li><a href="' . get_permalink($step->ID) . '">' . $step->post_title . '</a></li>';
+		// 	}
+		// 	$output .= '</ul>';
+		// }
+		// return $output;
 	}
 
 	/**
@@ -327,23 +140,19 @@ final class Wampum_Content_Types {
 	 *
 	 * @param  integer  $program_object_or_id  the program Object or ID
 	 *
-	 * @return array|objects|bool
+	 * @return array|bool
 	 */
-	public function get_program_steps($program_object_or_id) {
-		// TRY TO USE get_steps_from_{post_type}_query in class-wampum-connections.php - it's MUCH faster
-		//
-		// TODO: CHANGE THIS TO get_steps_from_step_query() and get_steps_from_program_query()
-		// CHECK IF IS OBJECT, IF ID THEN GET OBJECT FROM ID FIRST
-		// CHECK IF POST TYPE IS STEP OR PROGRAM AND GET STEPS WITH EACH METHOD
-		//
-		$connected = get_posts( array(
-			'connected_type'	=> 'programs_to_steps',
-			'connected_items'	=> $program_object_or_id,
-			'nopaging'			=> true,
-			'suppress_filters'	=> false,
-		) );
-		if ( $connected ) {
-			return $connected;
+	public function get_program_steps( $program_id ) {
+		$args = array(
+			'posts_per_page'   => 500,
+			'post_type'        => 'wampum_program',
+			'post_parent'      => $program_id,
+			'post_status'      => 'publish',
+			'suppress_filters' => true,
+		);
+		$steps = get_posts( $args );
+		if ( ! empty($steps) ) {
+			return $steps;
 		}
 		return false;
 	}
@@ -358,8 +167,8 @@ final class Wampum_Content_Types {
 	 *
 	 * @return string
 	 */
-	public static function singular_name( $post_type, $lowercase = false ) {
-		$name = self::default_names()[$post_type]['singular'];
+	public function get_singular_name( $post_type, $lowercase = false ) {
+		$name = $this->get_default_names()[$post_type]['singular'];
 		return ($lowercase) ? strtolower($name) : $name;
 	}
 
@@ -373,9 +182,24 @@ final class Wampum_Content_Types {
 	 *
 	 * @return string
 	 */
-	public static function plural_name( $post_type, $lowercase = false ) {
-		$name = self::default_names()[$post_type]['plural'];
+	public function get_plural_name( $post_type, $lowercase = false ) {
+		$name = $this->get_default_names()[$post_type]['plural'];
 		return ($lowercase) ? strtolower($name) : $name;
+	}
+
+	/**
+	 * Get plural post type name
+	 * TODO: Allow for taxonomy name?
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  string  $post_type  registered post type name
+	 *
+	 * @return string
+	 */
+	public function get_slug( $post_type ) {
+		$name = $this->get_default_names()[$post_type]['slug'];
+		return $name;
 	}
 
 	/**
@@ -386,20 +210,23 @@ final class Wampum_Content_Types {
 	 *
 	 * @return array
 	 */
-	public static function default_names() {
+	public function get_default_names() {
 
 		$content_names = array(
-			self::PROGRAM => array(
+			'wampum_program' => array(
 			   'singular' => _x('Program', 'wampum'),
 			   'plural'   => _x('Programs', 'wampum'),
+			   'slug'	  => _x('programs', 'wampum'),
 			),
-			self::STEP => array(
+			'wampum_step' => array(
 			   'singular' => _x('Step', 'wampum'),
 			   'plural'   => _x('Program Steps', 'wampum'),
+			   'slug'	  => _x('steps', 'wampum'),
 			),
-			self::RESOURCE => array(
+			'wampum_resource' => array(
 			   'singular' => _x('Resource', 'wampum'),
 			   'plural'   => _x('Resources', 'wampum'),
+			   'slug'	  => _x('resources', 'wampum'),
 			),
 		);
 		return apply_filters( 'wampum_content_default_names', $content_names );
