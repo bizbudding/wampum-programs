@@ -8,10 +8,10 @@ echo '<ul class="wampum-resource-list wtable" style="margin-left:0;">';
         echo '<span class="wtable-header">' . wampum_get_plural_name('wampum_resource') . '</span>';
     echo '</li>';
 
-	foreach ( $data as $resource ) {
-
+	foreach ( $data as $resource_id ) {
+		$resource = get_post($resource_id);
 		$buttons = '';
-		$file = get_post_meta( $resource->ID, 'wampum_resource_files', true );
+		$file = get_post_meta( $resource->ID, 'wampum_resource_file', true );
 		if ( $file ) {
 			$buttons .= '<a target="_blank" class="button wtable-button wtable-button-right" href="' . wp_get_attachment_url($file) . '">Download</a>';
 		}

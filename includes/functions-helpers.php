@@ -10,11 +10,13 @@
  */
 
 function wampum_is_program( $post_id = '' ) {
-	if ( $post_id ) {
-		$post = get_post( (int)$post_id );
-	} else {
-		global $post;
+	if ( empty($post_id) ) {
+		if ( ! is_singular() ) {
+			return false;
+		}
+		$post_id = get_the_ID();
 	}
+	$post = get_post( (int)$post_id );
 	if ( 'wampum_program' == $post->post_type ) {
 		if ( $post->post_parent = 0 ) {
 			return true;
@@ -24,11 +26,13 @@ function wampum_is_program( $post_id = '' ) {
 }
 
 function wampum_is_step( $post_id = '' ) {
-	if ( $post_id ) {
-		$post = get_post( (int)$post_id );
-	} else {
-		global $post;
+	if ( empty($post_id) ) {
+		if ( ! is_singular() ) {
+			return false;
+		}
+		$post_id = get_the_ID();
 	}
+	$post = get_post( (int)$post_id );
 	if ( 'wampum_program' == $post->post_type ) {
 		if ( $post->post_parent > 0 ) {
 			return true;
@@ -49,24 +53,29 @@ function wampum_get_user_programs( $user_id ) {
 /**
  * Check if a user can view a piece of content on the site
  *
- * @see 	class-wc-memberships-capabilities.php Woocommerce Memberships
- * @uses    get_user_access_start_time()
+ * @see 	woocommerce-memberships/includes/class-wc-memberships-shortcodes.php
  *
  * @param   int  $post_id The post ID to check access to
  *
  * @return  bool
  */
-function wampum_can_view( $post_id ) {
-	$args = array(
-		// 'rule_type'          => array( 'content_restriction', 'product_restriction' ),
-		// 'user_id'            => get_current_user_id(),
-		// 'content_type'       => null,
-		// 'content_type_name'  => null,
-		'object_id'          => $post_id,
-		'access_type'        => 'view',
-	);
-	return wc_memberships()->get_capabilities_instance()->get_user_access_start_time( $args );
+function wampum_can_view( $post_id = '' ) {
+	if ( empty($post_id) ) {
+		$post_id = get_the_ID();
+	}
+	if ( current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
+		true;
+	}
+	return false;
 }
+
+// Check if user has access to restricted content
+// if ( ! current_user_can( 'wc_memberships_view_restricted_post_content', $post->ID ) ) {
+	// $output .= '<div class="wc-memberships-content-restricted-message">' . wc_memberships()->get_frontend_instance()->get_content_restricted_message( $post->ID ) . '</div>';
+// Check if user has access to delayed content
+// } elseif ( ! current_user_can( 'wc_memberships_view_delayed_post_content', $post->ID ) ) {
+	// $output .= '<div class="wc-memberships-content-delayed-message">' . wc_memberships()->get_frontend_instance()->get_content_delayed_message( get_current_user_id(), $post->ID ) . '</div>';
+// }
 
 /**
  * Check if current user can view a specific post

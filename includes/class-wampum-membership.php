@@ -39,7 +39,7 @@ final class Wampum_Membership {
 		add_filter( 'auth_cookie_expiration', array( $this, 'stay_logged_in' ) );
 		// Hooks
 		add_action( 'plugins_loaded', 	      array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
-		add_action( 'wp_head', 				  array( $this, 'access_redirect' ) );
+		add_action( 'template_redirect', 	  array( $this, 'access_redirect' ) );
 	}
 
 	/**
@@ -90,32 +90,19 @@ final class Wampum_Membership {
 
     	$post_id = get_the_ID();
 
-    	if ( wampum_is_step() ) {
+    	if ( wampum_is_step($post_id) ) {
     		$post_id = wampum_get_step_program_id( $post_id );
     	}
 
-    	if ( wampum_can_view( $post_id ) ) {
+	    // Bail if the program is not restricted at all
+	    if ( ! wc_memberships_is_post_content_restricted( $post_id ) ) {
+	    	return;
+	    }
+
+	    // Bail if user already has access
+    	if ( current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
     		return;
     	}
-
-	    // Bail if the program is not restricted at all
-	 //    if ( ! $this->is_post_content_restricted( $post_id ) ) {
-	 //    	return;
-	 //    }
-
-	 //    // If user is logged in, check if they have access to the program
-	 //    if ( is_user_logged_in() ) {
-
-		//     $post_object = get_post($post_id);
-		//     $user_id     = get_current_user_id();
-		//     $programs    = $this->get_programs( $user_id );
-
-		//     // Bail, user has access
-		//     if ( in_array( $post_object, $programs ) ) {
-		//     	return;
-		//     }
-
-		// }
 
 	    // This adds the restricted message to the content, while stripping out the default Woo markup around the notice
 	    add_filter( 'the_content', array( $this, 'get_restricted_message' ) );
@@ -136,13 +123,19 @@ final class Wampum_Membership {
      * @return mixed
      */
 	public function get_restricted_message( $content ) {
-    	if ( is_main_query() ) {
+    	// if ( is_main_query() ) {
 	    	$post_id = get_the_ID();
 		    if ( wampum_is_step() ) {
 		    	$post_id = wampum_get_step_program_id( get_the_ID() );
 		    }
-			$content .= wc_memberships()->frontend->get_content_restricted_message($post_id);
-		}
+			// Check if user has access to restricted content
+			if ( ! current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
+				$content .= wc_memberships()->get_frontend_instance()->get_content_restricted_message( $post_id );
+			// Check if user has access to delayed content
+			} elseif ( ! current_user_can( 'wc_memberships_view_delayed_post_content', $post_id ) ) {
+				$content .= wc_memberships()->get_frontend_instance()->get_content_delayed_message( get_current_user_id(), $post_id );
+			}
+		// }
 		return $content;
 	}
 
@@ -322,6 +315,7 @@ final class Wampum_Membership {
 	 *
 	 * ************************
 	 * DO WE EVEN NEED THIS ANYMORE, SINCE USING wampum_can_view() ????????
+	 * I think this is used in functions-display.php for listing the programs in the Account
 	 * ************************
 	 *
 	 * @since  1.0.0
@@ -337,6 +331,8 @@ final class Wampum_Membership {
 		if ( ! $memberships ) {
 			return false;
 		}
+
+
 		// Set programs as empty array
 		$programs = array();
 		// Loop through memberships
@@ -352,7 +348,12 @@ final class Wampum_Membership {
 	    		continue;
 	    	}
 	    	// Get the membership plan's restricted content
-			$content = $membership->get_plan()->get_restricted_content();
+			// $content = $membership->get_plan()->get_restricted_content();
+			// $content = $membership->get_restricted_content();
+
+
+// trace($content->posts);
+
 			// Bail if no content
 			if ( ! $content ) {
 				return false;

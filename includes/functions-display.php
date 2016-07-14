@@ -24,37 +24,8 @@ function wampum_do_account_programs() {
 		$text = apply_filters( 'wampum_account_programs_no_programs_text', $text );
 		echo "<p>{$text}</p>";
 	} else {
-
-	// Get the account-programs.php template
-	wampum_get_template_part( 'account', 'programs', true, $data );
-
-	 //    echo '<ul class="wampum-programs-list ftable" style="margin-left:0;">';
-
-	 //        echo '<li class="ftable-row">';
-	 //            echo '<span class="ftable-header">Program</span>';
-	 //        echo '</li>';
-
-		// 	foreach ( $programs as $program ) {
-
-		// 		$image_size = apply_filters('wampum_account_programs_image_size', 'thumbnail');
-
-		// 		$image = '';
-		// 		if ( has_post_thumbnail( $program->ID ) ) {
-		// 		    $image = sprintf( '<a class="ftable-cell ftable-image" href="%s" title="%s">%s</a>',
-		// 				get_permalink( $program->ID ),
-		// 				the_title_attribute( 'echo=0' ),
-		// 				get_the_post_thumbnail( $program->ID, $image_size )
-		// 			);
-		// 		}
-		// 		$desc 	 = wampum_get_truncated_content($program->post_excerpt, 140);
-		// 		$title   = '<span class="ftable-cell ftable-title"><a href="' . get_permalink( $program->ID ) . '">' . $program->post_title . '</a>' . $desc . '</span>';
-		// 		$buttons = '<a class="button ftable-button" href="' . get_permalink($program->ID) . '">View</a>';
-		// 		$actions = '<span class="ftable-cell ftable-actions">' . $buttons . '</span>';
-		// 		echo '<li class="ftable-row">' . $image . $title . $actions . '</li>';
-		// 	}
-
-		// echo '</ul>';
-
+		// Get the account-programs.php template
+		wampum_get_template_part( 'account', 'programs', true, $data );
 	}
 
 	do_action('wampum_account_after_programs');
@@ -76,6 +47,7 @@ function wampum_do_program_resource_list() {
 	}
 
 	$data = get_field( 'wampum_resources' );
+	// trace($data);
 	// Get the resources
 	// if ( is_singular('wampum_program') ) {
 	// 	$data = Wampum()->connections->get_resources_from_program_query( get_queried_object() );
