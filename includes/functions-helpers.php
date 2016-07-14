@@ -9,16 +9,41 @@
  * @license   GPL-2.0+
  */
 
-function wampum_is_program() {
-	return Wampum()->content->is_program();
+function wampum_is_program( $post_id = '' ) {
+	if ( $post_id ) {
+		$post = get_post( (int)$post_id );
+	} else {
+		global $post;
+	}
+	if ( 'wampum_program' == $post->post_type ) {
+		if ( $post->post_parent = 0 ) {
+			return true;
+		}
+	}
+	return false;
 }
 
-function wampum_is_step() {
-	return Wampum()->content->is_step();
+function wampum_is_step( $post_id = '' ) {
+	if ( $post_id ) {
+		$post = get_post( (int)$post_id );
+	} else {
+		global $post;
+	}
+	if ( 'wampum_program' == $post->post_type ) {
+		if ( $post->post_parent > 0 ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 function wampum_get_step_program_id( $step_id ) {
 	return Wampum()->content->get_step_program_id( $step_id );
+}
+
+
+function wampum_get_user_programs( $user_id ) {
+	return Wampum()->membership->get_programs( $user_id );
 }
 
 /**
@@ -275,9 +300,5 @@ function wampum_get_template_part( $slug, $name = null, $load = true, $data = ''
 
 // function wampum_get_step_program( $step_object_or_id ) {
 // 	return Wampum()->content->get_step_program( $step_object_or_id );
-// }
-
-// function wampum_get_user_programs( $user_id ) {
-// 	return Wampum()->membership->get_programs( $user_id );
 // }
 

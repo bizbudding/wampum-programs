@@ -9,17 +9,11 @@
  * Order: 1
  */
 
-piklist('field', array(
-	'type'		=> 'file',
-	'field'		=> 'wampum_resource_files',
-	'label'		=> __( 'Upload a file for this resource', 'wampum' ),
-	// 'template'	=> 'field',
-	// 'validate' => array(
-	// 	array(
-	// 		'type' => 'file_exists',
-	// 	),
-	// ),
-	'options' => array(
-		'multiple' => false, // Only allow 1 file
-	),
-));
+// piklist('field', array(
+// 	'type'		=> 'file',
+// 	'field'		=> 'wampum_resource_files',
+// 	'label'		=> __( 'Upload a file for this resource', 'wampum' ),
+// 	'options' => array(
+// 		'multiple' => false, // Only allow 1 file
+// 	),
+// ));

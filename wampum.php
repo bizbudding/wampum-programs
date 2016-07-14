@@ -83,7 +83,7 @@ final class Wampum_Setup {
 	 *
 	 * @var object | Wampum_User_Step_Progress
 	 */
-	public $step_progress;
+	// public $step_progress;
 
 	/**
 	 * Wampum Template Loader Object
@@ -101,7 +101,7 @@ final class Wampum_Setup {
 	 *
 	 * @var object | Wampum_Widgets
 	 */
-	public $widgets;
+	// public $widgets;
 
 	/**
 	 * Main Wampum_Setup Instance.
@@ -130,9 +130,9 @@ final class Wampum_Setup {
 			// self::$instance->connections	= Wampum_Connections::instance();
 			self::$instance->membership		= Wampum_Membership::instance();
 			self::$instance->settings 		= Wampum_Settings::instance();
-			self::$instance->step_progress 	= Wampum_User_Step_Progress::instance();
+			// self::$instance->step_progress 	= Wampum_User_Step_Progress::instance();
 			self::$instance->templates		= Wampum_Template_Loader::instance();
-			self::$instance->widgets		= Wampum_Widgets::instance();
+			// self::$instance->widgets		= Wampum_Widgets::instance();
 		}
 		return self::$instance;
 	}
@@ -234,6 +234,9 @@ final class Wampum_Setup {
 		// Functions
 		require_once WAMPUM_INCLUDES_DIR . 'functions-display.php';
 		require_once WAMPUM_INCLUDES_DIR . 'functions-helpers.php';
+		// Upgrades
+		require_once WAMPUM_INCLUDES_DIR . 'upgrade/class-wampum-upgrade-p2p-to-child-pages.php';
+		require_once WAMPUM_INCLUDES_DIR . 'upgrade/functions-upgrade.php';
 	}
 
 	public function setup() {
@@ -286,13 +289,13 @@ final class Wampum_Setup {
 				'version'			=> '0.9.9.7',
 				'force_activation'	=> true,
 			),
-	 		array(
-				'name'				=> 'Posts to Posts',
-				'slug'				=> 'posts-to-posts',
-				'required'			=> true,
-				'version'			=> '1.6.5',
-				'force_activation'	=> true,
-			),
+	 	// 	array(
+			// 	'name'				=> 'Posts to Posts',
+			// 	'slug'				=> 'posts-to-posts',
+			// 	'required'			=> true,
+			// 	'version'			=> '1.6.5',
+			// 	'force_activation'	=> true,
+			// ),
 		);
 
 		// TGM configuration array

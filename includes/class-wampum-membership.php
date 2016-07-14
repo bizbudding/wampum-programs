@@ -362,6 +362,10 @@ final class Wampum_Membership {
 				if ( $post->post_type != 'wampum_program' ) {
 					continue;
 				}
+				// Skip if not a top level post (parent program)
+				if ( $post->post_parent > 0 ) {
+					continue;
+				}
 				// Skip if already in our program array
 				if ( in_array( $post, $programs ) ) {
 					continue;

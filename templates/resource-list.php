@@ -5,7 +5,7 @@ wp_enqueue_style('wampum');
 echo '<ul class="wampum-resource-list wtable" style="margin-left:0;">';
 
     echo '<li class="wtable-row">';
-        echo '<span class="wtable-header">' . Wampum()->content->singular_name(get_post_type()) . ' ' . Wampum()->content->plural_name('wampum_resource') . '</span>';
+        echo '<span class="wtable-header">' . wampum_get_plural_name('wampum_resource') . '</span>';
     echo '</li>';
 
 	foreach ( $data as $resource ) {

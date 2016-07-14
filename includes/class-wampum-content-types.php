@@ -43,7 +43,7 @@ final class Wampum_Content_Types {
 		// Actions
 		add_action( 'init', array( $this, 'register_post_types'), 0 );
 		// Support
-		add_post_type_support( 'wc_membership_plan', 'post-thumbnails' );
+		// add_post_type_support( 'wc_membership_plan', 'post-thumbnails' );
 	}
 
 	/**
@@ -65,7 +65,7 @@ final class Wampum_Content_Types {
 			'exclude_from_search' => true,
 			'hierarchical'		  => true,
 		    'has_archive' 		  => apply_filters( 'wampum_program_has_archive', false ),
-			'supports' 	  		  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
+			'supports' 	  		  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','page-attributes','genesis-cpt-archives-settings') ),
 			'rewrite' 			  => array( 'slug' => $this->get_slug('wampum_program') ),
 	    ), $this->get_default_names()['wampum_program'] );
 
@@ -78,29 +78,6 @@ final class Wampum_Content_Types {
 			'rewrite' 		    => array( 'slug' => $this->get_slug('wampum_resource') ),
 	    ), $this->get_default_names()['wampum_resource'] );
 
-	    // REMOVE THIS BEFORE YOU PUSH THIS LIVE!!!!!!!!!!!!!!
-	    flush_rewrite_rules();
-
-	}
-
-	public function is_program() {
-		if ( is_singular('wampum_program') ) {
-			global $post;
-			if ( $post->post_parent > 0 ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public function is_step() {
-		if ( is_singular('wampum_program') ) {
-			global $post;
-			if ( $post->post_parent = 0 ) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -220,7 +197,7 @@ final class Wampum_Content_Types {
 			),
 			'wampum_step' => array(
 			   'singular' => _x('Step', 'wampum'),
-			   'plural'   => _x('Program Steps', 'wampum'),
+			   'plural'   => _x('Steps', 'wampum'),
 			   'slug'	  => _x('steps', 'wampum'),
 			),
 			'wampum_resource' => array(
