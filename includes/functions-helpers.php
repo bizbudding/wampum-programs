@@ -18,7 +18,7 @@ function wampum_is_program( $post_id = '' ) {
 	}
 	$post = get_post( (int)$post_id );
 	if ( 'wampum_program' == $post->post_type ) {
-		if ( $post->post_parent = 0 ) {
+		if ( $post->post_parent == 0 ) {
 			return true;
 		}
 	}
@@ -41,13 +41,221 @@ function wampum_is_step( $post_id = '' ) {
 	return false;
 }
 
+/**
+ * Get ID of a step program
+ *
+ * @since  1.0.0
+ *
+ * @param  object|int   $step_object_or_id  the post object or ID to get connected item from
+ *
+ * @return string|bool
+ */
 function wampum_get_step_program_id( $step_id ) {
-	return Wampum()->content->get_step_program_id( $step_id );
+	$step = get_post($step_id);
+	if ( $step->post_parent > 0 ) {
+		return $step->post_parent;
+	}
+	return false;
 }
 
+/**
+ * Get an array of step IDs for a given program
+ *
+ * @since  1.4.0
+ *
+ * @param  int    $program_id  The program to get the steps for
+ *
+ * @return array
+ */
+function wampum_get_program_step_ids( $program_id ) {
+	return wampum_get_program_steps( $program_id, 'ids' );
+}
 
-function wampum_get_user_programs( $user_id ) {
-	return Wampum()->membership->get_programs( $user_id );
+/**
+ * Get an array of step objects for a given program
+ *
+ * @since  1.4.0
+ *
+ * @param  int     $program_id  The program to get the steps for
+ * @param  string  $return  	(Optional) The fields to return
+ *
+ * @return array
+ */
+function wampum_get_program_steps( $program_id, $return = 'all') {
+    $args = array(
+		'post_type'					=> 'wampum_program',
+		'post_parent'				=> $program_id,
+		'post_status'				=> 'publish',
+		'posts_per_page'			=> -1,
+		'fields'					=> $return,
+		'orderby'					=> 'menu_order',
+		'order'						=> 'ASC',
+    );
+    $posts = new WP_Query( $args );
+    $steps = array();
+    if ( $posts->have_posts() ) {
+        while ( $posts->have_posts() ) : $posts->the_post();
+        	global $post;
+        	if ( is_object($post) ) {
+        		$post_id = $post->ID;
+        	} else {
+        		$post_id = $post;
+        	}
+			if ( current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
+				$steps[] = $post;
+			}
+        endwhile;
+    }
+    wp_reset_postdata();
+    return $steps;
+}
+
+/**
+ * Get an array of program IDs the current user has access to
+ *
+ * @since  1.4.0
+ *
+ * @return array
+ */
+function wampum_get_user_program_ids() {
+	return wampum_get_user_programs('ids');
+}
+
+/**
+ * Get an array of programs the current user has access to
+ *
+ * @since  1.4.0
+ *
+ * @param  string   $return   (optional) data to return for each term
+ *                            use one of 'term_id', 'name', etc (defaults to entire term object)
+ * @return array
+ */
+function wampum_get_user_programs( $return = 'all') {
+    $args = array(
+		'post_type'					=> 'wampum_program',
+		'post_parent'				=> 0,
+		'post_status'				=> 'publish',
+		'posts_per_page'			=> -1,
+		'fields'					=> $return,
+		'orderby'					=> 'title',
+		'order'						=> 'ASC',
+    );
+    $posts = new WP_Query( $args );
+    $programs = array();
+    if ( $posts->have_posts() ) {
+    	global $post;
+    	if ( is_object($post) ) {
+    		$post_id = $post->ID;
+    	} else {
+    		$post_id = $post;
+    	}
+        while ( $posts->have_posts() ) : $posts->the_post();
+			if ( current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
+				$programs[] = $post;
+			}
+        endwhile;
+    }
+    wp_reset_postdata();
+    return $programs;
+}
+
+function wampum_is_program_progress_enabled( $program_id ) {
+	return get_post_meta( $program_id, 'wampum_is_program_progress_enabled', true );
+}
+
+function wampum_get_prev_next_links( $post_id = '' ) {
+	// Let's get it started
+	$output = '';
+	// Get parent, previous, and next connected posts
+	$items = wampum_get_sibling_ids( $post_id );
+	// Bail if none
+	if ( ! $items ) {
+		return $output;
+	}
+	// Prevents things from breaking if step is not connected to a program
+	$items['previous'] = ! empty($items['previous']) ? $items['previous'] : '';
+	$items['next'] 	   = ! empty($items['next']) ? $items['next'] : '';
+	// Set markup for links
+	$prev = $items['previous'] ? '<div class="pagination-previous alignleft"><a href="' . get_permalink( $items['previous'] ) . '">' . get_the_title( $items['previous'] ) . '</a></div>' : '';
+	$next = $items['next'] ? '<div class="pagination-next alignright"><a href="' . get_permalink( $items['next'] ) . '">' . get_the_title( $items['next'] ) . '</a></div>' : '';
+	// If previous or next link
+	if ( $prev || $next ) {
+		$output .= '<div class="wampum-pagination">';
+		$output .= $prev . $next;
+		$output .= '</div>';
+	}
+	// Send it home baby
+	return $output;
+}
+
+/**
+ * Get the previous or next post/cpt IDs
+ * Great for child page navigation
+ *
+ * @param  integer  $post_id  (Optional) The post ID to get the siblings of. Defaults to current post.
+ *
+ * @return array
+ */
+function wampum_get_sibling_ids( $post_id = '' ) {
+    if ( ! is_singular() ) {
+    	return;
+    }
+
+    if ( empty($post_id) ) {
+    	$post_id = get_the_ID();
+    }
+
+    $post = get_post($post_id);
+
+    $args = array(
+		'post_type'		=> $post->post_type,
+		'post_parent'	=> $post->post_parent,
+		'fields'		=> 'ids',
+		'order'			=> 'ASC',
+		'orderby'		=> 'menu_order',
+	);
+    $siblings = new WP_Query( $args );
+
+	$sibling_ids = array();
+
+	if ( $siblings->have_posts() ) {
+		$i = 0;
+		$count = $siblings->found_posts;
+	    while ( $siblings->have_posts() ) : $siblings->the_post();
+	    	if ( $i == 0 ) {
+	    		$first_id = get_the_ID();
+	    	}
+	    	$i++;
+
+	    	if ( $i == $count ) {
+	    		$last_id = get_the_ID();
+	    	}
+	    	$sibling_ids[] = get_the_ID();
+	    endwhile;
+
+	}
+	wp_reset_postdata();
+
+	$current = array_search($post->ID, $sibling_ids);
+
+	// Make sure we're not on the first item in the array
+	if ( $first_id == $post_id ) {
+		$previous = '';
+	} else {
+		$previous = (int)$sibling_ids[$current-1];
+	}
+
+	// Make sure we're not on the last item in the array
+	if ( $last_id == $post_id ) {
+		$next = '';
+	} else {
+		$next = (int)$sibling_ids[$current+1];
+	}
+
+    return array(
+    	'previous' => $previous,
+    	'next'     => $next,
+	);
 }
 
 /**

@@ -80,22 +80,6 @@ final class Wampum_Content_Types {
 
 	}
 
-	/**
-	 * Get ID of a step program
-	 *
-	 * @since  1.0.0
-	 *
-	 * @param  object|int   $step_object_or_id  the post object or ID to get connected item from
-	 *
-	 * @return string|bool
-	 */
-	public function get_step_program_id( $step_id ) {
-		$step = get_post($step_id);
-		if ( $step->post_parent > 0 ) {
-			return $step->post_parent;
-		}
-		return false;
-	}
 
 	public function get_program_steps_list( $program_object_or_id ) {
 		// $output = '';
@@ -108,30 +92,6 @@ final class Wampum_Content_Types {
 		// 	$output .= '</ul>';
 		// }
 		// return $output;
-	}
-
-	/**
-	 * Get all steps connected to a program
-	 *
-	 * @since  1.0.0
-	 *
-	 * @param  integer  $program_object_or_id  the program Object or ID
-	 *
-	 * @return array|bool
-	 */
-	public function get_program_steps( $program_id ) {
-		$args = array(
-			'posts_per_page'   => 500,
-			'post_type'        => 'wampum_program',
-			'post_parent'      => $program_id,
-			'post_status'      => 'publish',
-			'suppress_filters' => true,
-		);
-		$steps = get_posts( $args );
-		if ( ! empty($steps) ) {
-			return $steps;
-		}
-		return false;
 	}
 
 	/**

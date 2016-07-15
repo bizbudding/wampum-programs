@@ -25,32 +25,22 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 
-		// Post types to check agains
-		// $post_types = array('wampum_program','wampum_step');
-		// $post_type  = get_post_type();
-		// Bail if not viewing a step or program
-		// if ( ! in_array($post_type, $post_types) ) {
-		// 	return;
-		// }
-
-		if ( ! is_singular( array('wampum_program','wampum_step') ) ) {
+		if ( ! is_singular('wampum_program') ) {
 			return;
 		}
 
-		// global $wp_query;
 		$queried_object  = get_queried_object();
 		$queried_post_id = $queried_object->ID;
 
 		$program_id = $steps = '';
 
-		if ( is_singular('wampum_program') ) {
+		if ( wampum_is_program($queried_post_id) ) {
 			$program_id	= $queried_post_id;
-			$steps		= Wampum()->connections->get_steps_from_program_query( $queried_object );
-		} elseif ( is_singular('wampum_step') ) {
-			$program	= Wampum()->connections->get_program_from_step_query( $queried_object );
-			$program_id = isset($program->ID) ? $program->ID : '';
-			$steps		= Wampum()->connections->get_steps_from_step_query( $queried_object );
+		} elseif ( wampum_is_step($queried_post_id) ) {
+			$program_id = wampum_get_step_program_id($queried_post_id);
 		}
+
+		$steps = wampum_get_program_step_ids($program_id);
 
 		// Bail no program or steps
 		if ( ! $program_id || ! $steps ) {
@@ -60,7 +50,7 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		$completed_ids = array();
 
 		// Step progress
-		if ( is_user_logged_in() && Wampum()->step_progress->is_step_progress_enabled( $program_id ) ) {
+		if ( is_user_logged_in() && wampum_is_program_progress_enabled( $program_id ) ) {
 
 			$completed = Wampum()->connections->get_connected_items( 'user_step_progress', get_current_user_id() );
 
@@ -91,17 +81,17 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 
 	    echo '<ul class="widget-program-steps">';
 	    	// Set default li class
-			foreach ( $steps as $step ) {
+			foreach ( $steps as $step_id ) {
 		    	$classes = 'widget-program-step';
 				// Add class if current step
-				if ( $queried_post_id === $step->ID ) {
+				if ( $queried_post_id === $step_id ) {
 					$classes .= ' current-step';
 				}
 				// Add class if step is completed
-				if ( in_array($step->ID, $completed_ids) ) {
+				if ( in_array($step_id, $completed_ids) ) {
 					$classes .= ' completed';
 				}
-				echo '<li class="' . $classes . '"><a href="' . get_the_permalink( $step ) . '" title="' . get_the_title( $step ) . '">' . get_the_title( $step ) . '</a></li>';
+				echo '<li class="' . $classes . '"><a href="' . get_the_permalink( $step_id ) . '" title="' . get_the_title( $step_id ) . '">' . get_the_title( $step_id ) . '</a></li>';
 			}
 
 		echo '</ul>';

@@ -132,7 +132,7 @@ final class Wampum_Setup {
 			self::$instance->settings 		= Wampum_Settings::instance();
 			// self::$instance->step_progress 	= Wampum_User_Step_Progress::instance();
 			self::$instance->templates		= Wampum_Template_Loader::instance();
-			// self::$instance->widgets		= Wampum_Widgets::instance();
+			self::$instance->widgets		= Wampum_Widgets::instance();
 		}
 		return self::$instance;
 	}

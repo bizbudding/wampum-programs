@@ -40,28 +40,18 @@ function wampum_do_account_programs() {
  */
 add_action( 'wampum_after_content', 'wampum_do_program_resource_list' );
 function wampum_do_program_resource_list() {
-
 	// Bail if not the right singular post type
 	if ( ! is_singular( 'wampum_program' ) ) {
 		return;
 	}
-
-	$data = get_field( 'wampum_resources' );
-	// trace($data);
 	// Get the resources
-	// if ( is_singular('wampum_program') ) {
-	// 	$data = Wampum()->connections->get_resources_from_program_query( get_queried_object() );
-	// } elseif ( is_singular('wampum_step') ) {
-	// 	$data = Wampum()->connections->get_resources_from_step_query( get_queried_object() );
-	// }
-
+	$data = get_field( 'wampum_resources' );
 	// Bail if no resources
 	if ( ! is_array($data) || empty($data) ) {
 		return;
 	}
 	// Get the resource-list.php template
 	wampum_get_template_part( 'resource', 'list', true, $data );
-
 }
 
 /**
@@ -86,12 +76,16 @@ function wampum_do_step_progress_link() {
  *
  * @return null|mixed
  */
-// add_action( 'wampum_after_content', 'wampum_do_step_prev_next_links' );
+add_action( 'wampum_after_content', 'wampum_do_step_prev_next_links' );
 function wampum_do_step_prev_next_links() {
-	if ( ! is_singular('wampum_step') ) {
+	if ( ! is_singular('wampum_program') ) {
 		return;
 	}
-	Wampum()->connections->prev_next_connection_links( 'programs_to_steps', get_the_ID() );
+	$post_id = get_the_ID();
+	if ( ! wampum_is_step( $post_id ) ) {
+		return;
+	}
+	echo wampum_get_prev_next_links();
 }
 
 /**
@@ -106,7 +100,7 @@ function wampum_do_resource_button() {
 	if ( ! is_singular('wampum_resource') ) {
 		return;
 	}
-	$file = get_post_meta( get_the_ID(), 'wampum_resource_files', true );
+	$file = get_post_meta( get_the_ID(), 'wampum_resource_file', true );
 	if ( ! $file ) {
 		return;
 	}

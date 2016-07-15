@@ -306,26 +306,11 @@ final class Wampum_Membership {
 		<?php
     }
 
-    public function get_program_ids() {
+	public function disregard_this_its_only_here_for_temp_reference() {
+		// $programs = wc_memberships()->frontend->get_user_restricted_posts('wampum_program');
+		$programs = wc_memberships()->frontend->get_user_content_for_access_condition( 'restricted', 'posts', 'wampum_program' );
 
-    }
 
-	/**
-	 * Get a member's purchased programs
-	 *
-	 * ************************
-	 * DO WE EVEN NEED THIS ANYMORE, SINCE USING wampum_can_view() ????????
-	 * I think this is used in functions-display.php for listing the programs in the Account
-	 * ************************
-	 *
-	 * @since  1.0.0
-	 *
-	 * @param  integer  $user_id  (required) User ID
-	 * @param  string   $return   (optional) data to return for each term
-	 *                            use one of 'term_id', 'name', etc (defaults to entire term object)
-	 * @return array
-	 */
-	public function get_programs( $user_id ) {
 		$memberships = wampum_get_user_memberships( $user_id );
 		// Bail if no memberships
 		if ( ! $memberships ) {
@@ -348,11 +333,9 @@ final class Wampum_Membership {
 	    		continue;
 	    	}
 	    	// Get the membership plan's restricted content
-			// $content = $membership->get_plan()->get_restricted_content();
+			$content = $membership->get_plan()->get_restricted_content(1);
 			// $content = $membership->get_restricted_content();
 
-
-// trace($content->posts);
 
 			// Bail if no content
 			if ( ! $content ) {
