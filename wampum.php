@@ -131,6 +131,7 @@ final class Wampum_Setup {
 			self::$instance->membership		= Wampum_Membership::instance();
 			self::$instance->settings 		= Wampum_Settings::instance();
 			// self::$instance->step_progress 	= Wampum_User_Step_Progress::instance();
+			self::$instance->progress   	= Wampum_Program_Progress::instance();
 			self::$instance->templates		= Wampum_Template_Loader::instance();
 			self::$instance->widgets		= Wampum_Widgets::instance();
 		}
@@ -218,7 +219,7 @@ final class Wampum_Setup {
 		// Vendor
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-tgm-plugin-activation.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-gamajo-template-loader.php';
-		require_once WAMPUM_INCLUDES_DIR . 'lib/class-p2p-restful-connection.php';
+		// require_once WAMPUM_INCLUDES_DIR . 'lib/class-p2p-restful-connection.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-cpts.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-taxos.php';
 		// Classes
@@ -226,7 +227,8 @@ final class Wampum_Setup {
 		// require_once WAMPUM_INCLUDES_DIR . 'class-wampum-connections.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-membership.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-settings.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-user-step-progress.php';
+		// require_once WAMPUM_INCLUDES_DIR . 'class-wampum-user-step-progress.php';
+		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-program-progress.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-template-loader.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-widgets.php';
 		// Widgets
@@ -241,7 +243,7 @@ final class Wampum_Setup {
 
 	public function setup() {
 
-		register_activation_hook( __FILE__, array( $this, 'activate' ) );
+		register_activation_hook( __FILE__,   array( $this, 'activate' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
 		// Dependencies

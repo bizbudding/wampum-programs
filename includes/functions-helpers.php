@@ -218,6 +218,8 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 
 	$sibling_ids = array();
 
+	$first_id = $last_id = '';
+
 	if ( $siblings->have_posts() ) {
 		$i = 0;
 		$count = $siblings->found_posts;
@@ -225,11 +227,10 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	    	if ( $i == 0 ) {
 	    		$first_id = get_the_ID();
 	    	}
-	    	$i++;
-
 	    	if ( $i == $count ) {
 	    		$last_id = get_the_ID();
 	    	}
+	    	$i++;
 	    	$sibling_ids[] = get_the_ID();
 	    endwhile;
 
