@@ -77,13 +77,13 @@ final class Wampum_Setup {
 	public $settings;
 
 	/**
-	 * Wampum Step Progress Object
+	 * Wampum Program Progress Object
 	 *
 	 * @since 1.0.0
 	 *
 	 * @var object | Wampum_User_Step_Progress
 	 */
-	// public $step_progress;
+	public $progress;
 
 	/**
 	 * Wampum Template Loader Object
@@ -126,14 +126,12 @@ final class Wampum_Setup {
 			self::$instance->includes();
 			self::$instance->setup();
 			// Instantiate Classes
-			self::$instance->content		= Wampum_Content_Types::instance();
-			// self::$instance->connections	= Wampum_Connections::instance();
-			self::$instance->membership		= Wampum_Membership::instance();
-			self::$instance->settings 		= Wampum_Settings::instance();
-			// self::$instance->step_progress 	= Wampum_User_Step_Progress::instance();
-			self::$instance->progress   	= Wampum_Program_Progress::instance();
-			self::$instance->templates		= Wampum_Template_Loader::instance();
-			self::$instance->widgets		= Wampum_Widgets::instance();
+			self::$instance->content	= Wampum_Content_Types::instance();
+			self::$instance->membership	= Wampum_Membership::instance();
+			self::$instance->settings 	= Wampum_Settings::instance();
+			self::$instance->progress   = Wampum_Program_Progress::instance();
+			self::$instance->templates	= Wampum_Template_Loader::instance();
+			self::$instance->widgets	= Wampum_Widgets::instance();
 		}
 		return self::$instance;
 	}
@@ -214,30 +212,25 @@ final class Wampum_Setup {
 	 * @return void
 	 */
 	private function includes() {
-		// require_once WAMPUM_INCLUDES_DIR . 'lib/class-jivedig-content-swap.php';
-		// require_once WAMPUM_INCLUDES_DIR . 'lib/class-jivedig-post-manager.php';
 		// Vendor
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-tgm-plugin-activation.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-gamajo-template-loader.php';
-		// require_once WAMPUM_INCLUDES_DIR . 'lib/class-p2p-restful-connection.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-cpts.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-taxos.php';
 		// Classes
-		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-content-types.php';
-		// require_once WAMPUM_INCLUDES_DIR . 'class-wampum-connections.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-membership.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-settings.php';
-		// require_once WAMPUM_INCLUDES_DIR . 'class-wampum-user-step-progress.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-program-progress.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-template-loader.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-wampum-widgets.php';
+		require_once WAMPUM_INCLUDES_DIR . 'class-content-types.php';
+		require_once WAMPUM_INCLUDES_DIR . 'class-membership.php';
+		require_once WAMPUM_INCLUDES_DIR . 'class-settings.php';
+		require_once WAMPUM_INCLUDES_DIR . 'class-program-progress.php';
+		require_once WAMPUM_INCLUDES_DIR . 'class-template-loader.php';
+		require_once WAMPUM_INCLUDES_DIR . 'class-widgets.php';
 		// Widgets
-		require_once WAMPUM_INCLUDES_DIR . 'widgets/class-wampum-widget-program-steps.php';
+		require_once WAMPUM_INCLUDES_DIR . 'widgets/class-widget-program-steps.php';
 		// Functions
 		require_once WAMPUM_INCLUDES_DIR . 'functions-display.php';
 		require_once WAMPUM_INCLUDES_DIR . 'functions-helpers.php';
 		// Upgrades
-		require_once WAMPUM_INCLUDES_DIR . 'upgrade/class-wampum-upgrade-p2p-to-child-pages.php';
+		require_once WAMPUM_INCLUDES_DIR . 'upgrade/class-upgrade-p2p-to-child-pages.php';
 		require_once WAMPUM_INCLUDES_DIR . 'upgrade/functions-upgrade.php';
 	}
 
@@ -249,15 +242,6 @@ final class Wampum_Setup {
 		// Dependencies
 		add_action( 'tgmpa_register', array( $this, 'dependencies' ) );
 
-		// Bail if Posts to Posts or Piklist are not active
-		if ( ! ( function_exists( 'p2p_register_connection_type' ) || class_exists('Piklist') ) ) {
-			add_action( 'admin_init', array( $this, 'deactivate' ) );
-			return;
-		}
-
-		// Genesis & WooCommerce Connect
-		add_theme_support( 'genesis-connect-woocommerce' );
-
 		// If front end
 		if ( ! is_admin() ) {
 			// Register stylesheet
@@ -267,6 +251,20 @@ final class Wampum_Setup {
 			add_filter( 'the_content', array( $this, 'before_content' ) );
 			add_filter( 'the_content', array( $this, 'after_content' ) );
 		}
+	}
+
+	public function activate() {
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Deactivates the plugin if Genesis isn't running
+	 *
+	 * @since 1.0.0
+	 */
+	public function deactivate() {
+		deactivate_plugins( WAMPUM_BASENAME );
+		flush_rewrite_rules();
 	}
 
 	/**
@@ -285,21 +283,13 @@ final class Wampum_Setup {
 		$plugins = array(
 	 		// Dependent plugins from the WordPress Plugin Repository.
 	 		array(
-				'name'				=> 'Piklist',
-				'slug'				=> 'piklist',
+				'name'				=> 'Posts to Posts',
+				'slug'				=> 'posts-to-posts',
 				'required'			=> true,
-				'version'			=> '0.9.9.7',
+				'version'			=> '1.6.5',
 				'force_activation'	=> true,
 			),
-	 	// 	array(
-			// 	'name'				=> 'Posts to Posts',
-			// 	'slug'				=> 'posts-to-posts',
-			// 	'required'			=> true,
-			// 	'version'			=> '1.6.5',
-			// 	'force_activation'	=> true,
-			// ),
 		);
-
 		// TGM configuration array
 	 	$config = array(
 	 		'id'           => 'wampum',                 // Unique ID for hashing notices for multiple instances of TGMPA.
@@ -313,40 +303,7 @@ final class Wampum_Setup {
 	 		'is_automatic' => false,                    // Automatically activate plugins after installation or not.
 	 		'message'      => '',                       // Message to output right before the plugins table.
 	 	);
-
 	 	tgmpa( $plugins, $config );
-	}
-
-	public function activate() {
-		flush_rewrite_rules();
-	}
-
-	/**
-	 * Deactivates the plugin if Genesis isn't running
-	 *
-	 * @since 1.0.0
-	 */
-	public function deactivate() {
-		deactivate_plugins( WAMPUM_BASENAME );
-		flush_rewrite_rules();
-		add_action( 'admin_notices', array( $this, 'error_message' ) );
-	}
-
-	/**
-	 * Error message if we're not using the Genesis Framework.
-	 *
-	 * @since 1.0.0
-	 */
-	public function error_message() {
-
-		$error = sprintf( __( 'Wampum dependent plugins are not installed. Wampum has been deactivated.', 'wampum' ) );
-
-		echo '<div class="error"><p>' . esc_attr( $error ) . '</p></div>';
-
-		if ( isset( $_GET['activate'] ) ) {
-			unset( $_GET['activate'] );
-		}
-
 	}
 
 	/**
@@ -372,7 +329,6 @@ final class Wampum_Setup {
 	 * @return null
 	 */
 	public function register_scripts() {
-	    // wp_register_script( 'magnific-popup', WAMPUM_PLUGIN_URL . 'js/jquery.magnific-popup.min.js', array('jquery'), WAMPUM_VERSION, true );
 	}
 
 	/**

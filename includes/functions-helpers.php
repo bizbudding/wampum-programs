@@ -160,7 +160,11 @@ function wampum_get_user_programs( $return = 'all') {
 }
 
 function wampum_is_program_progress_enabled( $program_id ) {
-	return get_post_meta( $program_id, 'wampum_is_program_progress_enabled', true );
+	return get_post_meta( $program_id, 'wampum_program_progress_enabled', true );
+}
+
+function wampum_get_program_progress_link( $program_or_step_id ) {
+	return Wampum()->progress->get_program_progress_link( $program_or_step_id );
 }
 
 function wampum_get_prev_next_links( $post_id = '' ) {
@@ -201,11 +205,16 @@ function wampum_get_sibling_ids( $post_id = '' ) {
     	return;
     }
 
-    if ( empty($post_id) ) {
+    if ( ! $post_id ) {
     	$post_id = get_the_ID();
     }
 
     $post = get_post($post_id);
+
+    // Bail if top level page, no siblings
+    if ( $post->post_parent == 0 ) {
+    	return;
+    }
 
     $args = array(
 		'post_type'		=> $post->post_type,
@@ -216,7 +225,7 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	);
     $siblings = new WP_Query( $args );
 
-	$sibling_ids = array();
+	$sibling_ids = '';
 
 	$first_id = $last_id = '';
 
@@ -230,27 +239,39 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	    	if ( $i == $count ) {
 	    		$last_id = get_the_ID();
 	    	}
-	    	$i++;
+	    	// trace(get_the_ID());
 	    	$sibling_ids[] = get_the_ID();
+	    	$i++;
 	    endwhile;
 
 	}
 	wp_reset_postdata();
 
+	if ( ! is_array($sibling_ids) ) {
+		return;
+	}
+
+	// wampum-piklist.dev/programs/coaching-videos-hot-healthy-body/coaching-mindset-mastery/
+	// Sometimes the current ID is not in sibling IDs, WTF?!?!?!?!?!
 	$current = array_search($post->ID, $sibling_ids);
+	// trace($post->ID);
+	// trace($sibling_ids);
+	// if ( ! $current ) {
+	// 	return;
+	// }
 
 	// Make sure we're not on the first item in the array
 	if ( $first_id == $post_id ) {
 		$previous = '';
 	} else {
-		$previous = (int)$sibling_ids[$current-1];
+		$previous = $sibling_ids[$current-1];
 	}
 
 	// Make sure we're not on the last item in the array
 	if ( $last_id == $post_id ) {
 		$next = '';
 	} else {
-		$next = (int)$sibling_ids[$current+1];
+		$next = $sibling_ids[$current+1];
 	}
 
     return array(

@@ -36,35 +36,26 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	abstract class P2P_Restful_Connection {
 
 		/**
+		 * The version of this connection (currently used for JS script version)
+		 *
+		 * @since 1.0.0
+		 */
+		// protected $version = '1.0.0';
+
+		/**
 		 * Name of the p2p connection.
 		 *
 		 * @since 1.0.0
-		 *
-		 * @type string
 		 */
 		protected $connection_name = 'posts_to_pages';
 
-		// protected $from = null;
-
-		// protected $to = null;
-
-		// protected $link_connect_text = 'Connect';
-
-		protected $link_connected_text = 'Connected';
-
 		/**
 		 * URL of the JS file you will need to create.
+		 * Used in wp_register_script()
 		 *
 		 * @since 1.1.0
 		 */
-		protected $script_url = 'path/to/script/filename.js';
-
-		protected $messages = array(
-				'connect_success'		=> 'Successfully Connected!',
-				'disconnect_success'	=> 'Successfully Disconnected!',
-				'can_connect_fail'		=> 'An error occurred during connection.',
-				'can_disconnect_fail'	=> 'An error occurred during disconnect.',
-			);
+		// protected $script_url = 'path/to/script/filename.js';
 
 		/**
 		 * Register custom endpoints
@@ -74,28 +65,28 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 * @return void
 		 */
 		public function __construct() {
-			add_action( 'rest_api_init', array( $this, 'register_rest_endpoint' ) );
-			add_action( 'wp_enqueue_scripts', array( $this, 'register_script' ) );
+			// add_action( 'wp_enqueue_scripts', array( $this, 'register_script' ) );
+		}
+
+		public function link( $from, $to, $link_connect_text, $link_connected_text ) {
+			echo get_link( $from, $to, $link_connect_text, $link_connected_text );
 		}
 
 		public function get_link( $from, $to, $link_connect_text, $link_connected_text ) {
 			$this->enqueue_scripts();
-			$this->localize_script();
+			// $this->localize_script();
 			return $this->get_connection_link( $this->connection_name, $from, $to, $link_connect_text, $link_connected_text );
 		}
 
 		public function get_connection_link( $type, $from, $to, $text_connect, $text_connected ) {
 			$class = ' connect';
 			$text  = $text_connect;
-			// $data  = array(
-			// 		'from' => $from,
-			// 		'to'   => $to,
-			// 	);
 			if ( $this->connection_exists( $from, $to ) ) {
 				$class = ' connected';
 				$text  = $text_connected;
 			}
-			return '<div class="wampum-connection-wrap"><a data-from-id="' . $from . '" data-to-id="' . $to . '" class="button wampum-connection' . $class . '" href="#">' . $text . '</a></div>';
+			// return '<div class="restful-p2p-wrap"><a data-from-id="' . $from . '" data-to-id="' . $to . '" class="button restful-p2p' . $class . '" href="#">' . $text . '</a></div>';
+			return '<a data-from-id="' . $from . '" data-to-id="' . $to . '" class="button restful-p2p' . $class . '" href="#0">' . $text . '</a>';
 		}
 
 	    /**
@@ -105,9 +96,9 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 *
 		 * @return void
 	     */
-	    public function register_script() {
-	        wp_register_script(  $this->connection_name, $this->script_url, array('jquery'), '1.0.0', true );
-	    }
+	    // public function register_script() {
+	    //     wp_register_script(  $this->connection_name, $this->script_url, array('jquery'), $this->version, true );
+	    // }
 
 	    /**
 	     * Localize script to pass php data to js
@@ -116,28 +107,26 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 *
 		 * @return void
 	     */
-	    public function localize_script() {
-	        wp_localize_script( $this->connection_name, 'restful_p2p_connection_vars', $this->get_ajax_data() );
-	    }
+	    // public function localize_script() {
+	    //     wp_localize_script( $this->connection_name, 'p2p_restful_connection_vars', $this->get_ajax_data() );
+	    // }
 
-	    /**
-	     * Get the AJAX data that WordPress needs to output.
-	     * Used in wp_localize_script
-	     *
-	     * @since  1.0.0
-	     *
-	     * @return array
-	     */
-	    private function get_ajax_data() {
-	        $ajax_data = array(
-				'root'		=> esc_url_raw( rest_url() ),
-				'nonce'		=> wp_create_nonce( 'wp_rest' ),
-				'success'	=> true,
-				'failure'	=> false,
-	        );
-	        $additional_data = $this->additional_ajax_data();
-	        return array_merge( $ajax_data, $additional_data );
-	    }
+	   //  /**
+	   //   * Get the AJAX data that WordPress needs to output.
+	   //   * Used in wp_localize_script
+	   //   *
+	   //   * @since  1.0.0
+	   //   *
+	   //   * @return array
+	   //   */
+	   //  private function get_ajax_data() {
+	   //      return array(
+				// 'root'		=> esc_url_raw( rest_url() ),
+				// 'nonce'		=> wp_create_nonce( 'wp_rest' ),
+				// // 'success'	=> true,
+				// // 'failure'	=> false,
+	   //      );
+	   //  }
 
 	    /**
 	     * ************************************************
@@ -150,7 +139,7 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	     * @return array
 	     */
 	    public function enqueue_scripts() {
-	    	// Conditional checks when to enqueue
+	    	// Override this method and add conditional checks when to enqueue
 	    	wp_enqueue_script( $this->connection_name );
 	    }
 
@@ -164,29 +153,9 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	     *
 	     * @return array
 	     */
-	    public function additional_ajax_data() {
-	    	return array();
-	    }
-
-	    /**
-	     * ************************************************
-	     * OPTIONALLY OVERRIDE THIS METHOD IN YOUR CHILD CLASS!
-	     *
-	     * Check if connection can be made
-	     *
-	     * @since  1.0.0
-	     *
-	     * @param  array  $data  array of data to check against
-	     *
-	     * @return array
-	     */
-		public function can_connect( $data ) {
-			// Do not allow existing connection to be made twice
-			if ( $this->connection_exists( $data['from'], $data['to'] ) ) {
-				return false;
-			}
-			return true;
-		}
+	    // public function additional_ajax_data() {
+	    // 	return array();
+	    // }
 
 	    /**
 	     * ************************************************
@@ -269,42 +238,6 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		}
 
 		/**
-		 * Add custom endpoint to add connection
-		 *
-		 * @since   1.0
-		 *
-		 * @return  void
-		 */
-		public function register_rest_endpoint() {
-
-		    register_rest_route( 'restful-p2p/v1', '/connect/', array(
-				'methods'  => 'POST',
-				'callback' => array( $this, 'connect' ),
-				'args'	   => array(
-		            'from' => array(
-						'validate_callback' => 'is_numeric'
-		            ),
-		            'to' => array(
-		                'validate_callback' => 'is_numeric'
-		            ),
-		        ),
-		    ));
-
-		    register_rest_route( 'restful-p2p/v1', '/disconnect/', array(
-				'methods'  => 'POST',
-				'callback' => array( $this, 'disconnect' ),
-				'args'	   => array(
-		            'from' => array(
-						'validate_callback' => 'is_numeric'
-		            ),
-		            'to' => array(
-		                'validate_callback' => 'is_numeric'
-		            ),
-		        ),
-		    ));
-		}
-
-		/**
 		 * Connection 2 objects
 		 *
 		 * @since   1.0.0
@@ -313,17 +246,6 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 * @return  int|object
 		 */
 		public function connect( $data ) {
-
-			// trace($data);
-
-			// Send error if cannot create connection
-			if ( ! $this->can_connect( $data ) ) {
-				// trace($data);
-				return array(
-					'success' => false,
-					'message' => $this->messages['can_connect_fail']
-				);
-			}
 
 			// Optionally run other code
 			$this->before_connect( $data );
@@ -336,21 +258,23 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 			// If error, return WP_Error
 			if ( is_wp_error( $p2p ) ) {
 				// Fail
-				return array(
-					'success' => false,
-					'message' => $p2p->get_error_message(),
-				);
+				return $p2p;
+				// return array(
+				// 	'success' => false,
+				// 	'message' => $p2p->get_error_message(),
+				// );
 			} else {
 
 				// Optionally run other code
 				$this->after_connect( $data );
 
 				// Success
-				return array(
-					'success' => true,
-					'id'	  => $p2p,
-					'message' => $this->messages['connect_success'],
-				);
+				return new WP_REST_Response( $data, 200 );
+				// return array(
+					// 'success' => true,
+					// 'id'	  => $p2p,
+					// 'message' => $this->messages['connect_success'],
+				// );
 			}
 		}
 
@@ -364,14 +288,6 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 		 */
 		public function disconnect( $data ) {
 
-			// Send error if cannot delete connection
-			if ( ! $this->can_disconnect( $data ) ) {
-				return array(
-					'success' => false,
-					'message' => $this->messages['can_disconnect_fail']
-				);
-			}
-
 			// Optionally run other code
 			$this->before_disconnect( $data );
 
@@ -381,20 +297,22 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 			// If error, return WP_Error
 			if ( is_wp_error( $p2p ) ) {
 				// Fail
-				return array(
-					'success' => false,
-					'message' => $p2p->get_error_message(),
-				);
+				return $p2p;
+				// return array(
+				// 	'success' => false,
+				// 	'message' => $p2p->get_error_message(),
+				// );
 			} else {
 
 				// Optionally run other code
 				$this->after_disconnect( $data );
 
 				// Success
-				return array(
-					'success' => true,
-					'message' => $this->messages['disconnect_success'],
-				);
+				return new WP_REST_Response( $data, 200 );
+				// return array(
+					// 'success' => true,
+					// 'message' => $this->messages['disconnect_success'],
+				// );
 			}
 		}
 
@@ -445,12 +363,57 @@ if ( ! class_exists( 'P2P_Restful_Connection' ) )  {
 	     */
 	    private function sanitize_id( $id ) {
 	    	$post_id = 0;
-
 	        if ( isset($id) ) {
 	            $post_id = absint(filter_var($id, FILTER_SANITIZE_NUMBER_INT));
 	        }
-
 	        return $post_id;
 	    }
 	}
+}
+
+if ( ! function_exists( 'restful_p2p_register_rest_endpoint' ) ) {
+/**
+ * Add custom endpoint to add connection
+ *
+ * @since   1.0
+ *
+ * @return  void
+ */
+add_action( 'rest_api_init', 'restful_p2p_register_rest_endpoint' );
+function restful_p2p_register_rest_endpoint() {
+
+    register_rest_route( 'restful-p2p/v1', '/connect/', array(
+		'methods'  => 'POST',
+		'callback' => array( $this, 'connect' ),
+		'args'	   => array(
+            'from' => array(
+				'validate_callback' => function($param, $request, $key) {
+					return is_numeric( $param );
+				}
+            ),
+            'to' => array(
+				'validate_callback' => function($param, $request, $key) {
+					return is_numeric( $param );
+				}
+            ),
+        ),
+    ));
+
+    register_rest_route( 'restful-p2p/v1', '/disconnect/', array(
+		'methods'  => 'POST',
+		'callback' => array( $this, 'disconnect' ),
+		'args'	   => array(
+            'from' => array(
+				'validate_callback' => function($param, $request, $key) {
+					return is_numeric( $param );
+				}
+            ),
+            'to' => array(
+				'validate_callback' => function($param, $request, $key) {
+					return is_numeric( $param );
+				}
+            ),
+        ),
+    ));
+}
 }

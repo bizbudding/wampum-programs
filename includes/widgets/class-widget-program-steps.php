@@ -52,8 +52,12 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		// Step progress
 		if ( is_user_logged_in() && wampum_is_program_progress_enabled( $program_id ) ) {
 
-			$completed = Wampum()->connections->get_connected_items( 'user_step_progress', get_current_user_id() );
-
+			$completed = get_posts( array(
+				'connected_type'	=> 'user_program_progress',
+				'connected_items'	=> get_current_user_id(),
+				'nopaging'			=> true,
+				'suppress_filters'	=> false,
+			) );
 			if ( $completed ) {
 				foreach ( $completed as $complete ) {
 					$completed_ids[] = $complete->p2p_to;
@@ -148,4 +152,4 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		<?php
 	}
 
-} // class Wampum_Widget_Program_Steps
+}

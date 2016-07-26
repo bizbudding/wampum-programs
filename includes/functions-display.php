@@ -61,12 +61,12 @@ function wampum_do_program_resource_list() {
  *
  * @return null|mixed
  */
-// add_action( 'wampum_after_content', 'wampum_do_step_progress_link' );
+add_action( 'wampum_after_content', 'wampum_do_step_progress_link' );
 function wampum_do_step_progress_link() {
-	if ( ! is_user_logged_in() && ! is_singular('wampum_step') ) {
+	if ( ! is_singular('wampum_program') ) {
 		return;
 	}
-	echo Wampum()->step_progress->maybe_get_step_progress_link( get_current_user_id(), get_the_ID() );
+	echo wampum_get_program_progress_link( get_the_ID() );
 }
 
 /**

@@ -1,7 +1,7 @@
 ;(function( $ ) {
     'use strict';
 
-    $('.wampum-connection-wrap').on( 'click', '.wampum-connection', function(connection) {
+    $('.wampum-program-progress').on( 'click', '.restful-p2p', function(connection) {
 
 		// this disables href from acting like a link
 		connection.preventDefault();
@@ -31,9 +31,9 @@
                 xhr.setRequestHeader( 'X-WP-Nonce', restful_p2p_connection_vars.nonce );
             },
             success: function( response ) {
-                if ( true === response.success ) {
+                if ( response.success == true ) {
                     clicked.toggleClass('loading connect connected').html(text);
-                } else if ( false === response.success ) {
+                } else {
                     alert(response.message);
                 }
             },
