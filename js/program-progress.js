@@ -1,7 +1,7 @@
 ;(function( $ ) {
     'use strict';
 
-    $('.wampum-program-progress').on( 'click', '.restful-p2p', function(connection) {
+    $('.wampum-program-progress').on( 'click', '.progress-button', function(connection) {
 
 		// this disables href from acting like a link
 		connection.preventDefault();

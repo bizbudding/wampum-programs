@@ -29,7 +29,7 @@ class Wampum_Program_Progress {
 	/**
 	 * @since 1.0.0
 	 *
-	 * @var Wampum_User_Step_Progress The one true Wampum_User_Step_Progress
+	 * @var Wampum_Program_Progress The one true Wampum_Program_Progress
 	 */
 	private static $instance;
 
@@ -42,12 +42,45 @@ class Wampum_Program_Progress {
 		return self::$instance;
 	}
 
+	/**
+	 * Initiate all the things
+	 *
+	 * @return void
+	 */
 	public function init() {
-		add_action( 'rest_api_init', 	  array( $this, 'restful_p2p_register_rest_endpoint' ) );
 		add_action( 'p2p_init', 		  array( $this, 'register_p2p_connections' ) );
+		add_action( 'rest_api_init', 	  array( $this, 'restful_p2p_register_rest_endpoint' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
 	}
 
+	/**
+	 * Register Posts to Posts connections
+	 * Users to Programs (incomplete/complete or viewed)
+	 *
+	 * @since   1.0.0
+	 *
+	 * @return  void
+	 */
+	public function register_p2p_connections() {
+	    p2p_register_connection_type( array(
+			'name'		=> $this->connection_name,
+			'from'		=> 'user',
+			'to'		=> 'wampum_program',
+			'admin_box'	=> array(
+				'show' => false,
+			),
+	        'admin_column'   => false,
+	        'admin_dropdown' => false,
+	    ) );
+	}
+
+	/**
+	 * Register rest endpoint
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return void
+	 */
 	public function restful_p2p_register_rest_endpoint() {
 
 	    register_rest_route( 'restful-p2p/v1', '/connect/', array(
@@ -86,31 +119,24 @@ class Wampum_Program_Progress {
 	}
 
 	/**
-	 * Register Posts to Posts connections
-	 * Users to Programs (incomplete/complete or viewed)
+	 * Register and localize script to be enqueued later
 	 *
-	 * @since   1.0.0
+	 * @since  1.0.0
 	 *
-	 * @return  void
+	 * @return void
 	 */
-	public function register_p2p_connections() {
-	    p2p_register_connection_type( array(
-			'name'		=> $this->connection_name,
-			'from'		=> 'user',
-			'to'		=> 'wampum_program',
-			'admin_box'	=> array(
-				'show' => false,
-			),
-	        'admin_column'   => false,
-	        'admin_dropdown' => false,
-	    ) );
-	}
-
     public function register_scripts() {
         wp_register_script( $this->connection_name, WAMPUM_PLUGIN_URL . '/js/program-progress.js', array('jquery'), '1.0.0', true );
         wp_localize_script( $this->connection_name, 'restful_p2p_connection_vars', $this->get_ajax_data() );
     }
 
+	/**
+	 * Helper function to enqueue scripts
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return void
+	 */
     public function enqueue_scripts() {
     	wp_enqueue_script( $this->connection_name );
     }
@@ -163,6 +189,15 @@ class Wampum_Program_Progress {
 		return $this->get_link( get_current_user_id(), $program_or_step_id, $this->get_connect_text($program_id), $this->get_connected_text($program_id) );
 	}
 
+	/**
+	 * Get the text to be displayed when not connected
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  $post_id  The post ID to check
+	 *
+	 * @return string 	 The button text
+	 */
 	public function get_connect_text( $post_id ) {
 		$connect = get_post_meta( $post_id, 'wampum_program_progress_complete_text', true );
 		if ( empty($connect) ) {
@@ -171,6 +206,15 @@ class Wampum_Program_Progress {
 		return $connect;
 	}
 
+	/**
+	 * Get the text to be displayed when connected
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  $post_id  The post ID to check
+	 *
+	 * @return string 	 The button text
+	 */
 	public function get_connected_text( $post_id ) {
 		$connected = get_post_meta( $post_id, 'wampum_program_progress_completed_text', true );
 		if ( empty($connected) ) {
@@ -179,35 +223,60 @@ class Wampum_Program_Progress {
 		return $connected;
 	}
 
+	/**
+	 * Get the link to connect objects
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  integer  $from                 The ID of the from object
+	 * @param  integer  $to                   The ID of the to object
+	 * @param  string   $link_connect_text    The connect text
+	 * @param  string   $link_connected_text  The connected text
+	 *
+	 * @return string
+	 */
 	public function get_link( $from, $to, $link_connect_text, $link_connected_text ) {
 		$this->enqueue_scripts();
-		return $this->get_connection_link( $this->connection_name, $from, $to, $link_connect_text, $link_connected_text );
+		return $this->get_connection_link_html( $from, $to, $link_connect_text, $link_connected_text );
 	}
 
-	public function get_connection_link( $type, $from, $to, $text_connect, $text_connected ) {
+	/**
+	 * Get the html link to connect objects
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  integer  $from                 The ID of the from object
+	 * @param  integer  $to                   The ID of the to object
+	 * @param  string   $link_connect_text    The connect text
+	 * @param  string   $link_connected_text  The connected text
+	 *
+	 * @return string
+	 */
+	public function get_connection_link_html( $from, $to, $text_connect, $text_connected ) {
 		$class = ' connect';
 		$text  = $text_connect;
 		if ( $this->connection_exists( $from, $to ) ) {
 			$class = ' connected';
 			$text  = $text_connected;
 		}
-		return '<div class="wampum-program-progress"><a data-from-id="' . $from . '" data-to-id="' . $to . '" class="button restful-p2p' . $class . '" href="#0">' . $text . '</a></div>';
+		return '<div class="wampum-program-progress"><a data-from-id="' . $from . '" data-to-id="' . $to . '" class="button progress-button' . $class . '" href="#0">' . $text . '</a></div>';
 	}
 
 	/**
-	 * Connection 2 objects
+	 * Connect 2 objects
 	 *
 	 * @since   1.0.0
 	 *
-	 * @param 	array $data Options for the function.
-	 * @return  int|object
+	 * @param 	array  $data  Associative array containing 'from' and 'to' connection IDs
+	 *
+	 * @return  array
 	 */
 	public function connect( $data ) {
 		// Create connection
 		$p2p = p2p_type( $this->connection_name )->connect( $data['from'], $data['to'], array(
 		    'date' => current_time('mysql')
 		) );
-		// If error, return WP_Error
+		// Success/Fail
 		if ( is_wp_error( $p2p ) ) {
 			// Fail
 			return array(
@@ -215,11 +284,10 @@ class Wampum_Program_Progress {
 				'message' => $p2p->get_error_message(),
 			);
 		} else {
+			// Success
 			return array(
 				'success' => true,
 			);
-			// Success
-			// return new WP_REST_Response( $data, 200 );
 		}
 	}
 
@@ -228,13 +296,14 @@ class Wampum_Program_Progress {
 	 *
 	 * @since   1.0.0
 	 *
-	 * @param 	array $data Options for the function.
-	 * @return  int|object
+	 * @param 	array  $data  Associative array containing 'from' and 'to' connection IDs
+	 *
+	 * @return  array
 	 */
 	public function disconnect( $data ) {
 		// Remove connection
 		$p2p = p2p_type( $this->connection_name )->disconnect( $data['from'], $data['to'] );
-		// If error, return WP_Error
+		// Success/Fail
 		if ( is_wp_error( $p2p ) ) {
 			// Fail
 			return array(
@@ -242,11 +311,10 @@ class Wampum_Program_Progress {
 				'message' => $p2p->get_error_message(),
 			);
 		} else {
+			// Success
 			return array(
 				'success' => true,
 			);
-			// Success
-			// return new WP_REST_Response( $data, 200 );
 		}
 	}
 

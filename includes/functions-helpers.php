@@ -177,8 +177,8 @@ function wampum_get_prev_next_links( $post_id = '' ) {
 		return $output;
 	}
 	// Prevents things from breaking if step is not connected to a program
-	$items['previous'] = ! empty($items['previous']) ? $items['previous'] : '';
-	$items['next'] 	   = ! empty($items['next']) ? $items['next'] : '';
+	$items['previous'] = $items['previous'] ? $items['previous'] : '';
+	$items['next'] 	   = $items['next'] ? $items['next'] : '';
 	// Set markup for links
 	$prev = $items['previous'] ? '<div class="pagination-previous alignleft"><a href="' . get_permalink( $items['previous'] ) . '">' . get_the_title( $items['previous'] ) . '</a></div>' : '';
 	$next = $items['next'] ? '<div class="pagination-next alignright"><a href="' . get_permalink( $items['next'] ) . '">' . get_the_title( $items['next'] ) . '</a></div>' : '';
@@ -230,16 +230,15 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	$first_id = $last_id = '';
 
 	if ( $siblings->have_posts() ) {
-		$i = 0;
+		$i = 1;
 		$count = $siblings->found_posts;
 	    while ( $siblings->have_posts() ) : $siblings->the_post();
-	    	if ( $i == 0 ) {
+	    	if ( $i == 1 ) {
 	    		$first_id = get_the_ID();
 	    	}
 	    	if ( $i == $count ) {
 	    		$last_id = get_the_ID();
 	    	}
-	    	// trace(get_the_ID());
 	    	$sibling_ids[] = get_the_ID();
 	    	$i++;
 	    endwhile;
@@ -247,6 +246,7 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	}
 	wp_reset_postdata();
 
+	// Bail if we got nothing
 	if ( ! is_array($sibling_ids) ) {
 		return;
 	}
