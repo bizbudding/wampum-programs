@@ -97,8 +97,8 @@ function wampum_upgrade_convert_resource_files_to_new_key() {
 		if ( ! $file_id ) {
 			continue;
 		}
-		update_post_meta( $resource->ID, 'wampum_resource_file', true );
-		delete_post_meta( $resource->ID, 'wampum_resource_files', true );
+		update_post_meta( $resource->ID, 'wampum_resource_file', $file_id );
+		delete_post_meta( $resource->ID, 'wampum_resource_files' );
 	}
 }
 
