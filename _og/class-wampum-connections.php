@@ -331,8 +331,6 @@ class Wampum_Connections {
 	    // New resources field check
 	    $new_resources = isset($fields['add_resource']['request_value']) ? $fields['add_resource']['request_value'] : false;
 
-	    // trace($new_resources);
-
 	    if ( $new_resources ) {
 
 			foreach ( $new_resources as $resource ) {

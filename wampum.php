@@ -221,7 +221,6 @@ final class Wampum_Setup {
 		require_once WAMPUM_INCLUDES_DIR . 'functions-display.php';
 		require_once WAMPUM_INCLUDES_DIR . 'functions-helpers.php';
 		// Upgrades
-		require_once WAMPUM_INCLUDES_DIR . 'upgrade/class-upgrade-p2p-to-child-pages.php';
 		require_once WAMPUM_INCLUDES_DIR . 'upgrade/functions-upgrade.php';
 	}
 

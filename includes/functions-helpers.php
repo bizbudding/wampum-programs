@@ -251,14 +251,7 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 		return;
 	}
 
-	// wampum-piklist.dev/programs/coaching-videos-hot-healthy-body/coaching-mindset-mastery/
-	// Sometimes the current ID is not in sibling IDs, WTF?!?!?!?!?!
 	$current = array_search($post->ID, $sibling_ids);
-	// trace($post->ID);
-	// trace($sibling_ids);
-	// if ( ! $current ) {
-	// 	return;
-	// }
 
 	// Make sure we're not on the first item in the array
 	if ( $first_id == $post_id ) {
