@@ -1,3 +1,10 @@
+#### 1.4.0
+* Breaking Changes!
+* Convert wampum_step CPT to child pages of wampum_program CPT
+* Convert Piklist everything to ACF Pro everything
+* Must manually run helper functions in /includes/upgrade/functions-upgrade.php (See file comments)
+* Manual upgrade coverts everything cleans up after itself
+
 #### 1.3.0
 * Add no access overlay, message, and buttons to programs and steps
 * Rebuild rewrite rules to get closer to working correctly

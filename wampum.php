@@ -50,15 +50,6 @@ final class Wampum_Setup {
 	public $content;
 
 	/**
-	 * Wampum Connections Object
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var object | Wampum_Connections
-	 */
-	// public $connections;
-
-	/**
 	 * Wampum Membership Object
 	 *
 	 * @since 1.0.0
@@ -101,7 +92,7 @@ final class Wampum_Setup {
 	 *
 	 * @var object | Wampum_Widgets
 	 */
-	// public $widgets;
+	public $widgets;
 
 	/**
 	 * Main Wampum_Setup Instance.
@@ -240,7 +231,10 @@ final class Wampum_Setup {
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
 		// Dependencies
-		add_action( 'tgmpa_register', array( $this, 'dependencies' ) );
+		add_action( 'tgmpa_register', 		  array( $this, 'dependencies' ) );
+
+		// Add new load point for ACF json field groups
+		add_filter( 'acf/settings/load_json', array( $this, 'acf_json_load_point' ) );
 
 		// If front end
 		if ( ! is_admin() ) {
@@ -304,6 +298,18 @@ final class Wampum_Setup {
 	 		'message'      => '',                       // Message to output right before the plugins table.
 	 	);
 	 	tgmpa( $plugins, $config );
+	}
+
+	/**
+	 * Add the new load point for ACF JSON files in the plugin
+	 *
+	 * @since  1.4.0
+	 *
+	 * @return string
+	 */
+	public function acf_json_load_point( $paths ) {
+	    $paths[] = WAMPUM_INCLUDES_DIR . 'acf-json';
+	    return $paths;
 	}
 
 	/**

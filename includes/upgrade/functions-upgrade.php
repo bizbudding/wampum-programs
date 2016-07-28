@@ -12,7 +12,13 @@
  *
  * wampum_upgrade_convert_steps_to_program_child_pages()
  * wampum_upgrade_convert_resources_to_acf_relationship()  // Run this after steps have been converted to program child pages
- * wampum_upgrade_convert_resource_files_to_acf_repeater()
+ * wampum_upgrade_convert_resource_files_to_new_key()
+ *
+ * @see
+ * Then, delete all connections we no longer need
+ * wampum_upgrade_delete_connections( 'wampum_program', 'programs_to_steps' );
+ * wampum_upgrade_delete_connections( 'wampum_program', 'programs_to_resources' );
+ * wampum_upgrade_delete_connections( 'wampum_program', 'steps_to_resources' ); // They used to be steps but already converted to program child pages
  */
 
 function wampum_upgrade_convert_steps_to_program_child_pages() {
@@ -68,8 +74,7 @@ function wampum_upgrade_convert_resources_to_acf_relationship() {
 	}
 }
 
-// CURRENTLY NOT WORKING!!!
-function wampum_upgrade_convert_resource_files_to_acf_repeater() {
+function wampum_upgrade_convert_resource_files_to_new_key() {
 	$args = array(
 		'posts_per_page'   => -1,
 		'post_type'        => 'wampum_resource',
@@ -83,7 +88,7 @@ function wampum_upgrade_convert_resource_files_to_acf_repeater() {
 	}
 
 	foreach ( $resources as $resource ) {
-		$old_files = get_post_meta( $resource->ID, 'wampum_resource_file', true );
+		$old_files = get_post_meta( $resource->ID, 'wampum_resource_files', true );
 		if ( is_array($old_files) ) {
 			$file_id = $old_files[0];
 		} else {
@@ -92,13 +97,33 @@ function wampum_upgrade_convert_resource_files_to_acf_repeater() {
 		if ( ! $file_id ) {
 			continue;
 		}
-		trace($file_id);
-		// https://www.advancedcustomfields.com/resources/update_row/
-		$value = array(
-			'file'	=> $file_id,
-		);
-		// update_row( 'wampum_resource_files', 1, $value, $resource->ID );
-		update_sub_field( array('wampum_resource_files', 1, 'file' ), $file_id, $resource->ID );
+		update_post_meta( $resource->ID, 'wampum_resource_file', true );
+		delete_post_meta( $resource->ID, 'wampum_resource_files', true );
+	}
+}
+
+function wampum_upgrade_delete_connections( $post_type, $connection_name ) {
+	$args = array(
+		'posts_per_page'   => -1,
+		'post_type'        => $post_type,
+		'suppress_filters' => true
+	);
+	$posts = get_posts($args);
+
+	if ( ! $posts ) {
+		return;
+	}
+
+	foreach ( $posts as $post ) {
+		$post_id  = get_the_ID();
+		$connections = wampum_upgrade_get_connected_items( $connection_name, $post_id );
+		// Skip if none
+		if ( ! $connections ) {
+			continue;
+		}
+		foreach ( $connections as $connection ) {
+			p2p_type( $connection_name )->disconnect( $post_id, $connection->ID );
+		}
 	}
 }
 
