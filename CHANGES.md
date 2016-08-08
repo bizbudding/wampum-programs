@@ -1,3 +1,6 @@
+#### 1.4.1
+* Fix wampum_get_user_programs() function. Was showing all programs, even if no access
+
 #### 1.4.0
 * Breaking Changes!
 * Convert wampum_step CPT to child pages of wampum_program CPT

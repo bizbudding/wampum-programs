@@ -72,6 +72,7 @@ function wampum_get_program_step_ids( $program_id ) {
 }
 
 /**
+ * CURRENTLY NOT USED AND POSSIBLY BROKEN. WHY CHECK IF ACCESS? CAN'T REMEMBER
  * Get an array of step objects for a given program
  *
  * @since  1.4.0
@@ -143,14 +144,15 @@ function wampum_get_user_programs( $return = 'all') {
     $posts = new WP_Query( $args );
     $programs = array();
     if ( $posts->have_posts() ) {
-    	global $post;
-    	if ( is_object($post) ) {
-    		$post_id = $post->ID;
-    	} else {
-    		$post_id = $post;
-    	}
         while ( $posts->have_posts() ) : $posts->the_post();
+	    	global $post;
+	    	if ( is_object($post) ) {
+	    		$post_id = $post->ID;
+	    	} else {
+	    		$post_id = $post;
+	    	}
 			if ( current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
+			// if ( current_user_can( 'wc_memberships_view_restricted_post_type', $post_id ) ) {
 				$programs[] = $post;
 			}
         endwhile;

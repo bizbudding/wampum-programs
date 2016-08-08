@@ -17,7 +17,7 @@ function wampum_do_account_programs() {
 
 	echo '<h2>' . __( 'My', 'wampum' ) . ' ' . wampum_get_plural_name('wampum_program') . '</h2>';
 
-	$data = wampum_get_user_programs( get_current_user_id() );
+	$data = wampum_get_user_programs();
 
 	if ( ! $data ) {
 		$text = 'You don\'t have access to any ' . wampum_get_plural_name('wampum_program') . ' yet.';
