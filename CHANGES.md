@@ -1,3 +1,6 @@
+#### 1.4.3
+* Remove default padding from program progess widget
+
 #### 1.4.2
 * Add first step link to program parent entry pagination
 * Program progress CSS-only checkmarks
