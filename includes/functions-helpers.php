@@ -200,7 +200,6 @@ function wampum_get_first_step_link( $post_id ) {
 	$output = '';
 	// Get first step ID
 	$id = wampum_get_first_child_id( $post_id );
-	trace(get_permalink( $id ));
 	// Bail if none
 	if ( ! $id ) {
 		return $output;

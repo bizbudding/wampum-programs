@@ -52,6 +52,9 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		// Step progress
 		if ( is_user_logged_in() && wampum_is_program_progress_enabled( $program_id ) ) {
 
+			// Enqueue our pre-registered stylesheet
+			wp_enqueue_style('wampum');
+
 			$completed = get_posts( array(
 				'connected_type'	=> 'user_program_progress',
 				'connected_items'	=> get_current_user_id(),
