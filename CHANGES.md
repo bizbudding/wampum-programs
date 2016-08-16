@@ -1,3 +1,6 @@
+#### 1.4.2
+* Add first step link to program parent entry pagination
+
 #### 1.4.1
 * Fix wampum_get_user_programs() function. Was showing all programs, even if no access
 

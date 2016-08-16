@@ -72,8 +72,9 @@ function wampum_get_program_step_ids( $program_id ) {
 }
 
 /**
- * CURRENTLY NOT USED AND POSSIBLY BROKEN. WHY CHECK IF ACCESS? CAN'T REMEMBER
  * Get an array of step objects for a given program
+ *
+ * Why are we checking if access?!?!?!?!
  *
  * @since  1.4.0
  *
@@ -169,7 +170,7 @@ function wampum_get_program_progress_link( $program_or_step_id ) {
 	return Wampum()->progress->get_program_progress_link( $program_or_step_id );
 }
 
-function wampum_get_prev_next_links( $post_id = '' ) {
+function wampum_get_prev_next_links( $post_id ) {
 	// Let's get it started
 	$output = '';
 	// Get parent, previous, and next connected posts
@@ -190,6 +191,25 @@ function wampum_get_prev_next_links( $post_id = '' ) {
 		$output .= $prev . $next;
 		$output .= '</div>';
 	}
+	// Send it home baby
+	return $output;
+}
+
+function wampum_get_first_step_link( $post_id ) {
+	// Let's get it started
+	$output = '';
+	// Get first step ID
+	$id = wampum_get_first_child_id( $post_id );
+	trace(get_permalink( $id ));
+	// Bail if none
+	if ( ! $id ) {
+		return $output;
+	}
+	$next = '<div class="pagination-next alignright"><a href="' . get_permalink( $id ) . '">' . get_the_title( $id ) . '</a></div>';
+
+	$output .= '<div class="wampum-pagination">';
+	$output .= $next;
+	$output .= '</div>';
 	// Send it home baby
 	return $output;
 }
@@ -276,6 +296,38 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 }
 
 /**
+ * Get the first child's ID
+ * Used on program parent page to show entry pagination to the first step
+ *
+ * @since  1.4.2
+ *
+ * @param  int   $post_id  post ID (should be program parent)
+ *
+ * @return integer
+ */
+function wampum_get_first_child_id( $post_id = '' ) {
+    $args = array(
+		'post_type'					=> 'wampum_program',
+		'post_parent'				=> $post_id,
+		'post_status'				=> 'publish',
+		'posts_per_page'			=> -1,
+		'fields'					=> 'ids',
+		'orderby'					=> 'menu_order',
+		'order'						=> 'ASC',
+    );
+    $posts = new WP_Query( $args );
+    $id = '';
+    if ( $posts->have_posts() ) {
+        while ( $posts->have_posts() ) : $posts->the_post();
+     		$id = get_the_ID();
+     		break;
+        endwhile;
+    }
+	wp_reset_postdata();
+    return $id;
+}
+
+/**
  * Check if a user can view a piece of content on the site
  *
  * @see 	woocommerce-memberships/includes/class-wc-memberships-shortcodes.php
@@ -293,14 +345,6 @@ function wampum_can_view( $post_id = '' ) {
 	}
 	return false;
 }
-
-// Check if user has access to restricted content
-// if ( ! current_user_can( 'wc_memberships_view_restricted_post_content', $post->ID ) ) {
-	// $output .= '<div class="wc-memberships-content-restricted-message">' . wc_memberships()->get_frontend_instance()->get_content_restricted_message( $post->ID ) . '</div>';
-// Check if user has access to delayed content
-// } elseif ( ! current_user_can( 'wc_memberships_view_delayed_post_content', $post->ID ) ) {
-	// $output .= '<div class="wc-memberships-content-delayed-message">' . wc_memberships()->get_frontend_instance()->get_content_delayed_message( get_current_user_id(), $post->ID ) . '</div>';
-// }
 
 /**
  * Check if current user can view a specific post
@@ -523,16 +567,3 @@ function wampum_get_template_part( $slug, $name = null, $load = true, $data = ''
 	}
     Wampum()->templates->get_template_part( $slug, $name, $load );
 }
-
-// function wampum_get_program_steps_list( $program_object_or_id ) {
-// 	return Wampum()->content->get_program_steps_list( $program_object_or_id );
-// }
-
-// function wampum_get_program_steps( $program_object_or_id ) {
-// 	return Wampum()->content->get_program_steps( $program_object_or_id );
-// }
-
-// function wampum_get_step_program( $step_object_or_id ) {
-// 	return Wampum()->content->get_step_program( $step_object_or_id );
-// }
-

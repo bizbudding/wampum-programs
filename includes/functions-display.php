@@ -82,10 +82,11 @@ function wampum_do_step_prev_next_links() {
 		return;
 	}
 	$post_id = get_the_ID();
-	if ( ! wampum_is_step( $post_id ) ) {
-		return;
+	if ( wampum_is_step( $post_id ) ) {
+		echo wampum_get_prev_next_links();
+	} else {
+		echo wampum_get_first_step_link( $post_id );
 	}
-	echo wampum_get_prev_next_links();
 }
 
 /**
