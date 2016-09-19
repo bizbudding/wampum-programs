@@ -104,18 +104,28 @@ final class Wampum_Membership {
     		return;
     	}
 
+	   	$redirect_page_id = get_option( 'wc_memberships_redirect_page_id' );
+		$redirect_url     = add_query_arg(
+			array( 'r' => $post_id ),
+			$redirect_page_id ? get_permalink( $redirect_page_id ) : home_url()
+		);
+		wp_redirect( $redirect_url );
+		exit;
+
 	    // This adds the restricted message to the content, while stripping out the default Woo markup around the notice
-	    add_filter( 'the_content', array( $this, 'get_restricted_message' ) );
+	    // add_filter( 'the_content', array( $this, 'get_restricted_message' ) );
 
 	    // Add our custom wampum restricted message, with markup
-	    add_filter( 'wc_memberships_content_restricted_message', array( $this, 'noaccess_restricted_message' ), 10, 3 );
+	    // add_filter( 'wc_memberships_content_restricted_message', array( $this, 'noaccess_restricted_message' ), 10, 3 );
 
 	    // Add styles
-	    $this->noaccess_styles();
+	    // $this->noaccess_styles();
 
 	}
 
     /**
+     * CURRENTLY NO LONGER IN USE
+     *
      * When viewing a step, we need to get the restricted message for the restricted program associated with that step
      *
      * @since  1.3.0
@@ -140,6 +150,8 @@ final class Wampum_Membership {
 	}
 
     /**
+     * CURRENTLY NO LONGER IN USE
+     *
      * Get the restricted message, with product link(s) and maybe login form
      *
      * @since  1.3.0
@@ -208,6 +220,8 @@ final class Wampum_Membership {
     }
 
 	/**
+     * CURRENTLY NO LONGER IN USE
+     *
 	 * Get a formatted login url with restricted content redirect URL
 	 *
 	 * If content is neither a singular content or a taxonomy term will default to user account page
@@ -228,6 +242,8 @@ final class Wampum_Membership {
 	}
 
     /**
+     * CURRENTLY NO LONGER IN USE
+     *
      * Get styles for no access overlay and message
      *
      * @since  1.3.0
