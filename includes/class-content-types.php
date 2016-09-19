@@ -74,9 +74,9 @@ final class Wampum_Content_Types {
 	    register_extended_post_type( 'wampum_resource', array(
 			'enter_title_here'	=> 'Enter ' . $this->get_singular_name('wampum_resource') . ' Name',
 			'menu_icon'			=> 'dashicons-list-view',
-		    'has_archive' 		=> apply_filters( 'wampum_resource_has_archive', false ),
-			'supports'			=> apply_filters( 'wampum_resource_supports', array('title','editor','excerpt','thumbnail','genesis-cpt-archives-settings') ),
-			'rewrite' 		    => array( 'slug' => $this->get_slug('wampum_resource') ),
+			'public'			=> false,
+			'show_ui'			=> true,
+			'supports'			=> apply_filters( 'wampum_resource_supports', array('title','editor','excerpt','thumbnail') ),
 	    ), $this->get_default_names()['wampum_resource'] );
 
 	}

@@ -1,3 +1,8 @@
+#### 1.4.4
+* Make resources a non-public post type
+* Display Resources on single programs, styled like a popup, via a query var
+* Programs now redirected to wc_memberships_redirect_page_id if user doesn't have access
+
 #### 1.4.3
 * Remove default padding from program progess widget
 

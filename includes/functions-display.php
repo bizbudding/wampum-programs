@@ -90,13 +90,71 @@ function wampum_do_step_prev_next_links() {
 }
 
 /**
+ * Display Resources on single programs, styled like a popup
+ *
+ * @since  1.1.1
+ *
+ * @return null|mixed
+ */
+add_action( 'wp_footer', 'wampum_maybe_do_resource_content' );
+function wampum_maybe_do_resource_content() {
+	if ( ! is_singular('wampum_program') ) {
+		return;
+	}
+	if ( ! isset($_GET['resource']) ) {
+		return;
+	}
+	$resource_id = absint($_GET['resource']);
+	if ( ! current_user_can('wc_memberships_access_all_restricted_content') || ! current_user_can( 'wc_memberships_view_restricted_post_content', $resource_id ) ) {
+		return;
+	}
+	wp_enqueue_style('wampum');
+
+	// Get the resource post object
+	$post = get_post($resource_id);
+
+	// Bail if not a post object
+	if ( ! $post ) {
+		return;
+	}
+
+	// Bail if not a resource
+	if ( $post->post_type != 'wampum_resource' ) {
+		return;
+	}
+
+	echo '<div id="wampum-popups">';
+		echo '<div class="wampum-popups-underlay"></div>';
+		echo '<div class="wampum-popups-overlay">';
+			echo '<div class="wampum-popup">';
+				echo '<div class="wampum-popup-close"><a href="' . get_permalink() . '#resource-list">×<span class="screen-reader-text">Close Popup</span></a></div>';
+				echo '<div class="wampum-popup-content">';
+				    echo '<h2>' . $post->post_title . '</h2>';
+					if ( has_post_thumbnail( $post->ID ) ) {
+						$image_size = apply_filters( 'wampum_resource_image_size', 'medium' );
+						echo '<div class="featured-image">';
+						echo get_the_post_thumbnail( $post->ID, $image_size );
+						echo '</div>';
+					}
+					echo wpautop($post->post_content);
+					$file = get_post_meta( $post->ID, 'wampum_resource_file', true );
+					if ( $file ) {
+						echo '<p class="button-wrap"><a target="_blank" class="button wampum-resource-button" href="' . wp_get_attachment_url($file) . '">Download</a></p>';
+					}
+				echo '</div>';
+			echo '</div>';
+		echo '</div>';
+	echo '</div>';
+}
+
+/**
  * Display Resources on single resources
  *
  * @since  1.1.1
  *
  * @return null|mixed
  */
-add_action( 'wampum_after_content', 'wampum_do_resource_button' );
+// add_action( 'wampum_after_content', 'wampum_do_resource_button' );
 function wampum_do_resource_button() {
 	if ( ! is_singular('wampum_resource') ) {
 		return;
