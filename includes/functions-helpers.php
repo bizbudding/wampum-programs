@@ -238,11 +238,15 @@ function wampum_get_sibling_ids( $post_id = '' ) {
     }
 
     $args = array(
-		'post_type'		=> $post->post_type,
-		'post_parent'	=> $post->post_parent,
-		'fields'		=> 'ids',
-		'order'			=> 'ASC',
-		'orderby'		=> 'menu_order',
+		'post_type'					=> $post->post_type,
+		'post_parent'				=> $post->post_parent,
+		'posts_per_page'			=> 250,
+		'fields'					=> 'ids',
+		'order'						=> 'ASC',
+		'orderby'					=> 'menu_order',
+		'no_found_rows'				=> true,
+		'update_post_meta_cache'	=> false,
+		'update_post_term_cache'	=> false,
 	);
     $siblings = new WP_Query( $args );
 

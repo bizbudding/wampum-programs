@@ -1,3 +1,6 @@
+#### 1.4.5
+* Fix prev/next program step query not showing full results
+
 #### 1.4.4
 * Make resources a non-public post type
 * Display Resources on single programs, styled like a popup, via a query var
