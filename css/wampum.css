@@ -3,96 +3,96 @@
 
 .progress-button.connected::before,
 .widget-program-step.completed a::after {
-	display: inline-block;
-	content: "\2713 ";
-	font-weight: bold;
+    display: inline-block;
+    content: "\2713 ";
+    font-weight: bold;
 }
 
 .progress-button.connected::before {
-	font-size: 22px;
-	margin: -20px 8px -16px -4px;
-	vertical-align: middle;
+    font-size: 22px;
+    margin: -20px 8px -16px -4px;
+    vertical-align: middle;
 }
 
 /* Widget */
 
 .widget-program-step a {
-	display: -ms-flexbox;display: flex;
-	-ms-flex-pack: start;justify-content: flex-start;
-	-ms-flex-align: center;-ms-grid-row-align: center;align-items: center;
+    display: -ms-flexbox;display: flex;
+    -ms-flex-pack: start;justify-content: flex-start;
+    -ms-flex-align: center;-ms-grid-row-align: center;align-items: center;
 }
 
 .widget-program-step.completed a::after {
-	padding-left: 14px;
-	margin-left: auto;
-	font-size: 20px;
+    padding-left: 14px;
+    margin-left: auto;
+    font-size: 20px;
 }
 
 /* Flexbox Tables
 --------------------------------------------- */
 
 .wtable {
-	border: 1px solid rgba(0,0,0,0.05);
-	border-radius: 4px;
-	overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .wtable-row,
 .entry-content .wtable-row {
-	display: -webkit-flex;display: -ms-flexbox;display: flex;
-	-webkit-align-items: center;-ms-flex-align: center;align-items: center;
-	border-bottom: 1px solid rgba(0,0,0,0.05);
-	padding: 0;
-	margin: 0;
+    display: -webkit-flex;display: -ms-flexbox;display: flex;
+    -webkit-align-items: center;-ms-flex-align: center;align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 0;
+    margin: 0;
 }
 
 .wtable-row:last-of-type {
-	border-bottom: 0;
+    border-bottom: 0;
 }
 
 .wtable-cell {
-	padding: 10px;
+    padding: 10px;
 }
 
 .wtable-auto {
-	flex: 0 0 auto;
+    flex: 0 0 auto;
 }
 
 .wtable-grow {
-	flex: 1 1 auto;
+    flex: 1 1 auto;
 }
 
 .wtable-image {
-	width: 100%;
-	max-width: 140px;
+    width: 100%;
+    max-width: 140px;
 }
 
 .wtable-image .wp-post-image,
 .entry-content .wtable-image .wp-post-image {
-	display: block;
-	margin: 0;
+    display: block;
+    margin: 0;
 }
 
 .wtable-title {
-	font-size: 18px;
+    font-size: 18px;
     line-height: 1.4;
 }
 
 .wtable-desc {
-	font-size: 14px;
-	margin-top: 4px;
+    font-size: 14px;
+    margin-top: 4px;
 }
 
 .wtable-title,
 .wtable-desc {
-	display: block;
+    display: block;
 }
 
 .wtable-header {
-	width: 100%;
-	background-color: rgba(0,0,0,0.05);
-	font-weight: bold;
-	padding: 8px 20px;
+    width: 100%;
+    background-color: rgba(0,0,0,0.05);
+    font-weight: bold;
+    padding: 8px 20px;
 }
 
 .button.wtable-button,
@@ -106,26 +106,26 @@
     background-color: #ebe9eb;
     border: 0;
     white-space: nowrap;
-	margin: 2px;
+    margin: 2px;
 }
 
 .button.wtable-button:hover,
 .entry-content .button.wtable-button:hover {
-	background-color: #dad8da;
+    background-color: #dad8da;
     color: #515151;
     border: 0;
 }
 
 @media only screen and (max-width: 668px) {
 
-	.wtable-row,
-	.wtable-cell {
-		-webkit-flex-wrap: wrap;-ms-flex-wrap: wrap;flex-wrap: wrap;
-	}
+    .wtable-row,
+    .wtable-cell {
+        -webkit-flex-wrap: wrap;-ms-flex-wrap: wrap;flex-wrap: wrap;
+    }
 
-	.wtable-cell {
-		width: 100%;
-	}
+    .wtable-cell {
+        width: 100%;
+    }
 
 }
 
@@ -143,8 +143,8 @@
 }
 
 .wampum-popups-underlay {
-    background-color: rgba(0,0,0,0.75);
-	width: 100%;
+    background-color: rgba(0,0,0,0.85);
+    width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
@@ -165,16 +165,19 @@
 
 .wampum-popup {
     position: relative;
-    max-width: 800px;
+    min-width: 350px;
+    max-width: 650px;
     height: auto;
+    max-height: calc(100vh - 0px);
     background-color: #fff;
     margin: auto;
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 3px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     z-index: 1;
-    -webkit-animation: wscalein 0.5s;
-    animation: wscalein 0.5s;
+    -webkit-animation: scalein 0.5s;
+    animation: scalein 0.5s;
 }
 
 .wampum-popup-content {
@@ -184,7 +187,7 @@
 }
 
 .wampum-popup-content p:last-of-type {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .wampum-popup-close {
@@ -194,7 +197,7 @@
 }
 
 .wampum-popup-close a {
-	display: block;
+    display: block;
     background-color: transparent;
     color: #333;
     font-family: Arial;
