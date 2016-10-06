@@ -1,3 +1,7 @@
+#### 1.4.7.1
+* Allow videos to embed in resource popup
+* Add filter for resource popup width
+
 #### 1.4.7
 * Add wampum_create_user_membership() helper function to use a form to (maybe) create user, and add a user to a membership
 

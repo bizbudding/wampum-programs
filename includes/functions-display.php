@@ -130,12 +130,16 @@ function wampum_maybe_do_resource_content() {
 		$content .= get_the_post_thumbnail( $post->ID, $image_size );
 		$content .= '</div>';
 	}
-	$content .= wpautop($post->post_content);
+	if ( isset($GLOBALS['wp_embed']) ) {
+	    // if the content contains something we can oEmbed, do it.
+	    $content .= wpautop($GLOBALS['wp_embed']->autoembed($post->post_content));
+	}
 	$file = get_post_meta( $post->ID, 'wampum_resource_file', true );
 	if ( $file ) {
 		$content .= '<p class="button-wrap"><a target="_blank" class="button wampum-resource-button" href="' . wp_get_attachment_url($file) . '">Download</a></p>';
 	}
-	wampum_popup( $content, array( 'width' => '800' ) );
+	$width = apply_filters( 'wampum_resource_popup_width', '800' );
+	wampum_popup( $content, array( 'width' => $width ) );
 
 }
 
