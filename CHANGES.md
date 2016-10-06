@@ -1,3 +1,7 @@
+#### 1.4.6
+* Resource list only shows 1 button for clarity
+* Improve wampum_popup() function
+
 #### 1.4.5
 * Fix prev/next program step query not showing full results
 

@@ -123,28 +123,21 @@ function wampum_maybe_do_resource_content() {
 		return;
 	}
 
-	echo '<div id="wampum-popups">';
-		echo '<div class="wampum-popups-underlay"></div>';
-		echo '<div class="wampum-popups-overlay">';
-			echo '<div class="wampum-popup">';
-				echo '<div class="wampum-popup-close"><a href="' . get_permalink() . '#resource-list">×<span class="screen-reader-text">Close Popup</span></a></div>';
-				echo '<div class="wampum-popup-content">';
-				    echo '<h2>' . $post->post_title . '</h2>';
-					if ( has_post_thumbnail( $post->ID ) ) {
-						$image_size = apply_filters( 'wampum_resource_image_size', 'medium' );
-						echo '<div class="featured-image">';
-						echo get_the_post_thumbnail( $post->ID, $image_size );
-						echo '</div>';
-					}
-					echo wpautop($post->post_content);
-					$file = get_post_meta( $post->ID, 'wampum_resource_file', true );
-					if ( $file ) {
-						echo '<p class="button-wrap"><a target="_blank" class="button wampum-resource-button" href="' . wp_get_attachment_url($file) . '">Download</a></p>';
-					}
-				echo '</div>';
-			echo '</div>';
-		echo '</div>';
-	echo '</div>';
+	$content = '';
+    $content .= '<h2>' . $post->post_title . '</h2>';
+	if ( has_post_thumbnail( $post->ID ) ) {
+		$image_size = apply_filters( 'wampum_resource_image_size', 'medium' );
+		$content .= '<div class="featured-image">';
+		$content .= get_the_post_thumbnail( $post->ID, $image_size );
+		$content .= '</div>';
+	}
+	$content .= wpautop($post->post_content);
+	$file = get_post_meta( $post->ID, 'wampum_resource_file', true );
+	if ( $file ) {
+		$content .= '<p class="button-wrap"><a target="_blank" class="button wampum-resource-button" href="' . wp_get_attachment_url($file) . '">Download</a></p>';
+	}
+	wampum_popup( $content, array( 'width' => '800' ) );
+
 }
 
 /**

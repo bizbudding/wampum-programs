@@ -12,10 +12,10 @@ echo '<ul id="resource-list" class="wampum-resource-list wtable" style="margin-l
 		$resource			= get_post($resource_id);
 		$resource_popup_url	= add_query_arg( 'resource', $resource_id, get_permalink() );
 		$buttons			= '';
-		$file = get_post_meta( $resource->ID, 'wampum_resource_file', true );
-		if ( $file ) {
-			$buttons .= '<a target="_blank" class="button wtable-button wtable-button-right" href="' . wp_get_attachment_url($file) . '">Download</a>';
-		}
+		// $file = get_post_meta( $resource->ID, 'wampum_resource_file', true );
+		// if ( $file ) {
+		// 	$buttons .= '<a target="_blank" class="button wtable-button wtable-button-right" href="' . wp_get_attachment_url($file) . '">Download</a>';
+		// }
 		$buttons .= '<a class="button wtable-button wtable-button-left" href="' . $resource_popup_url . '">View</a>';
 
 		$image   = '';

@@ -438,29 +438,35 @@ function wampum_get_truncated_content( $content, $charlength ) {
 /**
  * Check if current user can view a specific 'wampum_step'
  *
- * @since  1.0.0
+ * @since  1.4.6
  *
- * @param  int  $post_id  ID of the post to check access to
+ * @param  string  $content  The content of the popup
+ * @param  array   $args 	 Array of settings for the popup
  *
  * @return bool
  */
-// function wampum_user_can_view_step( $user_id, $step_id ) {
-// 	return Wampum()->membership->can_view_step( $user_id, $step_id );
-// }
+function wampum_popup( $content, $args ) {
 
-/**
- * Check if current user can view a specific post
- * I think it only works with posts, maybe pages, but not CPT's
- *
- * @since  1.0.0
- *
- * @param  int  $post_id  ID of the post to check access to
- *
- * @return bool
- */
-// function wampum_user_can_view_post( $user_id, $post_id ) {
-// 	return Wampum()->membership->can_view_post( $user_id, $post_id );
-// }
+	$defaults = array(
+		'hidden' => false, // Maybe add display:none; to the HTML
+		'width'	 => '400', // Max popup content width in pixels
+	);
+	$args = wp_parse_args( $args, $defaults );
+	// Inline styles
+	$underlay_style = ( true == $args['hidden'] ) ? 'display:none;' : '';
+	$overlay_style 	= 'max-width:' . $args['width'] . 'px;';
+	// Do it up!
+    echo '<div class="wpopup" style="' . $underlay_style . '">';
+        echo '<div class="wpopup-content" style="' . $overlay_style . '">';
+            $url = explode( '?', esc_url_raw( add_query_arg( array() ) ) );
+            $current_url = $url[0];
+            if ( $current_url ) {
+                echo '<a class="wpopup-close" href="' . esc_url($current_url) . '">×<span class="screen-reader-text">Close Popup</span></a>';
+            }
+            echo $content;
+        echo '</div>';
+    echo '</div>';
+}
 
 /**
  * Check if user is an active member of a particular membership plan
