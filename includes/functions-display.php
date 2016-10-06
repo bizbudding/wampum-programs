@@ -130,9 +130,12 @@ function wampum_maybe_do_resource_content() {
 		$content .= get_the_post_thumbnail( $post->ID, $image_size );
 		$content .= '</div>';
 	}
+	$post_content .= $post->post_content;
 	if ( isset($GLOBALS['wp_embed']) ) {
-	    // if the content contains something we can oEmbed, do it.
-	    $content .= wpautop($GLOBALS['wp_embed']->autoembed($post->post_content));
+	    // If the content contains something we can oEmbed, do it.
+	    $content .= wpautop($GLOBALS['wp_embed']->autoembed($post_content));
+	} else {
+		$content .= wpautop($post_content);
 	}
 	$file = get_post_meta( $post->ID, 'wampum_resource_file', true );
 	if ( $file ) {
