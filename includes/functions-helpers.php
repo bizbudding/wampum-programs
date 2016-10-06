@@ -10,6 +10,8 @@
  */
 
 /**
+ * TODO: ADD THIS TO class-membership.php instead!
+ *
  * Add membership to user
  * If user doesn't exists, create one first
  *
