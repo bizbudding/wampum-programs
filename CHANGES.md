@@ -1,3 +1,6 @@
+#### 1.4.7
+* Add wampum_create_user_membership() helper function to use a form to (maybe) create user, and add a user to a membership
+
 #### 1.4.6.1
 * Add helper action hook for wampum_popups to get safely loaded, including CSS
 
