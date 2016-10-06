@@ -16,7 +16,7 @@
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:            1.4.6
+ * Version:            1.4.6.1
  * GitHub Plugin URI:  https://github.com/JiveDig/wampum
  * GitHub Branch:	   master
  */
@@ -165,7 +165,7 @@ final class Wampum_Setup {
 
 		// Plugin version.
 		if ( ! defined( 'WAMPUM_VERSION' ) ) {
-			define( 'WAMPUM_VERSION', '1.4.6' );
+			define( 'WAMPUM_VERSION', '1.4.6.1' );
 		}
 
 		// Plugin Folder Path.
@@ -241,8 +241,9 @@ final class Wampum_Setup {
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_stylesheets' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
 			// Setup front end hooks
-			add_filter( 'the_content', array( $this, 'before_content' ) );
-			add_filter( 'the_content', array( $this, 'after_content' ) );
+			add_filter( 'the_content', 	array( $this, 'before_content' ) );
+			add_filter( 'the_content', 	array( $this, 'after_content' ) );
+			add_action( 'wp_footer', 	array( $this, 'popups_hook' ) );
 		}
 	}
 
@@ -381,6 +382,18 @@ final class Wampum_Setup {
 		$content .= ob_get_clean();
 		return $content;
 	}
+
+	/**
+	 * Add a new so devs can safely add a new popup without things breaking if this plugin gets deactivated
+	 *
+	 * @since 	1.4.6.1
+	 *
+	 * @return 	null
+	 */
+	function popups_hook() {
+		do_action( 'wampum_popups' );
+	}
+
 
 }
 endif; // End if class_exists check.

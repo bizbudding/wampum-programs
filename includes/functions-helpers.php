@@ -438,6 +438,8 @@ function wampum_get_truncated_content( $content, $charlength ) {
 /**
  * Check if current user can view a specific 'wampum_step'
  *
+ * @uses   Use via add_action( 'wampum_popups', 'my_function_name' )
+ *
  * @since  1.4.6
  *
  * @param  string  $content  The content of the popup
@@ -446,6 +448,9 @@ function wampum_get_truncated_content( $content, $charlength ) {
  * @return bool
  */
 function wampum_popup( $content, $args ) {
+
+	// Make sure CSS is loaded
+	wp_enqueue_style('wampum');
 
 	$defaults = array(
 		'hidden' => false, // Maybe add display:none; to the HTML

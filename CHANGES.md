@@ -1,3 +1,6 @@
+#### 1.4.6.1
+* Add helper action hook for wampum_popups to get safely loaded, including CSS
+
 #### 1.4.6
 * Resource list only shows 1 button for clarity
 * Improve wampum_popup() function

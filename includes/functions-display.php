@@ -96,7 +96,7 @@ function wampum_do_step_prev_next_links() {
  *
  * @return null|mixed
  */
-add_action( 'wp_footer', 'wampum_maybe_do_resource_content' );
+add_action( 'wampum_popups', 'wampum_maybe_do_resource_content' );
 function wampum_maybe_do_resource_content() {
 	if ( ! is_singular('wampum_program') ) {
 		return;
@@ -108,7 +108,6 @@ function wampum_maybe_do_resource_content() {
 	if ( ! current_user_can('wc_memberships_access_all_restricted_content') || ! current_user_can( 'wc_memberships_view_restricted_post_content', $resource_id ) ) {
 		return;
 	}
-	wp_enqueue_style('wampum');
 
 	// Get the resource post object
 	$post = get_post($resource_id);
