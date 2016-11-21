@@ -82,7 +82,7 @@ function wampum_do_step_prev_next_links() {
 		return;
 	}
 	$post_id = get_the_ID();
-	if ( wampum_is_step( $post_id ) ) {
+	if ( wampum_is_child( $post_id ) ) {
 		echo wampum_get_prev_next_links( $post_id );
 	} else {
 		echo wampum_get_first_step_link( $post_id );

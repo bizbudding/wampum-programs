@@ -41,9 +41,8 @@ final class Wampum_Content_Types {
 
 	public function init() {
 		// Actions
-		add_action( 'init', array( $this, 'register_post_types'), 0 );
-		// Support
-		// add_post_type_support( 'wc_membership_plan', 'post-thumbnails' );
+		add_action( 'init', 	array( $this, 'register_post_types'), 0 );
+		add_action( 'wp_head', 	array( $this, 'do_template_functions' ) );
 	}
 
 	/**
@@ -79,20 +78,45 @@ final class Wampum_Content_Types {
 			'supports'			=> apply_filters( 'wampum_resource_supports', array('title','editor','excerpt','thumbnail') ),
 	    ), $this->get_default_names()['wampum_resource'] );
 
+		// Program Templates
+		register_extended_taxonomy( 'wampum_program_template', 'wampum_program', array(
+			'public'	=> false,
+			'show_ui'	=> true,
+		), array(
+		    'singular' => 'Template',
+		    'plural'   => 'Templates',
+		) );
+
 	}
 
-
-	public function get_program_steps_list( $program_object_or_id ) {
-		// $output = '';
-		// $steps = $this->get_program_steps($program_object_or_id);
-		// if ( $steps ) {
-		// 	$output .= '<ul>';
-		// 	foreach ( $steps as $step ) {
-		// 		$output .= '<li><a href="' . get_permalink($step->ID) . '">' . $step->post_title . '</a></li>';
-		// 	}
-		// 	$output .= '</ul>';
-		// }
-		// return $output;
+	/**
+	 * Try to output a function for each wampum_program_template a program is in
+	 * These functions should be manually created, per-site, based on template terms used
+	 *
+	 * @return void
+	 */
+	public function do_template_functions() {
+		if ( ! is_singular('wampum_program') ) {
+			return;
+		}
+		// Get array of term slugs
+		$terms = get_terms( array(
+			'taxonomy'	 => 'wampum_program_template',
+			'fields'	 => 'id=>slug',
+			'hide_empty' => false,
+		) );
+		// Bail if no terms
+		if ( ! $terms ) {
+			return;
+		}
+		// Create a function and output if it exists
+		foreach ( $terms as $term_slug ) {
+		    $function = 'wampum_do_template_' . $term_slug;
+		    if ( function_exists( $function ) ) {
+		        $function();
+		        add_action( 'wampum_after_content', $function() );
+		    }
+		}
 	}
 
 	/**

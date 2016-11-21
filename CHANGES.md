@@ -1,3 +1,9 @@
+#### 1.4.8
+* Program templates taxonomy - 'wampum_program_template'
+* Create wampum_do_template_{term_slug_with_underscores}() template tags for custom template based on term slugs
+* Add helper function wampum_get_top_parent_id()
+* Restrict access to all child, grandchild, etc pages of restricted programs
+
 #### 1.4.7.1
 * Allow videos to embed in resource popup
 * Add filter for resource popup width

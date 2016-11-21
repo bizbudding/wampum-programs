@@ -34,13 +34,9 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 
 		$program_id = $steps = '';
 
-		if ( wampum_is_program($queried_post_id) ) {
-			$program_id	= $queried_post_id;
-		} elseif ( wampum_is_step($queried_post_id) ) {
-			$program_id = wampum_get_step_program_id($queried_post_id);
-		}
+		$program_id = wampum_get_top_parent_id();
 
-		$steps = wampum_get_program_step_ids($program_id);
+		$steps = wampum_get_children_ids($program_id);
 
 		// Bail no program or steps
 		if ( ! $program_id || ! $steps ) {
@@ -123,6 +119,7 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		$instance['title'] 				= esc_attr( $new_instance['title'] );
 		$instance['title_from_program'] = (int) $new_instance['title_from_program'];
 		$instance['title_link']			= (int) $new_instance['title_link'];
+		// $instance['show_nested']		= (int) $new_instance['show_nested'];
 		return $instance;
 	}
 
@@ -152,6 +149,11 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 			<input class="checkbox" type="checkbox" value="1" <?php checked( $instance['title_link'], 1 ); ?> id="<?php echo $this->get_field_id( 'title_link' ); ?>" name="<?php echo $this->get_field_name( 'title_link' ); ?>" />
 			<label for="<?php echo $this->get_field_id( 'title_link' ); ?>"><?php _e( 'Make title a link', 'wampum' ); echo '<br /><em>('; _e( 'only if "Use program name as widget title." is checked', 'wampum' ); echo ')</em></label>';?>
 		</p>
+
+		<!-- <p> -->
+			<!-- <input class="checkbox" type="checkbox" value="1" <?php checked( $instance['show_nested'], 1 ); ?> id="<?php echo $this->get_field_id( 'show_nested' ); ?>" name="<?php echo $this->get_field_name( 'show_nested' ); ?>" /> -->
+			<!-- <label for="<?php echo $this->get_field_id( 'show_nested' ); ?>"><?php _e( 'Show all nested posts', 'wampum' ); ?></label> -->
+		<!-- </p> -->
 		<?php
 	}
 

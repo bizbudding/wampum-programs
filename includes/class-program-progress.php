@@ -150,12 +150,7 @@ class Wampum_Program_Progress {
      * @return array
      */
     private function get_ajax_data() {
-		$post_id = get_the_ID();
-		if ( wampum_is_step( $post_id ) ) {
-			$program_id = wampum_get_step_program_id( $post_id );
-		} else {
-			$program_id = $post_id;
-		}
+		$program_id	= wampum_get_top_parent_id( get_the_ID() );
         return array(
 			'root'				=> esc_url_raw( rest_url() ),
 			'nonce'				=> wp_create_nonce( 'wp_rest' ),
@@ -178,11 +173,7 @@ class Wampum_Program_Progress {
 		if ( ! is_user_logged_in() ) {
 			return;
 		}
-		if ( wampum_is_step( $program_or_step_id ) ) {
-			$program_id = wampum_get_step_program_id( $program_or_step_id );
-		} else {
-			$program_id = $program_or_step_id;
-		}
+		$program_id = wampum_get_top_parent_id( $program_or_step_id );
 		if ( ! wampum_is_program_progress_enabled($program_id) ) {
 			return;
 		}

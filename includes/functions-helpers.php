@@ -149,54 +149,61 @@ function wampum_create_user_membership( $args ) {
     return $new_user;
 }
 
-function wampum_is_program( $post_id = '' ) {
-	if ( empty($post_id) ) {
+function wampum_is_top_level( $post_id = '' ) {
+	if ( ! $post_id ) {
 		if ( ! is_singular() ) {
 			return false;
 		}
 		$post_id = get_the_ID();
 	}
 	$post = get_post( (int)$post_id );
-	if ( 'wampum_program' == $post->post_type ) {
-		if ( $post->post_parent == 0 ) {
-			return true;
-		}
+	if ( $post && $post->post_parent == 0 ) {
+		return true;
 	}
 	return false;
 }
 
-function wampum_is_step( $post_id = '' ) {
-	if ( empty($post_id) ) {
+function wampum_is_child( $post_id = '' ) {
+	if ( ! $post_id ) {
 		if ( ! is_singular() ) {
 			return false;
 		}
 		$post_id = get_the_ID();
 	}
-	$post = get_post( (int)$post_id );
-	if ( 'wampum_program' == $post->post_type ) {
-		if ( $post->post_parent > 0 ) {
-			return true;
-		}
+	$post = $post_id ? get_post($post_id) : get_post();
+	if ( $post->post_parent > 0 )	{
+		return true;
 	}
 	return false;
 }
 
 /**
- * Get ID of a step program
+ * Get ID of a top level post
  *
- * @since  1.0.0
+ * @since  1.4.8
  *
  * @param  object|int   $step_object_or_id  the post object or ID to get connected item from
  *
  * @return string|bool
  */
-function wampum_get_step_program_id( $step_id ) {
-	$step = get_post($step_id);
-	if ( $step->post_parent > 0 ) {
-		return $step->post_parent;
+function wampum_get_top_parent_id( $post_id = '' ) {
+	if ( ! $post_id ) {
+		if ( ! is_singular() ) {
+			return false;
+		}
+		$post_id = get_the_ID();
 	}
-	return false;
+	$post = $post_id ? get_post($post_id) : get_post();
+	if ( $post->post_parent > 0 )	{
+		$ancestors	= get_post_ancestors($post->ID);
+		$root		= count($ancestors)-1;
+		$parent_id	= $ancestors[$root];
+	} else {
+		$parent_id = $post->ID;
+	}
+	return $parent_id;
 }
+
 
 /**
  * Get an array of step IDs for a given program
@@ -207,26 +214,37 @@ function wampum_get_step_program_id( $step_id ) {
  *
  * @return array
  */
-function wampum_get_program_step_ids( $program_id ) {
-	return wampum_get_program_steps( $program_id, 'ids' );
+function wampum_get_children_ids( $post_id = '' ) {
+	if ( ! $post_id ) {
+		if ( ! is_singular() ) {
+			return false;
+		}
+		$post_id = get_the_ID();
+	}
+	return wampum_get_children( $post_id, 'ids' );
 }
 
 /**
  * Get an array of step objects for a given program
  *
- * Why are we checking if access?!?!?!?!
- *
  * @since  1.4.0
  *
- * @param  int     $program_id  The program to get the steps for
+ * @param  int     $post_id  The program to get the steps for
  * @param  string  $return  	(Optional) The fields to return
  *
  * @return array
  */
-function wampum_get_program_steps( $program_id, $return = 'all') {
+function wampum_get_children( $post_id = '', $return = 'all') {
+	if ( ! $post_id ) {
+		if ( ! is_singular() ) {
+			return false;
+		}
+		$post_id = get_the_ID();
+	}
+    $post_type = get_post_type($post_id);
     $args = array(
-		'post_type'					=> 'wampum_program',
-		'post_parent'				=> $program_id,
+		'post_type'					=> $post_type,
+		'post_parent'				=> $post_id,
 		'post_status'				=> 'publish',
 		'posts_per_page'			=> -1,
 		'fields'					=> $return,
@@ -234,7 +252,7 @@ function wampum_get_program_steps( $program_id, $return = 'all') {
 		'order'						=> 'ASC',
     );
     $posts = new WP_Query( $args );
-    $steps = array();
+    $children = array();
     if ( $posts->have_posts() ) {
         while ( $posts->have_posts() ) : $posts->the_post();
         	global $post;
@@ -243,13 +261,11 @@ function wampum_get_program_steps( $program_id, $return = 'all') {
         	} else {
         		$post_id = $post;
         	}
-			if ( current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
-				$steps[] = $post;
-			}
+			$children[] = $post;
         endwhile;
     }
     wp_reset_postdata();
-    return $steps;
+    return $children;
 }
 
 /**
@@ -293,7 +309,6 @@ function wampum_get_user_programs( $return = 'all') {
 	    		$post_id = $post;
 	    	}
 			if ( current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
-			// if ( current_user_can( 'wc_memberships_view_restricted_post_type', $post_id ) ) {
 				$programs[] = $post;
 			}
         endwhile;
@@ -498,14 +513,9 @@ function wampum_can_view( $post_id = '' ) {
  *
  * @return  bool
  */
-function wampum_can_view_post( $post_id = null ) {
-	if ( ! $post_id ) {
-		global $post;
-		$post_id = isset( $post->ID ) ? $post->ID : false;
-	}
-	if ( wampum_is_step() ) {
-		$post_id = wampum_get_step_program_id( $post_id );
-	}
+function wampum_can_view_post( $post_id = '' ) {
+	$post = $post_id ? get_post($post_id) : get_post();
+	$post_id = wampum_get_top_parent_id( $post->ID );
 	return wc_memberships_user_can( $user_id, 'view', array( 'post' => $post_id ) );
 }
 
@@ -551,28 +561,35 @@ function wampum_get_slug( $post_type ) {
 
 /**
  * Helper function to get the excerpt with max character length
- * Example: the_excerpt_max_charlength(140);
+ * Taken from Genesis genesis_truncate_phrase()
+ * Example: wampum_get_truncated_content(140);
  *
- * @param  $charlength the amount of characters to include
- * @return string
+ * @param 	string  $text           		A string to be shortened.
+ * @param 	int     $max_characters 		The maximum number of characters to return.
+ * @return 	string  Truncated string. 		Empty string if `$max_characters` is falsy.
  */
-function wampum_get_truncated_content( $content, $charlength ) {
+function wampum_get_truncated_content( $text, $max_characters ) {
 
-	$charlength++;
-
-	if ( mb_strlen( $content ) > $charlength ) {
-		$subex	 = mb_substr( $content, 0, $charlength - 5 );
-		$exwords = explode( ' ', $subex );
-		$excut	 = - ( mb_strlen( $exwords[ count( $exwords ) - 1 ] ) );
-		if ( $excut < 0 ) {
-			return mb_substr( $subex, 0, $excut ) . '[&hellip;]';
-		} else {
-			return $subex . '[&hellip;]';
-		}
-		return '[&hellip;]';
-	} else {
-		return $content;
+	if ( ! $max_characters ) {
+		return '';
 	}
+
+	$text = trim( $text );
+
+	if ( mb_strlen( $text ) > $max_characters ) {
+
+		// Truncate $text to $max_characters + 1.
+		$text = mb_substr( $text, 0, $max_characters + 1 );
+
+		// Truncate to the last space in the truncated string.
+		$text_trim = trim( mb_substr( $text, 0, mb_strrpos( $text, ' ' ) ) );
+
+		$text = empty( $text_trim ) ? $text : $text_trim;
+
+	}
+
+	return $text;
+
 }
 
 /**
