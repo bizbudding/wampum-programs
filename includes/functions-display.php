@@ -96,8 +96,8 @@ function wampum_do_step_prev_next_links() {
  *
  * @return null|mixed
  */
-add_action( 'wampum_popups', 'wampum_maybe_do_resource_content' );
-function wampum_maybe_do_resource_content() {
+add_action( 'wampum_popups', 'wampum_do_resource_popup' );
+function wampum_do_resource_popup() {
 	if ( ! is_singular('wampum_program') ) {
 		return;
 	}
@@ -105,7 +105,7 @@ function wampum_maybe_do_resource_content() {
 		return;
 	}
 	$resource_id = absint($_GET['resource']);
-	if ( ! current_user_can('wc_memberships_access_all_restricted_content') || ! current_user_can( 'wc_memberships_view_restricted_post_content', $resource_id ) ) {
+	if ( ! ( current_user_can('wc_memberships_access_all_restricted_content') || current_user_can( 'wc_memberships_view_restricted_post_content', $resource_id ) ) ) {
 		return;
 	}
 
