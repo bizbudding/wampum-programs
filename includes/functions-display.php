@@ -61,7 +61,7 @@ function wampum_do_program_resource_list() {
  *
  * @return null|mixed
  */
-add_action( 'wampum_after_content', 'wampum_do_step_progress_link' );
+add_action( 'wampum_after_content', 'wampum_do_step_progress_link', 12 );
 function wampum_do_step_progress_link() {
 	if ( ! is_singular('wampum_program') ) {
 		return;
@@ -76,7 +76,7 @@ function wampum_do_step_progress_link() {
  *
  * @return null|mixed
  */
-add_action( 'wampum_after_content', 'wampum_do_step_prev_next_links' );
+add_action( 'wampum_after_content', 'wampum_do_step_prev_next_links', 12 );
 function wampum_do_step_prev_next_links() {
 	if ( ! is_singular('wampum_program') ) {
 		return;

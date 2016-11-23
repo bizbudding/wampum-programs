@@ -114,8 +114,7 @@ final class Wampum_Content_Types {
 		foreach ( $terms as $term_slug ) {
 		    $function = 'wampum_do_template_' . $term_slug;
 		    if ( function_exists( $function ) ) {
-		        $function();
-		        add_action( 'wampum_after_content', $function() );
+		        add_action( 'wampum_after_content', $function );
 		    }
 		}
 	}
