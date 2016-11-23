@@ -16,7 +16,7 @@
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:            1.4.7.1
+ * Version:            1.4.8
  * GitHub Plugin URI:  https://github.com/JiveDig/wampum
  * GitHub Branch:	   master
  */

@@ -107,7 +107,7 @@ final class Wampum_Content_Types {
 			'hide_empty' => false,
 		) );
 		// Bail if no terms
-		if ( ! $terms ) {
+		if ( ! $terms || is_wp_error($terms) ) {
 			return;
 		}
 		// Create a function and output if it exists
