@@ -92,6 +92,7 @@ final class Wampum_Content_Types {
 	/**
 	 * Try to output a function for each wampum_program_template a program is in
 	 * These functions should be manually created, per-site, based on template terms used
+	 * Example function wampum_do_template_{term slug here}() { // $data = get_field('some_custom_field'); echo $data; }
 	 *
 	 * @return void
 	 */

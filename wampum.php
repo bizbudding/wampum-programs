@@ -59,15 +59,6 @@ final class Wampum_Setup {
 	public $membership;
 
 	/**
-	 * Wampum Settings Object
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var object | Wampum_Settings
-	 */
-	public $settings;
-
-	/**
 	 * Wampum Program Progress Object
 	 *
 	 * @since 1.0.0
@@ -119,7 +110,6 @@ final class Wampum_Setup {
 			// Instantiate Classes
 			self::$instance->content	= Wampum_Content_Types::instance();
 			self::$instance->membership	= Wampum_Membership::instance();
-			self::$instance->settings 	= Wampum_Settings::instance();
 			self::$instance->progress   = Wampum_Program_Progress::instance();
 			self::$instance->templates	= Wampum_Template_Loader::instance();
 			self::$instance->widgets	= Wampum_Widgets::instance();
@@ -211,7 +201,6 @@ final class Wampum_Setup {
 		// Classes
 		require_once WAMPUM_INCLUDES_DIR . 'class-content-types.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-membership.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-settings.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-program-progress.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-template-loader.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-widgets.php';
