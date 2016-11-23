@@ -335,8 +335,8 @@ function wampum_get_prev_next_links( $post_id ) {
 		return $output;
 	}
 	// Prevents things from breaking if step is not connected to a program
-	$items['previous'] = $items['previous'] ? $items['previous'] : '';
-	$items['next'] 	   = $items['next'] ? $items['next'] : '';
+	$items['previous'] = isset($items['previous']) && ! empty($items['previous']) ? $items['previous'] : '';
+	$items['next'] 	   = isset($items['next']) && ! empty($items['next']) ? $items['next'] : '';
 	// Set markup for links
 	$prev = $items['previous'] ? '<div class="pagination-previous alignleft"><a href="' . get_permalink( $items['previous'] ) . '">' . get_the_title( $items['previous'] ) . '</a></div>' : '';
 	$next = $items['next'] ? '<div class="pagination-next alignright"><a href="' . get_permalink( $items['next'] ) . '">' . get_the_title( $items['next'] ) . '</a></div>' : '';
@@ -437,14 +437,16 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	if ( $first_id == $post_id ) {
 		$previous = '';
 	} else {
-		$previous = $sibling_ids[$current-1];
+		// Get the previous if we have it in the array
+		$previous = array_key_exists( $current-1, $sibling_ids ) ? $sibling_ids[$current-1] : '';
 	}
 
 	// Make sure we're not on the last item in the array
 	if ( $last_id == $post_id ) {
 		$next = '';
 	} else {
-		$next = $sibling_ids[$current+1];
+		// Get the next if we have it in the array
+		$next = array_key_exists( $current+1, $sibling_ids ) ? $sibling_ids[$current+1] : '';
 	}
 
     return array(
