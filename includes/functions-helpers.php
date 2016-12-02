@@ -34,7 +34,12 @@
  */
 function wampum_create_user_membership( $args ) {
 
-    // Bail if Woo Memberships is not active (do we need this?)
+	// Bail if Woocommerce is not active
+	if ( ! class_exists( 'WooCommerce' ) ) {
+		return;
+	}
+
+    // Bail if Woo Memberships is not active
     if ( ! function_exists( 'wc_memberships' ) ) {
         return;
     }

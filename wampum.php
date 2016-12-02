@@ -329,17 +329,19 @@ final class Wampum_Setup {
 	/**
 	 * Before Download Content
 	 *
-	 * Adds an action to the beginning of download post content that can be hooked to
+	 * Adds an action to the beginning of post content that can be hooked to
 	 * by other functions.
 	 *
 	 * @since 1.0.8
 	 * @global $post
 	 *
-	 * @param $content The the_content field of the download object
+	 * @param $content The the_content field of the post object
 	 * @return string the content with any additional data attached
 	 */
 	function before_content( $content ) {
-		// if ( is_singular(array('wampum_program','wampum_step','wampum_resource') ) && is_main_query() ) {
+		if ( ! is_singular('wampum_program') ) {
+			return;
+		}
 		if ( ! is_main_query() ) {
 			return $content;
 		}
@@ -352,17 +354,19 @@ final class Wampum_Setup {
 	/**
 	 * After Download Content
 	 *
-	 * Adds an action to the end of download post content that can be hooked to by
+	 * Adds an action to the end of post content that can be hooked to by
 	 * other functions.
 	 *
 	 * @since 1.0.8
 	 * @global $post
 	 *
-	 * @param $content The the_content field of the download object
+	 * @param $content The the_content field of the post object
 	 * @return string the content with any additional data attached
 	 */
 	function after_content( $content ) {
-		// if ( is_singular(array('wampum_program','wampum_step','wampum_resource') ) && is_main_query() ) {
+		if ( ! is_singular('wampum_program') ) {
+			return;
+		}
 		if ( ! is_main_query() ) {
 			return $content;
 		}
@@ -373,7 +377,7 @@ final class Wampum_Setup {
 	}
 
 	/**
-	 * Add a new so devs can safely add a new popup without things breaking if this plugin gets deactivated
+	 * Add a new hook so devs can safely add a new popup without things breaking if this plugin gets deactivated
 	 *
 	 * @since 	1.4.6.1
 	 *

@@ -32,29 +32,6 @@ function wampum_do_account_programs() {
 }
 
 /**
- * Display Resources on Programs and Steps
- *
- * @since  1.1.0
- *
- * @return null|mixed
- */
-add_action( 'wampum_after_content', 'wampum_do_program_resource_list' );
-function wampum_do_program_resource_list() {
-	// Bail if not the right singular post type
-	if ( ! is_singular( 'wampum_program' ) ) {
-		return;
-	}
-	// Get the resources
-	$data = get_field( 'wampum_resources' );
-	// Bail if no resources
-	if ( ! is_array($data) || empty($data) ) {
-		return;
-	}
-	// Get the resource-list.php template
-	wampum_get_template_part( 'resource', 'list', true, $data );
-}
-
-/**
  * Display step progress links
  *
  * @since  1.0.0
@@ -87,80 +64,4 @@ function wampum_do_step_prev_next_links() {
 	} else {
 		echo wampum_get_first_step_link( $post_id );
 	}
-}
-
-/**
- * Display Resources on single programs, styled like a popup
- *
- * @since  1.1.1
- *
- * @return null|mixed
- */
-add_action( 'wampum_popups', 'wampum_do_resource_popup' );
-function wampum_do_resource_popup() {
-	if ( ! is_singular('wampum_program') ) {
-		return;
-	}
-	if ( ! isset($_GET['resource']) ) {
-		return;
-	}
-	$resource_id = absint($_GET['resource']);
-	if ( ! ( current_user_can('wc_memberships_access_all_restricted_content') || current_user_can( 'wc_memberships_view_restricted_post_content', $resource_id ) ) ) {
-		return;
-	}
-
-	// Get the resource post object
-	$post = get_post($resource_id);
-
-	// Bail if not a post object
-	if ( ! $post ) {
-		return;
-	}
-
-	// Bail if not a resource
-	if ( $post->post_type != 'wampum_resource' ) {
-		return;
-	}
-
-	$content = '';
-    $content .= '<h2>' . $post->post_title . '</h2>';
-	if ( has_post_thumbnail( $post->ID ) ) {
-		$image_size = apply_filters( 'wampum_resource_image_size', 'medium' );
-		$content .= '<div class="featured-image">';
-		$content .= get_the_post_thumbnail( $post->ID, $image_size );
-		$content .= '</div>';
-	}
-	$post_content .= $post->post_content;
-	if ( isset($GLOBALS['wp_embed']) ) {
-	    // If the content contains something we can oEmbed, do it.
-	    $content .= wpautop($GLOBALS['wp_embed']->autoembed($post_content));
-	} else {
-		$content .= wpautop($post_content);
-	}
-	$file = get_post_meta( $post->ID, 'wampum_resource_file', true );
-	if ( $file ) {
-		$content .= '<p class="button-wrap"><a target="_blank" class="button wampum-resource-button" href="' . wp_get_attachment_url($file) . '">Download</a></p>';
-	}
-	$width = apply_filters( 'wampum_resource_popup_width', '800' );
-	wampum_popup( $content, array( 'width' => $width ) );
-
-}
-
-/**
- * Display Resources on single resources
- *
- * @since  1.1.1
- *
- * @return null|mixed
- */
-// add_action( 'wampum_after_content', 'wampum_do_resource_button' );
-function wampum_do_resource_button() {
-	if ( ! is_singular('wampum_resource') ) {
-		return;
-	}
-	$file = get_post_meta( get_the_ID(), 'wampum_resource_file', true );
-	if ( ! $file ) {
-		return;
-	}
-	echo '<p><a target="_blank" class="button wampum-resource-button" href="' . wp_get_attachment_url($file) . '">Download</a></p>';
 }
