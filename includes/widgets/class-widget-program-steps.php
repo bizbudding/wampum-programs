@@ -9,9 +9,9 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 	 */
 	public function __construct() {
 		parent::__construct(
-	 		'wampum_widget_program_steps', // Base ID
-			'Wampum - ' . wampum_get_plural_name('wampum_step'), // Name
-			array( 'description' => __( 'Show steps of a program', 'wampum' ), ) // Args
+	 		'wampum_widget_program_children', // Base ID
+			'Wampum - ' . wampum_get_singular_name('wampum_program') . ' Children', // Name
+			array( 'description' => __( 'Show child pages of a program', 'wampum' ), ) // Args
 		);
 	}
 
@@ -32,14 +32,14 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		$queried_object  = get_queried_object();
 		$queried_post_id = $queried_object->ID;
 
-		$program_id = $steps = '';
+		$program_id = $children = '';
 
 		$program_id = wampum_get_top_parent_id();
 
-		$steps = wampum_get_children_ids($program_id);
+		$children = wampum_get_children_ids($program_id);
 
-		// Bail no program or steps
-		if ( ! $program_id || ! $steps ) {
+		// Bail no program or children
+		if ( ! $program_id || ! $children ) {
 			return;
 		}
 
@@ -74,7 +74,7 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		if ( 1 == $instance['title_from_program'] ) {
 			$title = get_the_title( $program_id );
 			if ( 1 == $instance['title_link'] ) {
-				$title = '<a href="' . get_permalink( $program_id ) . '">' . apply_filters( 'wampum_steps_widget_title', $title ) . '</a>';
+				$title = '<a href="' . get_permalink( $program_id ) . '">' . apply_filters( 'wampum_programs_widget_title', $title ) . '</a>';
 			}
 		}
 
@@ -82,19 +82,19 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 			echo $before_title . $title . $after_title;
 		}
 
-	    echo '<ul class="widget-program-steps">';
+	    echo '<ul class="widget-program-children">';
 	    	// Set default li class
-			foreach ( $steps as $step_id ) {
-		    	$classes = 'widget-program-step';
-				// Add class if current step
-				if ( $queried_post_id === $step_id ) {
-					$classes .= ' current-step';
+			foreach ( $children as $child_id ) {
+		    	$classes = 'widget-program-child';
+				// Add class if current child
+				if ( $queried_post_id === $child_id ) {
+					$classes .= ' current-child';
 				}
-				// Add class if step is completed
-				if ( in_array($step_id, $completed_ids) ) {
+				// Add class if child is completed
+				if ( in_array($child_id, $completed_ids) ) {
 					$classes .= ' completed';
 				}
-				echo '<li class="' . $classes . '"><a href="' . get_the_permalink( $step_id ) . '" title="' . get_the_title( $step_id ) . '">' . get_the_title( $step_id ) . '</a></li>';
+				echo '<li class="' . $classes . '"><a href="' . get_the_permalink( $child_id ) . '" title="' . get_the_title( $child_id ) . '">' . get_the_title( $child_id ) . '</a></li>';
 			}
 
 		echo '</ul>';

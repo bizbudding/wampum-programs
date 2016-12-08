@@ -2,7 +2,7 @@
 /**
  * Wampum Template Loader
  *
- * @package   Wampum
+ * @package   Wampum - Programs
  * @author    Mike Hemberger
  * @link      https://bizbudding.com
  * @copyright 2016 Mike Hemberger

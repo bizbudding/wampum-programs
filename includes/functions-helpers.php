@@ -327,7 +327,7 @@ function wampum_is_program_progress_enabled( $program_id ) {
 }
 
 function wampum_get_program_progress_link( $program_or_step_id ) {
-	return Wampum()->progress->get_program_progress_link( $program_or_step_id );
+	return Wampum_Programs()->progress->get_program_progress_link( $program_or_step_id );
 }
 
 function wampum_get_prev_next_links( $post_id ) {
@@ -536,7 +536,7 @@ function wampum_can_view_post( $post_id = '' ) {
  * @return string
  */
 function wampum_get_singular_name( $post_type, $lowercase = false ) {
-	return Wampum()->content->get_singular_name( $post_type, $lowercase );
+	return Wampum_Programs()->content->get_singular_name( $post_type, $lowercase );
 }
 
 /**
@@ -549,7 +549,7 @@ function wampum_get_singular_name( $post_type, $lowercase = false ) {
  * @return string
  */
 function wampum_get_plural_name( $post_type, $lowercase = false ) {
-	return Wampum()->content->get_plural_name( $post_type, $lowercase );
+	return Wampum_Programs()->content->get_plural_name( $post_type, $lowercase );
 }
 
 /**
@@ -563,7 +563,7 @@ function wampum_get_plural_name( $post_type, $lowercase = false ) {
  * @return string
  */
 function wampum_get_slug( $post_type ) {
-	return Wampum()->content->get_slug( $post_type );
+	return Wampum_Programs()->content->get_slug( $post_type );
 }
 
 /**
@@ -741,7 +741,7 @@ function wampum_get_user_memberships( $user_id = null, $args = array() ) {
  */
 function wampum_get_template_part( $slug, $name = null, $load = true, $data = '' ) {
     if ( is_array($data) ) {
-	    Wampum()->templates->set_template_data( $data );
+	    Wampum_Programs()->templates->set_template_data( $data );
 	}
-    Wampum()->templates->get_template_part( $slug, $name, $load );
+    Wampum_Programs()->templates->get_template_part( $slug, $name, $load );
 }

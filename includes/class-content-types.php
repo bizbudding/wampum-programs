@@ -2,7 +2,7 @@
 /**
  * Wampum
  *
- * @package   Wampum
+ * @package   Wampum - Programs
  * @author    Mike Hemberger <mike@bizbudding.com.com>
  * @link      https://github.com/JiveDig/wampum/
  * @copyright 2016 Mike Hemberger
@@ -68,15 +68,6 @@ final class Wampum_Content_Types {
 			'rewrite' 			  => array( 'slug' => $this->get_slug('wampum_program') ),
 			// 'show_in_rest'		  => true,
 	    ), $this->get_default_names()['wampum_program'] );
-
-	    // Resources
-	    register_extended_post_type( 'wampum_resource', array(
-			'enter_title_here'	=> 'Enter ' . $this->get_singular_name('wampum_resource') . ' Name',
-			'menu_icon'			=> 'dashicons-list-view',
-			'public'			=> false,
-			'show_ui'			=> true,
-			'supports'			=> apply_filters( 'wampum_resource_supports', array('title','editor','excerpt','thumbnail') ),
-	    ), $this->get_default_names()['wampum_resource'] );
 
 		// Program Templates
 		register_extended_taxonomy( 'wampum_program_template', 'wampum_program', array(
@@ -173,22 +164,11 @@ final class Wampum_Content_Types {
 	 * @return array
 	 */
 	public function get_default_names() {
-
 		$content_names = array(
 			'wampum_program' => array(
-			   'singular' => _x('Program', 'wampum'),
-			   'plural'   => _x('Programs', 'wampum'),
-			   'slug'	  => _x('programs', 'wampum'),
-			),
-			'wampum_step' => array(
-			   'singular' => _x('Step', 'wampum'),
-			   'plural'   => _x('Steps', 'wampum'),
-			   'slug'	  => _x('steps', 'wampum'),
-			),
-			'wampum_resource' => array(
-			   'singular' => _x('Resource', 'wampum'),
-			   'plural'   => _x('Resources', 'wampum'),
-			   'slug'	  => _x('resources', 'wampum'),
+			   'singular' => _x( 'Program', 'wampum' ),
+			   'plural'   => _x( 'Programs', 'wampum' ),
+			   'slug'	  => _x( 'programs', 'wampum' ),
 			),
 		);
 		return apply_filters( 'wampum_content_default_names', $content_names );

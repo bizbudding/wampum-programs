@@ -3,39 +3,38 @@
  * @package   Wampum
  * @author    BizBudding, INC <mike@bizbudding.com>
  * @license   GPL-2.0+
- * @link      http://bizbudding.com.com
+ * @link      https://bizbudding.com.com
  * @copyright 2016 BizBudding, INC
  *
  * @wordpress-plugin
- * Plugin Name:        Wampum
- * Description: 	   The core Wampum plugin
- * Plugin URI:         https://github.com/JiveDig/wampum
- * Plugin Type: 	   Piklist
+ * Plugin Name:        Wampum - Programs
+ * Description: 	   A program membership CPT with extensible terms-for-templates templating system
+ * Plugin URI:         https://github.com/JiveDig/wampum-programs
  * Author:             Mike Hemberger
  * Author URI:         http://bizbudding.com
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
  * Version:            1.4.8
- * GitHub Plugin URI:  https://github.com/JiveDig/wampum
+ * GitHub Plugin URI:  https://github.com/JiveDig/wampum-programs
  * GitHub Branch:	   master
  */
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! class_exists( 'Wampum_Setup' ) ) :
+if ( ! class_exists( 'Wampum_Programs_Setup' ) ) :
 
 /**
- * Main Wampum_Setup Class.
+ * Main Wampum_Programs_Setup Class.
  *
  * @since 1.0.0
  */
-final class Wampum_Setup {
+final class Wampum_Programs_Setup {
 	/** Singleton *************************************************************/
 
 	/**
-	 * @var Wampum_Setup The one true Wampum_Setup
+	 * @var Wampum_Programs_Setup The one true Wampum_Programs_Setup
 	 * @since 1.0.0
 	 */
 	private static $instance;
@@ -86,23 +85,23 @@ final class Wampum_Setup {
 	public $widgets;
 
 	/**
-	 * Main Wampum_Setup Instance.
+	 * Main Wampum_Programs_Setup Instance.
 	 *
-	 * Insures that only one instance of Wampum_Setup exists in memory at any one
+	 * Insures that only one instance of Wampum_Programs_Setup exists in memory at any one
 	 * time. Also prevents needing to define globals all over the place.
 	 *
 	 * @since   1.0.0
 	 * @static  var array $instance
-	 * @uses    Wampum_Setup::setup_constants() Setup the constants needed.
-	 * @uses    Wampum_Setup::includes() Include the required files.
-	 * @uses    Wampum_Setup::load_textdomain() load the language files.
+	 * @uses    Wampum_Programs_Setup::setup_constants() Setup the constants needed.
+	 * @uses    Wampum_Programs_Setup::includes() Include the required files.
+	 * @uses    Wampum_Programs_Setup::load_textdomain() load the language files.
 	 * @see     Wampum()
-	 * @return  object | Wampum_Setup The one true Wampum_Setup
+	 * @return  object | Wampum_Programs_Setup The one true Wampum_Programs_Setup
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
 			// Setup the setup
-			self::$instance = new Wampum_Setup;
+			self::$instance = new Wampum_Programs_Setup;
 			// Methods
 			self::$instance->setup_constants();
 			self::$instance->includes();
@@ -393,23 +392,23 @@ final class Wampum_Setup {
 endif; // End if class_exists check.
 
 /**
- * The main function for that returns Wampum_Setup
+ * The main function for that returns Wampum_Programs_Setup
  *
- * The main function responsible for returning the one true Wampum_Setup
+ * The main function responsible for returning the one true Wampum_Programs_Setup
  * Instance to functions everywhere.
  *
  * Use this function like you would a global variable, except without needing
  * to declare the global.
  *
- * Example: <?php $wampum = Wampum(); ?>
+ * Example: <?php $wampum = Wampum_Programs(); ?>
  *
  * @since 1.0.0
  *
- * @return object|Wampum_Setup The one true Wampum_Setup Instance.
+ * @return object|Wampum_Programs_Setup The one true Wampum_Programs_Setup Instance.
  */
-function Wampum() {
-	return Wampum_Setup::instance();
+function Wampum_Programs() {
+	return Wampum_Programs_Setup::instance();
 }
 
-// Get Wampum Running.
-Wampum();
+// Get Wampum_Programs Running.
+Wampum_Programs();
