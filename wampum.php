@@ -209,6 +209,7 @@ final class Wampum_Setup {
 		// Functions
 		require_once WAMPUM_INCLUDES_DIR . 'functions-display.php';
 		require_once WAMPUM_INCLUDES_DIR . 'functions-helpers.php';
+		require_once WAMPUM_INCLUDES_DIR . 'shortcodes.php';
 		// Upgrades
 		require_once WAMPUM_INCLUDES_DIR . 'upgrade/functions-upgrade.php';
 	}
@@ -340,7 +341,7 @@ final class Wampum_Setup {
 	 */
 	function before_content( $content ) {
 		if ( ! is_singular('wampum_program') ) {
-			return;
+			return $content;
 		}
 		if ( ! is_main_query() ) {
 			return $content;
@@ -365,7 +366,7 @@ final class Wampum_Setup {
 	 */
 	function after_content( $content ) {
 		if ( ! is_singular('wampum_program') ) {
-			return;
+			return $content;
 		}
 		if ( ! is_main_query() ) {
 			return $content;
