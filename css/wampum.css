@@ -49,36 +49,6 @@
     margin-left: 8px;
 }
 
-/* Program Progress
---------------------------------------------- */
-
-.progress-button.connected::before,
-.widget-program-step.completed a::after {
-    display: inline-block;
-    content: "\2713 ";
-    font-weight: bold;
-}
-
-.progress-button.connected::before {
-    font-size: 22px;
-    margin: -20px 8px -16px -4px;
-    vertical-align: middle;
-}
-
-/* Widget */
-
-.widget-program-step a {
-    display: -ms-flexbox;display: flex;
-    -ms-flex-pack: start;justify-content: flex-start;
-    -ms-flex-align: center;-ms-grid-row-align: center;align-items: center;
-}
-
-.widget-program-step.completed a::after {
-    padding-left: 14px;
-    margin-left: auto;
-    font-size: 20px;
-}
-
 /* Flexbox Tables
 --------------------------------------------- */
 
@@ -106,11 +76,15 @@
 }
 
 .wtable-auto {
-    flex: 0 0 auto;
+    -webkit-flex: 0 0 auto;
+        -ms-flex: 0 0 auto;
+            flex: 0 0 auto;
 }
 
 .wtable-grow {
-    flex: 1 1 auto;
+    -webkit-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
 }
 
 .wtable-image {
@@ -178,9 +152,9 @@ Full Screen Overlay/Underlay/Popup
 
 .wpopup {
     background-color: rgba(0, 0, 0, 0.8);
-    display: -ms-flexbox;display: flex;
-    -ms-flex-pack: center;justify-content: center;
-    -ms-flex-align: center;align-items: center;
+    display: -ms-flexbox;display: -webkit-flex;display: flex;
+    -ms-flex-pack: center;-webkit-justify-content: center;justify-content: center;
+    -ms-flex-align: center;-webkit-align-items: center;align-items: center;
     position: fixed;
     top: 0;
     left: 0;
@@ -246,14 +220,6 @@ Full Screen Overlay/Underlay/Popup
         opacity: 1;
     }
 }
-@-ms-keyframes wfadein {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-}
 @keyframes wfadein {
     0% {
         opacity: 0;
@@ -265,20 +231,6 @@ Full Screen Overlay/Underlay/Popup
 
 /* Scale In */
 @-webkit-keyframes wscalein {
-    0% {
-        -webkit-transform: scale(0);
-        -ms-transform: scale(0);
-        transform: scale(0);
-        opacity: 0;
-    }
-    100% {
-        -webkit-transform: scale(1);
-        -ms-transform: scale(1);
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-@-ms-keyframes wscalein {
     0% {
         -webkit-transform: scale(0);
         -ms-transform: scale(0);

@@ -1,8 +1,8 @@
 <?php
 /**
- * Adds Wampum_Widget_Program_Steps widget.
+ * Adds Wampum_Widget_Program_Children widget.
  */
-class Wampum_Widget_Program_Steps extends WP_Widget {
+class Wampum_Widget_Program_Children extends WP_Widget {
 
 	/**
 	 * Register widget with WordPress.

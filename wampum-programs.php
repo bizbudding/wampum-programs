@@ -188,18 +188,16 @@ final class Wampum_Programs_Setup {
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-cpts.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-taxos.php';
 		// Classes
-		require_once WAMPUM_INCLUDES_DIR . 'class-content-types.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-membership.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-template-loader.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-widgets.php';
+		require_once WAMPUM_INCLUDES_DIR . 'classes/class-content-types.php';
+		require_once WAMPUM_INCLUDES_DIR . 'classes/class-membership.php';
+		require_once WAMPUM_INCLUDES_DIR . 'classes/class-template-loader.php';
+		require_once WAMPUM_INCLUDES_DIR . 'classes/class-widgets.php';
 		// Widgets
-		require_once WAMPUM_INCLUDES_DIR . 'widgets/class-widget-program-steps.php';
+		require_once WAMPUM_INCLUDES_DIR . 'widgets/class-widget-program-children.php';
 		// Functions
-		require_once WAMPUM_INCLUDES_DIR . 'functions-display.php';
-		require_once WAMPUM_INCLUDES_DIR . 'functions-helpers.php';
+		require_once WAMPUM_INCLUDES_DIR . 'display.php';
+		require_once WAMPUM_INCLUDES_DIR . 'helpers.php';
 		require_once WAMPUM_INCLUDES_DIR . 'shortcodes.php';
-		// Upgrades
-		require_once WAMPUM_INCLUDES_DIR . 'upgrade/functions-upgrade.php';
 	}
 
 	public function setup() {
