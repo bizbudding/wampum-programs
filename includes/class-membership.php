@@ -1,8 +1,8 @@
 <?php
 /**
- * Wampum Membership
+ * Wampum - Programs
  *
- * @package   Wampum - Programs
+ * @package   Wampum_Membership
  * @author    Mike Hemberger
  * @link      https://bizbudding.com
  * @copyright 2016 Mike Hemberger

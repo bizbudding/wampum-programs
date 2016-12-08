@@ -1,8 +1,8 @@
 <?php
 /**
- * Wampum
+ * Wampum - Programs
  *
- * @package   Wampum - Programs
+ * @package   Wampum_Content_Types
  * @author    Mike Hemberger <mike@bizbudding.com.com>
  * @link      https://github.com/JiveDig/wampum/
  * @copyright 2016 Mike Hemberger
@@ -83,7 +83,11 @@ final class Wampum_Content_Types {
 	/**
 	 * Try to output a function for each wampum_program_template a program is in
 	 * These functions should be manually created, per-site, based on template terms used
-	 * Example function wampum_do_template_{term slug here}() { // $data = get_field('some_custom_field'); echo $data; }
+	 * Example function wampum_do_template_{termslug_with_underscores_here}() { // $data = get_field('some_custom_field'); echo $data; }
+	 *
+	 * If you want to do this your own, ignore the function name and hook in yourself
+	 *
+	 * @since  1.5.0
 	 *
 	 * @return void
 	 */
@@ -103,7 +107,11 @@ final class Wampum_Content_Types {
 		}
 		// Create a function and output if it exists
 		foreach ( $terms as $term_slug ) {
-		    $function = 'wampum_do_template_' . $term_slug;
+			// Convert term slug dashes to underscores for function name
+			$slug_with_underscores = str_replace( '-', '_', $term_slug );
+			// Build function name
+		    $function = 'wampum_do_template_' . str_replace( '-', '_', $slug_with_underscores );
+		    // Hook function in, if it exists
 		    if ( function_exists( $function ) ) {
 		        add_action( 'wampum_after_content', $function );
 		    }

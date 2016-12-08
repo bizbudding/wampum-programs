@@ -1,8 +1,8 @@
 <?php
 /**
- * Wampum
+ * Wampum - Programs
  *
- * @package   Wampum
+ * @package   Wampum - Programs
  * @author    Mike Hemberger <mike@bizbudding.com.com>
  * @link      https://github.com/JiveDig/wampum/
  * @copyright 2016 Mike Hemberger
@@ -29,21 +29,6 @@ function wampum_do_account_programs() {
 	}
 
 	do_action('wampum_account_after_programs');
-}
-
-/**
- * Display step progress links
- *
- * @since  1.0.0
- *
- * @return null|mixed
- */
-add_action( 'wampum_after_content', 'wampum_do_step_progress_link', 12 );
-function wampum_do_step_progress_link() {
-	if ( ! is_singular('wampum_program') ) {
-		return;
-	}
-	echo wampum_get_program_progress_link( get_the_ID() );
 }
 
 /**

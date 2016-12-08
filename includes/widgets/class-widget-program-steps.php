@@ -46,24 +46,25 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 		$completed_ids = array();
 
 		// Step progress
-		if ( is_user_logged_in() && wampum_is_program_progress_enabled( $program_id ) ) {
+		// NO LONGER USED - SAVE FOR REFERENCE
+		// if ( is_user_logged_in() && wampum_is_program_progress_enabled( $program_id ) ) {
 
-			// Enqueue our pre-registered stylesheet
-			wp_enqueue_style('wampum');
+		// 	// Enqueue our pre-registered stylesheet
+		// 	wp_enqueue_style('wampum');
 
-			$completed = get_posts( array(
-				'connected_type'	=> 'user_program_progress',
-				'connected_items'	=> get_current_user_id(),
-				'nopaging'			=> true,
-				'suppress_filters'	=> false,
-			) );
-			if ( $completed ) {
-				foreach ( $completed as $complete ) {
-					$completed_ids[] = $complete->p2p_to;
-				}
-			}
+		// 	$completed = get_posts( array(
+		// 		'connected_type'	=> 'user_program_progress',
+		// 		'connected_items'	=> get_current_user_id(),
+		// 		'nopaging'			=> true,
+		// 		'suppress_filters'	=> false,
+		// 	) );
+		// 	if ( $completed ) {
+		// 		foreach ( $completed as $complete ) {
+		// 			$completed_ids[] = $complete->p2p_to;
+		// 		}
+		// 	}
 
-		}
+		// }
 
 		extract( $args );
 
@@ -91,9 +92,10 @@ class Wampum_Widget_Program_Steps extends WP_Widget {
 					$classes .= ' current-child';
 				}
 				// Add class if child is completed
-				if ( in_array($child_id, $completed_ids) ) {
-					$classes .= ' completed';
-				}
+				// NO LONGER IN USE, SAVE FOR REFERENCE
+				// if ( in_array($child_id, $completed_ids) ) {
+				// 	$classes .= ' completed';
+				// }
 				echo '<li class="' . $classes . '"><a href="' . get_the_permalink( $child_id ) . '" title="' . get_the_title( $child_id ) . '">' . get_the_title( $child_id ) . '</a></li>';
 			}
 

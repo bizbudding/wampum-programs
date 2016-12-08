@@ -58,15 +58,6 @@ final class Wampum_Programs_Setup {
 	public $membership;
 
 	/**
-	 * Wampum Program Progress Object
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var object | Wampum_User_Step_Progress
-	 */
-	public $progress;
-
-	/**
 	 * Wampum Template Loader Object
 	 *
 	 * @since 1.0.0
@@ -109,7 +100,6 @@ final class Wampum_Programs_Setup {
 			// Instantiate Classes
 			self::$instance->content	= Wampum_Content_Types::instance();
 			self::$instance->membership	= Wampum_Membership::instance();
-			self::$instance->progress   = Wampum_Program_Progress::instance();
 			self::$instance->templates	= Wampum_Template_Loader::instance();
 			self::$instance->widgets	= Wampum_Widgets::instance();
 		}
@@ -200,7 +190,6 @@ final class Wampum_Programs_Setup {
 		// Classes
 		require_once WAMPUM_INCLUDES_DIR . 'class-content-types.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-membership.php';
-		require_once WAMPUM_INCLUDES_DIR . 'class-program-progress.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-template-loader.php';
 		require_once WAMPUM_INCLUDES_DIR . 'class-widgets.php';
 		// Widgets
@@ -218,17 +207,10 @@ final class Wampum_Programs_Setup {
 		register_activation_hook( __FILE__,   array( $this, 'activate' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
-		// Dependencies
-		add_action( 'tgmpa_register', 		  array( $this, 'dependencies' ) );
-
-		// Add new load point for ACF json field groups
-		add_filter( 'acf/settings/load_json', array( $this, 'acf_json_load_point' ) );
-
 		// If front end
 		if ( ! is_admin() ) {
 			// Register stylesheet
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_stylesheets' ) );
-			add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
 			// Setup front end hooks
 			add_filter( 'the_content', 	array( $this, 'before_content' ) );
 			add_filter( 'the_content', 	array( $this, 'after_content' ) );
@@ -251,57 +233,6 @@ final class Wampum_Programs_Setup {
 	}
 
 	/**
-	 * Dependent plugin check
-	 * @link http://tgmpluginactivation.com/
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return  mixed  admin notice if dependent plugins aren't active
-	 */
-	public function dependencies() {
-		/**
-		 * Array of plugin arrays. Required keys are name and slug.
-		 * If the source is NOT from the .org repo, then source is also required.
-		 */
-		$plugins = array(
-	 		// Dependent plugins from the WordPress Plugin Repository.
-	 		array(
-				'name'				=> 'Posts to Posts',
-				'slug'				=> 'posts-to-posts',
-				'required'			=> true,
-				'version'			=> '1.6.5',
-				'force_activation'	=> true,
-			),
-		);
-		// TGM configuration array
-	 	$config = array(
-	 		'id'           => 'wampum',                 // Unique ID for hashing notices for multiple instances of TGMPA.
-	 		'default_path' => '',                       // Default absolute path to bundled plugins.
-	 		'menu'         => 'wampum-install-plugins', // Menu slug.
-	 		'parent_slug'  => 'themes.php',             // Parent menu slug.
-	 		'capability'   => 'edit_theme_options',     // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
-	 		'has_notices'  => true,                     // Show admin notices or not.
-	 		'dismissable'  => true,                     // If false, a user cannot dismiss the nag message.
-	 		'dismiss_msg'  => '',                       // If 'dismissable' is false, this message will be output at top of nag.
-	 		'is_automatic' => false,                    // Automatically activate plugins after installation or not.
-	 		'message'      => '',                       // Message to output right before the plugins table.
-	 	);
-	 	tgmpa( $plugins, $config );
-	}
-
-	/**
-	 * Add the new load point for ACF JSON files in the plugin
-	 *
-	 * @since  1.4.0
-	 *
-	 * @return string
-	 */
-	public function acf_json_load_point( $paths ) {
-	    $paths[] = WAMPUM_INCLUDES_DIR . 'acf-json';
-	    return $paths;
-	}
-
-	/**
 	 * Register stylesheets for later use
 	 *
 	 * Use via wp_enqueue_style('wampum'); in a template
@@ -312,18 +243,6 @@ final class Wampum_Programs_Setup {
 	 */
 	public function register_stylesheets() {
 	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css', array(), WAMPUM_VERSION );
-	}
-
-	/**
-	 * Register scripts for later use
-	 *
-	 * Use via wp_enqueue_script('magnific-popup'); in a template
-	 *
-	 * @since  1.0.0
-	 *
-	 * @return null
-	 */
-	public function register_scripts() {
 	}
 
 	/**
