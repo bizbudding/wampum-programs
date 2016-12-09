@@ -461,44 +461,6 @@ function wampum_get_truncated_content( $text, $max_characters ) {
 }
 
 /**
- * Check if current user can view a specific 'wampum_step'
- *
- * @uses   Use via add_action( 'wampum_popups', 'my_function_name' )
- *
- * @since  1.4.6
- *
- * @param  string  $content  The content of the popup
- * @param  array   $args 	 Array of settings for the popup
- *
- * @return bool
- */
-function wampum_popup( $content, $args ) {
-
-	// Make sure CSS is loaded
-	wp_enqueue_style('wampum');
-
-	$defaults = array(
-		'hidden' => false, // Maybe add display:none; to the HTML
-		'width'	 => '400', // Max popup content width in pixels
-	);
-	$args = wp_parse_args( $args, $defaults );
-	// Inline styles
-	$underlay_style = ( true == $args['hidden'] ) ? 'display:none;' : '';
-	$overlay_style 	= 'max-width:' . $args['width'] . 'px;';
-	// Do it up!
-    echo '<div class="wpopup" style="' . $underlay_style . '">';
-        echo '<div class="wpopup-content" style="' . $overlay_style . '">';
-            $url = explode( '?', esc_url_raw( add_query_arg( array() ) ) );
-            $current_url = $url[0];
-            if ( $current_url ) {
-                echo '<a class="wpopup-close" href="' . esc_url($current_url) . '">×<span class="screen-reader-text">Close Popup</span></a>';
-            }
-            echo $content;
-        echo '</div>';
-    echo '</div>';
-}
-
-/**
  * Check if user is an active member of a particular membership plan
  * @uses   /woocommerce-memberships/includes/frontend/class-wc-memberships-frontend.php
  *

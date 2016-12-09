@@ -183,7 +183,6 @@ final class Wampum_Programs_Setup {
 	 */
 	private function includes() {
 		// Vendor
-		require_once WAMPUM_INCLUDES_DIR . 'lib/class-tgm-plugin-activation.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-gamajo-template-loader.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-cpts.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-taxos.php';
@@ -212,7 +211,6 @@ final class Wampum_Programs_Setup {
 			// Setup front end hooks
 			add_filter( 'the_content', 	array( $this, 'before_content' ) );
 			add_filter( 'the_content', 	array( $this, 'after_content' ) );
-			add_action( 'wp_footer', 	array( $this, 'popups_hook' ) );
 		}
 	}
 
@@ -292,18 +290,6 @@ final class Wampum_Programs_Setup {
 		$content .= ob_get_clean();
 		return $content;
 	}
-
-	/**
-	 * Add a new hook so devs can safely add a new popup without things breaking if this plugin gets deactivated
-	 *
-	 * @since 	1.4.6.1
-	 *
-	 * @return 	null
-	 */
-	function popups_hook() {
-		do_action( 'wampum_popups' );
-	}
-
 
 }
 endif; // End if class_exists check.
