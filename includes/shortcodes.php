@@ -25,7 +25,7 @@
  * )
  *
  */
-add_shortcode( 'wampumchildpages', function( $atts ) {
+add_shortcode( 'wampum_child_pages', function( $atts ) {
 
     global $post;
 
