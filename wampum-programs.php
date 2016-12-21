@@ -67,15 +67,6 @@ final class Wampum_Programs_Setup {
 	public $templates;
 
 	/**
-	 * Wampum Widgets Object
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var object | Wampum_Widgets
-	 */
-	public $widgets;
-
-	/**
 	 * Main Wampum_Programs_Setup Instance.
 	 *
 	 * Insures that only one instance of Wampum_Programs_Setup exists in memory at any one
@@ -101,7 +92,6 @@ final class Wampum_Programs_Setup {
 			self::$instance->content	= Wampum_Content_Types::instance();
 			self::$instance->membership	= Wampum_Membership::instance();
 			self::$instance->templates	= Wampum_Template_Loader::instance();
-			self::$instance->widgets	= Wampum_Widgets::instance();
 		}
 		return self::$instance;
 	}
@@ -190,9 +180,6 @@ final class Wampum_Programs_Setup {
 		require_once WAMPUM_INCLUDES_DIR . 'classes/class-content-types.php';
 		require_once WAMPUM_INCLUDES_DIR . 'classes/class-membership.php';
 		require_once WAMPUM_INCLUDES_DIR . 'classes/class-template-loader.php';
-		require_once WAMPUM_INCLUDES_DIR . 'classes/class-widgets.php';
-		// Widgets
-		require_once WAMPUM_INCLUDES_DIR . 'widgets/class-widget-program-children.php';
 		// Functions
 		require_once WAMPUM_INCLUDES_DIR . 'display.php';
 		require_once WAMPUM_INCLUDES_DIR . 'helpers.php';
