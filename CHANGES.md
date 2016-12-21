@@ -4,6 +4,8 @@
 * Create wampum_do_template_{term_slug_with_underscores}() template tags for custom template based on term slugs
 * Add helper function wampum_get_top_parent_id()
 * Restrict access to all child, grandchild, etc pages of restricted programs
+* Remove old resources functionality
+* Remove widgets
 
 #### 1.4.7.1
 * Allow videos to embed in resource popup
