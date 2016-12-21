@@ -1,4 +1,5 @@
-#### 1.4.8
+#### 1.5.0
+* New template system via functions
 * Program templates taxonomy - 'wampum_program_template'
 * Create wampum_do_template_{term_slug_with_underscores}() template tags for custom template based on term slugs
 * Add helper function wampum_get_top_parent_id()

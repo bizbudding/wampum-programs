@@ -1,8 +1,8 @@
 <?php
 /**
- * Wampum Template Loader
+ * Wampum - Programs
  *
- * @package   Wampum
+ * @package   Wampum_Template_Loader
  * @author    Mike Hemberger
  * @link      https://bizbudding.com
  * @copyright 2016 Mike Hemberger

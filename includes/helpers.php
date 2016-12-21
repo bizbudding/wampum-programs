@@ -10,145 +10,14 @@
  */
 
 /**
- * TODO: ADD THIS TO class-membership.php instead!
+ * Check if post is a top level post
  *
- * Add membership to user
- * If user doesn't exists, create one first
+ * @since  1.5.0
  *
- * $args = array(
- *      'plan_id'    => null, // required
- *      'user_email' => null, // required
- *      'user_login' => null,
- *      'user_pass'  => null,
- *      'first_name' => null,
- *      'last_name'  => null,
- *      'note'       => null,
- *      'login'      => true, // Auto-login if they are created during this process?
- * );
+ * @param  int  $post_id  The ID of the post to check (defaults to current)
  *
- * @since 	1.4.7
- *
- * @param 	array  $args  Array of args when maybe creating a user and adding a membership to a user
- *
- * @return  bool|WP_Error  Whether a new user was created during the process
+ * @return bool
  */
-function wampum_create_user_membership( $args ) {
-
-    // Bail if Woo Memberships is not active (do we need this?)
-    if ( ! function_exists( 'wc_memberships' ) ) {
-        return;
-    }
-
-    // Set defaults
-    $defaults = array(
-        'plan_id'    => null, // required
-        'user_email' => null, // required
-        'user_login' => null,
-        'user_pass'  => null,
-        'first_name' => null,
-        'last_name'  => null,
-        'note'       => null,
-        'login'      => true, // Auto-login if they are created during this process?
-    );
-    $args = wp_parse_args( $args, $defaults );
-
-
-    // Minimum data we need is a plan ID and user email
-    if ( ! $args['plan_id'] || ! $args['user_email'] ) {
-        return;
-    }
-
-    // By default set new user var to false
-    $new_user = false;
-
-    // If the email is already a registered user
-    if ( $email_exists = email_exists( $args['user_email'] ) || $username_exists = username_exists( $args['user_login'] ) ) {
-        // Get the user and and their ID
-        if ( $email_exists ) {
-            $user = get_user_by( 'email', $args['user_email'] );
-        } elseif ( $username_exists ) {
-            $user = get_user_by( 'login', $args['user_login'] );
-        }
-        if ( $user ) {
-            $user_id = $user->ID;
-        }
-    }
-    // Not a user
-    else {
-        // Set the new user data
-        $userdata = array(
-            'user_email' => $args['user_email'],
-        );
-        // If we don't have a login, use the email instead
-        if ( ! $args['user_login'] ) {
-            $userdata['user_login'] = $args['user_email'];
-        } else {
-            $userdata['user_login'] = $args['user_login'];
-        }
-        // If we don't have a password, generate one
-        if ( ! $args['user_pass'] ) {
-            $userdata['user_pass'] = wp_generate_password( $length = 12, $include_standard_special_chars = true );
-        }
-        // If we have a first name, set it
-        if ( $args['first_name'] ) {
-            $userdata['first_name'] = $args['first_name'];
-        }
-        // If we have a last name, set it
-        if ( $args['last_name'] ) {
-            $userdata['last_name'] = $args['last_name'];
-        }
-        // Create a new user
-        $user_id = wp_insert_user( $userdata ) ;
-
-        // If no error set the new user var to true
-        if ( ! is_wp_error( $user_id ) ) {
-            $new_user = true;
-        } else {
-            // It's an error, return it
-            return $user_id;
-        }
-
-        // Get the user object
-        $user = get_user_by( 'id', $user_id );
-
-        // If we need to log in the user and the current user is not logged in
-        if ( $user && $args['login'] && ! is_user_logged_in() ) {
-            // Log them in!
-            wp_set_current_user( $user_id, $user->user_login );
-            wp_set_auth_cookie( $user_id );
-            do_action( 'wp_login', $user->user_login );
-        }
-    }
-
-    // If we have a user
-    if ( $user_id ) {
-
-        // If user is not an existing member of the plan
-        if ( ! wc_memberships_is_user_member( $user_id, $args['plan_id'] ) ) {
-
-            // Add the user to the membership
-            $membership_args = array(
-                'plan_id'   => $args['plan_id'],
-                'user_id'   => $user_id,
-            );
-            $user_membership = wc_memberships_create_user_membership( $membership_args );
-
-            // If there was an error, return it
-            if ( is_wp_error( $user_membership ) ) {
-            	return $user_membership;
-            }
-
-            // If we have a note, save it to the user membership
-            if ( $args['note'] ) {
-                // Add a note so we know how this was registered.
-                $user_membership->add_note( $args['note'] );
-	        }
-        }
-
-    }
-    return $new_user;
-}
-
 function wampum_is_top_level( $post_id = '' ) {
 	if ( ! $post_id ) {
 		if ( ! is_singular() ) {
@@ -163,6 +32,15 @@ function wampum_is_top_level( $post_id = '' ) {
 	return false;
 }
 
+/**
+ * Check if a post is a child of another post
+ *
+ * @since  1.5.0
+ *
+ * @param  int  $post_id  The ID of the post to check (defaults to current)
+ *
+ * @return bool
+ */
 function wampum_is_child( $post_id = '' ) {
 	if ( ! $post_id ) {
 		if ( ! is_singular() ) {
@@ -180,7 +58,7 @@ function wampum_is_child( $post_id = '' ) {
 /**
  * Get ID of a top level post
  *
- * @since  1.4.8
+ * @since  1.5.0
  *
  * @param  object|int   $step_object_or_id  the post object or ID to get connected item from
  *
@@ -317,15 +195,21 @@ function wampum_get_user_programs( $return = 'all') {
     return $programs;
 }
 
-function wampum_is_program_progress_enabled( $program_id ) {
-	return get_post_meta( $program_id, 'wampum_program_progress_enabled', true );
-}
 
-function wampum_get_program_progress_link( $program_or_step_id ) {
-	return Wampum()->progress->get_program_progress_link( $program_or_step_id );
-}
-
-function wampum_get_prev_next_links( $post_id ) {
+/**
+ * Get previous and next links with HTML
+ *
+ * @param  ID  $post_id  The post ID to find the links for
+ *
+ * @return string The HTML of the links
+ */
+function wampum_get_prev_next_links( $post_id = '' ) {
+	if ( ! $post_id ) {
+		if ( ! is_singular() ) {
+			return false;
+		}
+		$post_id = get_the_ID();
+	}
 	// Let's get it started
 	$output = '';
 	// Get parent, previous, and next connected posts
@@ -346,24 +230,6 @@ function wampum_get_prev_next_links( $post_id ) {
 		$output .= $prev . $next;
 		$output .= '</div>';
 	}
-	// Send it home baby
-	return $output;
-}
-
-function wampum_get_first_step_link( $post_id ) {
-	// Let's get it started
-	$output = '';
-	// Get first step ID
-	$id = wampum_get_first_child_id( $post_id );
-	// Bail if none
-	if ( ! $id ) {
-		return $output;
-	}
-	$next = '<div class="pagination-next alignright"><a href="' . get_permalink( $id ) . '">' . get_the_title( $id ) . '</a></div>';
-
-	$output .= '<div class="wampum-pagination">';
-	$output .= $next;
-	$output .= '</div>';
 	// Send it home baby
 	return $output;
 }
@@ -456,6 +322,31 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 }
 
 /**
+ * Get the first child link
+ *
+ * @param  ID  $post_id  The post ID to find the first child of
+ *
+ * @return string  The HTML with the child link
+ */
+function wampum_get_first_child_link( $post_id ) {
+	// Let's get it started
+	$output = '';
+	// Get first step ID
+	$id = wampum_get_first_child_id( $post_id );
+	// Bail if none
+	if ( ! $id ) {
+		return $output;
+	}
+	$next = '<div class="pagination-next alignright"><a href="' . get_permalink( $id ) . '">' . get_the_title( $id ) . '</a></div>';
+
+	$output .= '<div class="wampum-pagination">';
+	$output .= $next;
+	$output .= '</div>';
+	// Send it home baby
+	return $output;
+}
+
+/**
  * Get the first child's ID
  * Used on program parent page to show entry pagination to the first step
  *
@@ -488,6 +379,8 @@ function wampum_get_first_child_id( $post_id = '' ) {
 }
 
 /**
+ * CURRENTLY UNUSED!
+ *
  * Check if a user can view a piece of content on the site
  *
  * @see 	woocommerce-memberships/includes/class-wc-memberships-shortcodes.php
@@ -507,6 +400,8 @@ function wampum_can_view( $post_id = '' ) {
 }
 
 /**
+ * CURRENTLY UNUSED!
+ *
  * Check if current user can view a specific post
  *
  * @since   1.0.0
@@ -531,7 +426,7 @@ function wampum_can_view_post( $post_id = '' ) {
  * @return string
  */
 function wampum_get_singular_name( $post_type, $lowercase = false ) {
-	return Wampum()->content->get_singular_name( $post_type, $lowercase );
+	return Wampum_Programs()->content->get_singular_name( $post_type, $lowercase );
 }
 
 /**
@@ -544,12 +439,11 @@ function wampum_get_singular_name( $post_type, $lowercase = false ) {
  * @return string
  */
 function wampum_get_plural_name( $post_type, $lowercase = false ) {
-	return Wampum()->content->get_plural_name( $post_type, $lowercase );
+	return Wampum_Programs()->content->get_plural_name( $post_type, $lowercase );
 }
 
 /**
  * Get plural post type name
- * TODO: Allow for taxonomy name?
  *
  * @since  1.0.0
  *
@@ -558,7 +452,7 @@ function wampum_get_plural_name( $post_type, $lowercase = false ) {
  * @return string
  */
 function wampum_get_slug( $post_type ) {
-	return Wampum()->content->get_slug( $post_type );
+	return Wampum_Programs()->content->get_slug( $post_type );
 }
 
 /**
@@ -595,123 +489,6 @@ function wampum_get_truncated_content( $text, $max_characters ) {
 }
 
 /**
- * Check if current user can view a specific 'wampum_step'
- *
- * @uses   Use via add_action( 'wampum_popups', 'my_function_name' )
- *
- * @since  1.4.6
- *
- * @param  string  $content  The content of the popup
- * @param  array   $args 	 Array of settings for the popup
- *
- * @return bool
- */
-function wampum_popup( $content, $args ) {
-
-	// Make sure CSS is loaded
-	wp_enqueue_style('wampum');
-
-	$defaults = array(
-		'hidden' => false, // Maybe add display:none; to the HTML
-		'width'	 => '400', // Max popup content width in pixels
-	);
-	$args = wp_parse_args( $args, $defaults );
-	// Inline styles
-	$underlay_style = ( true == $args['hidden'] ) ? 'display:none;' : '';
-	$overlay_style 	= 'max-width:' . $args['width'] . 'px;';
-	// Do it up!
-    echo '<div class="wpopup" style="' . $underlay_style . '">';
-        echo '<div class="wpopup-content" style="' . $overlay_style . '">';
-            $url = explode( '?', esc_url_raw( add_query_arg( array() ) ) );
-            $current_url = $url[0];
-            if ( $current_url ) {
-                echo '<a class="wpopup-close" href="' . esc_url($current_url) . '">×<span class="screen-reader-text">Close Popup</span></a>';
-            }
-            echo $content;
-        echo '</div>';
-    echo '</div>';
-}
-
-/**
- * Check if user is an active member of a particular membership plan
- * @uses   /woocommerce-memberships/includes/frontend/class-wc-memberships-frontend.php
- *
- * @since  1.0.0
- *
- * @param  int         $user_id  Optional. Defaults to current user.
- * @param  int|string  $plan     Membership Plan slug, post object or related post ID
- *
- * @return bool True, if is an active member, false otherwise
- */
-function wampum_is_user_active_member( $user_id = null, $plan ) {
-	return wc_memberships_is_user_active_member( $user_id, $plan );
-}
-
-/**
- * Check if user is a member of a particular membership plan
- * @uses   /woocommerce-memberships/includes/frontend/class-wc-memberships-frontend.php
- *
- * @since  1.0.0
- *
- * @param  int         $user_id  Optional. Defaults to current user.
- * @param  int|string  $plan     Membership Plan slug, post object or related post ID
- *
- * @return bool True, if is a member, false otherwise
- */
-function wampum_is_user_member( $user_id = null, $plan ) {
-	return wc_memberships_is_user_member( $user_id, $plan );
-}
-
-/**
- * Get all content restriction rules for a plan
- * @uses   /woocommerce-memberships/includes/class-wc-memberships-membership-plan.php
- *
- * @since  1.0.0
- *
- * @param  object $plan membership plan object
- *
- * @return array  Array of content restriction rules
- */
-function wampum_get_plan_content_restriction_rules( $plan ) {
-	return $plan->get_plan()->get_content_restriction_rules();
-}
-
-/**
- * Main function for returning a user membership
- * @uses   /woocommerce-memberships/includes/frontend/class-wc-memberships-frontend.php
- *
- * Supports getting user membership by membership ID, Post object
- * or a combination of the user ID and membership plan id/slug/Post object.
- *
- * If no $id is provided, defaults to getting the membership for the current user.
- *
- * @since  1.0.0
- *
- * @param  mixed $id   Optional. Post object or post ID of the user membership, or user ID
- * @param  mixed $plan Optional. Membership Plan slug, post object or related post ID
- *
- * @return WC_Memberships_User_Membership
- */
-function wampum_get_user_membership( $id = null, $plan = null ) {
-	return wc_memberships_get_user_membership( $id, $plan );
-}
-
-/**
- * Get all memberships for a user
- * @uses   /woocommerce-memberships/includes/frontend/class-wc-memberships-frontend.php
- *
- * @since  1.0.0
- *
- * @param  int   $user_id  Optional. Defaults to current user.
- * @param  array $args
- *
- * @return WC_Memberships_User_Membership[]|null array of user memberships
- */
-function wampum_get_user_memberships( $user_id = null, $args = array() ) {
-	return wc_memberships_get_user_memberships( $user_id, $args );
-}
-
-/**
  * Helper function to get template part
  *
  * wampum_get_template_part( 'account', 'page' );
@@ -736,7 +513,7 @@ function wampum_get_user_memberships( $user_id = null, $args = array() ) {
  */
 function wampum_get_template_part( $slug, $name = null, $load = true, $data = '' ) {
     if ( is_array($data) ) {
-	    Wampum()->templates->set_template_data( $data );
+	    Wampum_Programs()->templates->set_template_data( $data );
 	}
-    Wampum()->templates->get_template_part( $slug, $name, $load );
+    Wampum_Programs()->templates->get_template_part( $slug, $name, $load );
 }

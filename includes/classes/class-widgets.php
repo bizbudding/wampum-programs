@@ -1,6 +1,6 @@
 <?php
 /**
- * Wampum Widgets
+ * Wampum - Programs
  *
  * @package   Wampum_Widgets
  * @author    Mike Hemberger
@@ -44,7 +44,7 @@ final class Wampum_Widgets {
 	}
 
 	public function register_widgets() {
-	    register_widget( 'Wampum_Widget_Program_Steps' );
+	    register_widget( 'Wampum_Widget_Program_Children' );
 	}
 
 }
