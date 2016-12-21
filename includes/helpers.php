@@ -12,8 +12,11 @@
 /**
  * Check if post is a top level post
  *
+ * @since  1.5.0
+ *
  * @param  int  $post_id  The ID of the post to check (defaults to current)
- * @return [type]          [description]
+ *
+ * @return bool
  */
 function wampum_is_top_level( $post_id = '' ) {
 	if ( ! $post_id ) {
@@ -29,6 +32,15 @@ function wampum_is_top_level( $post_id = '' ) {
 	return false;
 }
 
+/**
+ * Check if a post is a child of another post
+ *
+ * @since  1.5.0
+ *
+ * @param  int  $post_id  The ID of the post to check (defaults to current)
+ *
+ * @return bool
+ */
 function wampum_is_child( $post_id = '' ) {
 	if ( ! $post_id ) {
 		if ( ! is_singular() ) {
@@ -46,7 +58,7 @@ function wampum_is_child( $post_id = '' ) {
 /**
  * Get ID of a top level post
  *
- * @since  1.4.8
+ * @since  1.5.0
  *
  * @param  object|int   $step_object_or_id  the post object or ID to get connected item from
  *
@@ -183,15 +195,21 @@ function wampum_get_user_programs( $return = 'all') {
     return $programs;
 }
 
-function wampum_is_program_progress_enabled( $program_id ) {
-	return get_post_meta( $program_id, 'wampum_program_progress_enabled', true );
-}
 
-function wampum_get_program_progress_link( $program_or_step_id ) {
-	return Wampum_Programs()->progress->get_program_progress_link( $program_or_step_id );
-}
-
-function wampum_get_prev_next_links( $post_id ) {
+/**
+ * Get previous and next links with HTML
+ *
+ * @param  ID  $post_id  The post ID to find the links for
+ *
+ * @return string The HTML of the links
+ */
+function wampum_get_prev_next_links( $post_id = '' ) {
+	if ( ! $post_id ) {
+		if ( ! is_singular() ) {
+			return false;
+		}
+		$post_id = get_the_ID();
+	}
 	// Let's get it started
 	$output = '';
 	// Get parent, previous, and next connected posts
@@ -212,24 +230,6 @@ function wampum_get_prev_next_links( $post_id ) {
 		$output .= $prev . $next;
 		$output .= '</div>';
 	}
-	// Send it home baby
-	return $output;
-}
-
-function wampum_get_first_step_link( $post_id ) {
-	// Let's get it started
-	$output = '';
-	// Get first step ID
-	$id = wampum_get_first_child_id( $post_id );
-	// Bail if none
-	if ( ! $id ) {
-		return $output;
-	}
-	$next = '<div class="pagination-next alignright"><a href="' . get_permalink( $id ) . '">' . get_the_title( $id ) . '</a></div>';
-
-	$output .= '<div class="wampum-pagination">';
-	$output .= $next;
-	$output .= '</div>';
 	// Send it home baby
 	return $output;
 }
@@ -322,6 +322,31 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 }
 
 /**
+ * Get the first child link
+ *
+ * @param  ID  $post_id  The post ID to find the first child of
+ *
+ * @return string  The HTML with the child link
+ */
+function wampum_get_first_child_link( $post_id ) {
+	// Let's get it started
+	$output = '';
+	// Get first step ID
+	$id = wampum_get_first_child_id( $post_id );
+	// Bail if none
+	if ( ! $id ) {
+		return $output;
+	}
+	$next = '<div class="pagination-next alignright"><a href="' . get_permalink( $id ) . '">' . get_the_title( $id ) . '</a></div>';
+
+	$output .= '<div class="wampum-pagination">';
+	$output .= $next;
+	$output .= '</div>';
+	// Send it home baby
+	return $output;
+}
+
+/**
  * Get the first child's ID
  * Used on program parent page to show entry pagination to the first step
  *
@@ -354,6 +379,8 @@ function wampum_get_first_child_id( $post_id = '' ) {
 }
 
 /**
+ * CURRENTLY UNUSED!
+ *
  * Check if a user can view a piece of content on the site
  *
  * @see 	woocommerce-memberships/includes/class-wc-memberships-shortcodes.php
@@ -373,6 +400,8 @@ function wampum_can_view( $post_id = '' ) {
 }
 
 /**
+ * CURRENTLY UNUSED!
+ *
  * Check if current user can view a specific post
  *
  * @since   1.0.0
@@ -415,7 +444,6 @@ function wampum_get_plural_name( $post_type, $lowercase = false ) {
 
 /**
  * Get plural post type name
- * TODO: Allow for taxonomy name?
  *
  * @since  1.0.0
  *
@@ -458,85 +486,6 @@ function wampum_get_truncated_content( $text, $max_characters ) {
 
 	return $text;
 
-}
-
-/**
- * Check if user is an active member of a particular membership plan
- * @uses   /woocommerce-memberships/includes/frontend/class-wc-memberships-frontend.php
- *
- * @since  1.0.0
- *
- * @param  int         $user_id  Optional. Defaults to current user.
- * @param  int|string  $plan     Membership Plan slug, post object or related post ID
- *
- * @return bool True, if is an active member, false otherwise
- */
-function wampum_is_user_active_member( $user_id = null, $plan ) {
-	return wc_memberships_is_user_active_member( $user_id, $plan );
-}
-
-/**
- * Check if user is a member of a particular membership plan
- * @uses   /woocommerce-memberships/includes/frontend/class-wc-memberships-frontend.php
- *
- * @since  1.0.0
- *
- * @param  int         $user_id  Optional. Defaults to current user.
- * @param  int|string  $plan     Membership Plan slug, post object or related post ID
- *
- * @return bool True, if is a member, false otherwise
- */
-function wampum_is_user_member( $user_id = null, $plan ) {
-	return wc_memberships_is_user_member( $user_id, $plan );
-}
-
-/**
- * Get all content restriction rules for a plan
- * @uses   /woocommerce-memberships/includes/class-wc-memberships-membership-plan.php
- *
- * @since  1.0.0
- *
- * @param  object $plan membership plan object
- *
- * @return array  Array of content restriction rules
- */
-function wampum_get_plan_content_restriction_rules( $plan ) {
-	return $plan->get_plan()->get_content_restriction_rules();
-}
-
-/**
- * Main function for returning a user membership
- * @uses   /woocommerce-memberships/includes/frontend/class-wc-memberships-frontend.php
- *
- * Supports getting user membership by membership ID, Post object
- * or a combination of the user ID and membership plan id/slug/Post object.
- *
- * If no $id is provided, defaults to getting the membership for the current user.
- *
- * @since  1.0.0
- *
- * @param  mixed $id   Optional. Post object or post ID of the user membership, or user ID
- * @param  mixed $plan Optional. Membership Plan slug, post object or related post ID
- *
- * @return WC_Memberships_User_Membership
- */
-function wampum_get_user_membership( $id = null, $plan = null ) {
-	return wc_memberships_get_user_membership( $id, $plan );
-}
-
-/**
- * Get all memberships for a user
- * @uses   /woocommerce-memberships/includes/frontend/class-wc-memberships-frontend.php
- *
- * @since  1.0.0
- *
- * @param  int   $user_id  Optional. Defaults to current user.
- * @param  array $args
- *
- * @return WC_Memberships_User_Membership[]|null array of user memberships
- */
-function wampum_get_user_memberships( $user_id = null, $args = array() ) {
-	return wc_memberships_get_user_memberships( $user_id, $args );
 }
 
 /**

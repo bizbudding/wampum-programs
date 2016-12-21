@@ -15,7 +15,7 @@
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:            1.4.8
+ * Version:            1.5.0
  * GitHub Plugin URI:  https://github.com/JiveDig/wampum-programs
  * GitHub Branch:	   master
  */
@@ -144,7 +144,7 @@ final class Wampum_Programs_Setup {
 
 		// Plugin version.
 		if ( ! defined( 'WAMPUM_VERSION' ) ) {
-			define( 'WAMPUM_VERSION', '1.4.8' );
+			define( 'WAMPUM_VERSION', '1.5.0' );
 		}
 
 		// Plugin Folder Path.
@@ -199,6 +199,13 @@ final class Wampum_Programs_Setup {
 		require_once WAMPUM_INCLUDES_DIR . 'shortcodes.php';
 	}
 
+	/**
+	 * Plugin hooks, filters, and shortcode
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return void
+	 */
 	public function setup() {
 
 		register_activation_hook( __FILE__,   array( $this, 'activate' ) );
@@ -214,12 +221,20 @@ final class Wampum_Programs_Setup {
 		}
 	}
 
+	/**
+	 * Flush rewrite rules upon activation
+	 *
+	 * @since  1.0.0
+	 *
+	 * @return void
+	 */
 	public function activate() {
 		flush_rewrite_rules();
 	}
 
 	/**
-	 * Deactivates the plugin if Genesis isn't running
+	 * Flush rewrite rules upon deactivation
+	 * Does this actually work?
 	 *
 	 * @since 1.0.0
 	 */
@@ -238,7 +253,7 @@ final class Wampum_Programs_Setup {
 	 * @return null
 	 */
 	public function register_stylesheets() {
-	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum.css', array(), WAMPUM_VERSION );
+	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum-programs.min.css', array(), WAMPUM_VERSION );
 	}
 
 	/**

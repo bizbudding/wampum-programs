@@ -12,6 +12,13 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+/**
+ * Add program list to the main WooCommerce account Dashbaord
+ *
+ * @since  1.0.0
+ *
+ * @return null|mixed
+ */
 add_action( 'woocommerce_before_my_account', 'wampum_do_account_programs', 4 );
 function wampum_do_account_programs() {
 
@@ -28,6 +35,7 @@ function wampum_do_account_programs() {
 		wampum_get_template_part( 'account', 'programs', true, $data );
 	}
 
+	// Add new hook for custom stuff
 	do_action('wampum_account_after_programs');
 }
 
@@ -47,6 +55,6 @@ function wampum_do_step_prev_next_links() {
 	if ( wampum_is_child( $post_id ) ) {
 		echo wampum_get_prev_next_links( $post_id );
 	} else {
-		echo wampum_get_first_step_link( $post_id );
+		echo wampum_get_first_child_link( $post_id );
 	}
 }
