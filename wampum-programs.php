@@ -226,8 +226,8 @@ final class Wampum_Programs_Setup {
 	 * @since 1.0.0
 	 */
 	public function deactivate() {
-		deactivate_plugins( WAMPUM_BASENAME );
 		flush_rewrite_rules();
+		deactivate_plugins( WAMPUM_BASENAME );
 	}
 
 	/**
