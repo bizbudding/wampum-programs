@@ -1,3 +1,7 @@
+#### 1.5.1
+* Add new wampum_prev_post_text and wampum_next_post_text filters
+* Add genesis-layouts support for wampum_program CPT by default
+
 #### 1.5.0
 * New template system via functions
 * Program templates taxonomy - 'wampum_program_template'

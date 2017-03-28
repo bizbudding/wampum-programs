@@ -64,7 +64,7 @@ final class Wampum_Content_Types {
 			'exclude_from_search' => true,
 			'hierarchical'		  => true,
 		    'has_archive' 		  => apply_filters( 'wampum_program_has_archive', false ),
-			'supports' 	  		  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','page-attributes','genesis-cpt-archives-settings') ),
+			'supports' 	  		  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','page-attributes','genesis-cpt-archives-settings','genesis-layouts') ),
 			'rewrite' 			  => array( 'slug' => $this->get_slug('wampum_program') ),
 			// 'show_in_rest'		  => true,
 	    ), $this->get_default_names()['wampum_program'] );
