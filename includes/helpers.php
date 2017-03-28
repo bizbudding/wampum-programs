@@ -221,9 +221,14 @@ function wampum_get_prev_next_links( $post_id = '' ) {
 	// Prevents things from breaking if step is not connected to a program
 	$items['previous'] = isset($items['previous']) && ! empty($items['previous']) ? $items['previous'] : '';
 	$items['next'] 	   = isset($items['next']) && ! empty($items['next']) ? $items['next'] : '';
+
+	// Text filters
+	$prev_text = apply_filters( 'wampum_prev_post_text', get_the_title( $items['previous'] ) );
+	$next_text = apply_filters( 'wampum_next_post_text', get_the_title( $items['next'] ) );
+
 	// Set markup for links
-	$prev = $items['previous'] ? '<div class="pagination-previous alignleft"><a href="' . get_permalink( $items['previous'] ) . '">' . get_the_title( $items['previous'] ) . '</a></div>' : '';
-	$next = $items['next'] ? '<div class="pagination-next alignright"><a href="' . get_permalink( $items['next'] ) . '">' . get_the_title( $items['next'] ) . '</a></div>' : '';
+	$prev = $items['previous'] ? '<div class="pagination-previous alignleft"><a href="' . get_permalink( $items['previous'] ) . '">' . $prev_text . '</a></div>' : '';
+	$next = $items['next'] ? '<div class="pagination-next alignright"><a href="' . get_permalink( $items['next'] ) . '">' . $next_text . '</a></div>' : '';
 	// If previous or next link
 	if ( $prev || $next ) {
 		$output .= '<div class="wampum-pagination">';
@@ -337,7 +342,8 @@ function wampum_get_first_child_link( $post_id ) {
 	if ( ! $id ) {
 		return $output;
 	}
-	$next = '<div class="pagination-next alignright"><a href="' . get_permalink( $id ) . '">' . get_the_title( $id ) . '</a></div>';
+	$next_text	= apply_filters( 'wampum_next_post_text', get_the_title( $id ) );
+	$next		= '<div class="pagination-next alignright"><a href="' . get_permalink( $id ) . '">' . $next_text . '</a></div>';
 
 	$output .= '<div class="wampum-pagination">';
 	$output .= $next;
