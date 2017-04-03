@@ -1,3 +1,6 @@
+#### 1.5.2
+* Add new filters to change post_type and taxo args
+
 #### 1.5.1
 * Add new wampum_prev_post_text and wampum_next_post_text filters
 * Add genesis-layouts support for wampum_program CPT by default

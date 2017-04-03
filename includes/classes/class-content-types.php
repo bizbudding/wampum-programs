@@ -48,32 +48,52 @@ final class Wampum_Content_Types {
 	/**
 	 * Register custom post stypes
 	 *
-	 * @see  	http://wordpress.stackexchange.com/questions/83531/custom-post-type-404s-with-rewriting-even-after-resetting-permalinks
-	 * @see  	https://github.com/johnbillion/extended-cpts/wiki/Custom-permalink-structures
-	 *
 	 * @since   1.0.0
 	 *
 	 * @return  void
 	 */
 	public function register_post_types() {
 
-		// Programs
-	    register_extended_post_type( 'wampum_program', array(
-			'enter_title_here' 	  => 'Enter ' . $this->get_singular_name('wampum_program') . ' Name',
-			'menu_icon'		   	  => 'dashicons-feedback',
-			'exclude_from_search' => true,
-			'hierarchical'		  => true,
-		    'has_archive' 		  => apply_filters( 'wampum_program_has_archive', false ),
-			'supports' 	  		  => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','page-attributes','genesis-cpt-archives-settings','genesis-layouts') ),
-			'rewrite' 			  => array( 'slug' => $this->get_slug('wampum_program') ),
-			// 'show_in_rest'		  => true,
-	    ), $this->get_default_names()['wampum_program'] );
+		// Program args
+		$program_args = array(
+			'enter_title_here'		=> 'Enter ' . $this->get_singular_name('wampum_program') . ' Name',
+			'menu_icon'				=> 'dashicons-feedback',
+			'exclude_from_search'	=> true,
+			'hierarchical'			=> true,
+			'has_archive'			=> apply_filters( 'wampum_program_has_archive', false ),
+			'supports'				=> apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','page-attributes','genesis-cpt-archives-settings','genesis-layouts') ),
+			'rewrite'				=> array( 'slug' => $this->get_slug('wampum_program') ),
+			'admin_cols'			=> array(
+				'wampum_program_template'	=> array(
+					'title'    => 'Templates',
+					'taxonomy' => 'wampum_program_template',
+				),
+			),
+		);
 
-		// Program Templates
-		register_extended_taxonomy( 'wampum_program_template', 'wampum_program', array(
-			'public'	=> false,
-			'show_ui'	=> true,
-		), array(
+		$program_args = apply_filters( 'wampum_program_args', $program_args );
+
+		/**
+		 * Register the Programs post type
+		 * @var array $program_args
+		 */
+	    register_extended_post_type( 'wampum_program', $program_args, $this->get_default_names()['wampum_program'] );
+
+		// Template args
+		$template_args = array(
+			array(
+				'public'	=> false,
+				'show_ui'	=> true,
+			),
+		);
+
+		$template_args = apply_filters( 'wampum_program_template_args', $template_args );
+
+		/**
+		 * Register the Program Templates taxonomy
+		 * @var array $template_args
+		 */
+		register_extended_taxonomy( 'wampum_program_template', 'wampum_program', $template_args, array(
 		    'singular' => 'Template',
 		    'plural'   => 'Templates',
 		) );
