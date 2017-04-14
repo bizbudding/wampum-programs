@@ -9,15 +9,16 @@
  * @wordpress-plugin
  * Plugin Name:        Wampum - Programs
  * Description: 	   A program membership CPT with extensible terms-for-templates templating system
- * Plugin URI:         https://github.com/JiveDig/wampum-programs
+ * Plugin URI:         https://github.com/bizbudding/wampum-programs
  * Author:             Mike Hemberger
  * Author URI:         http://bizbudding.com
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
- * Version:            1.5.2
  *
- * GitHub Plugin URI:  https://github.com/JiveDig/wampum-programs
+ * Version:            1.5.3
+ *
+ * GitHub Plugin URI:  https://github.com/bizbudding/wampum-programs
  * GitHub Branch:	   master
  */
 
@@ -135,7 +136,7 @@ final class Wampum_Programs_Setup {
 
 		// Plugin version.
 		if ( ! defined( 'WAMPUM_VERSION' ) ) {
-			define( 'WAMPUM_VERSION', '1.5.2' );
+			define( 'WAMPUM_VERSION', '1.5.3' );
 		}
 
 		// Plugin Folder Path.
