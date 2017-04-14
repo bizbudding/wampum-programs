@@ -1,3 +1,6 @@
+#### 1.5.3
+* Update plugin header to point to new repo in bizbudding GitHub organization
+
 #### 1.5.2
 * Add new filters to change post_type and taxo args
 
