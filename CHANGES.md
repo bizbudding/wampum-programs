@@ -1,5 +1,6 @@
 #### 1.5.4
 * Change access_redirect() method to not redirect unless Woo Membership settings say so.
+* Show the parent program restricted message on all child program pages.
 
 #### 1.5.3
 * Update plugin header to point to new repo in bizbudding GitHub organization
