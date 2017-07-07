@@ -79,43 +79,57 @@ final class Wampum_Membership {
 	 */
 	public function access_redirect() {
 
-	    if ( ! is_singular('wampum_program') ) {
-	    	return;
-	    }
+		if ( ! is_singular('wampum_program') ) {
+			return;
+		}
 
-	    // Bail if super user
-	    if ( is_user_logged_in() && current_user_can('wc_memberships_access_all_restricted_content') ) {
-	    	return;
-	    }
+		// Bail if super user
+		if ( is_user_logged_in() && current_user_can( 'wc_memberships_access_all_restricted_content' ) ) {
+			return;
+		}
 
-    	$post_id = wampum_get_top_parent_id();
+		$parent_program_id = wampum_get_top_parent_id();
 
-	    // Bail if the program is not restricted at all
-	    if ( ! wc_memberships_is_post_content_restricted( $post_id ) ) {
-	    	return;
-	    }
+		// Bail if the program is not restricted at all
+		if ( ! wc_memberships_is_post_content_restricted( $parent_program_id ) ) {
+			return;
+		}
 
-	    // Bail if user already has access
-    	if ( current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
-    		return;
-    	}
+		// Bail if user already has access
+		if ( current_user_can( 'wc_memberships_view_restricted_post_content', $parent_program_id ) ) {
+			return;
+		}
 
-	   	$redirect_page_id = get_option( 'wc_memberships_redirect_page_id' );
-		$redirect_url     = add_query_arg(
-			array( 'r' => $post_id ),
-			$redirect_page_id ? get_permalink( $redirect_page_id ) : home_url()
-		);
-		wp_redirect( $redirect_url );
-		exit;
+		$restriction_mode = get_option( 'wc_memberships_restriction_mode' );
 
-	    // This adds the restricted message to the content, while stripping out the default Woo markup around the notice
-	    // add_filter( 'the_content', array( $this, 'get_restricted_message' ) );
+		// If resctriction mode is set to "Redirect to page"
+		if ( 'redirect' === $restriction_mode ) {
 
-	    // Add our custom wampum restricted message, with markup
-	    // add_filter( 'wc_memberships_content_restricted_message', array( $this, 'noaccess_restricted_message' ), 10, 3 );
+			// Redirect to Content Restricted page
+			$redirect_page_id = get_option( 'wc_memberships_redirect_page_id' );
+			$redirect_url     = add_query_arg(
+				array( 'r' => $parent_program_id ),
+				$redirect_page_id ? get_permalink( $redirect_page_id ) : home_url()
+			);
+			wp_redirect( $redirect_url );
+			exit;
 
-	    // Add styles
-	    // $this->noaccess_styles();
+		}
+    	// If resctriction mode is set to "Hide completely"
+		elseif ( 'hide' === $restriction_mode ) {
+
+			// Redirect home
+			wp_redirect( home_url() );
+			exit;
+
+		}
+    	// If resctriction mode is set to "Hide content"
+		elseif ( 'hide_content' ) {
+
+			// What the heck do we do here?
+			// I wish we could use Woo Membership private methods for displaying restricted content message.
+
+		}
 
 	}
 
