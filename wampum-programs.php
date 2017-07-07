@@ -11,7 +11,7 @@
  * Description: 	   A program membership CPT with extensible terms-for-templates templating system
  * Plugin URI:         https://github.com/bizbudding/wampum-programs
  * Author:             Mike Hemberger
- * Author URI:         http://bizbudding.com
+ * Author URI:         https://bizbudding.com
  * Text Domain:        wampum
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
