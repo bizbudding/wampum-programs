@@ -126,8 +126,17 @@ final class Wampum_Membership {
     	// If resctriction mode is set to "Hide content"
 		elseif ( 'hide_content' ) {
 
-			// What the heck do we do here?
-			// I wish we could use Woo Membership private methods for displaying restricted content message.
+			// Show the parent program restricted message on all child program pages
+			add_filter( 'wc_memberships_content_restricted_message', function( $message, $post_id, $products ) {
+				if ( ! function_exists( 'wc_memberships_get_content_meta' ) ) {
+					return $message;
+				}
+				$custom_message = wc_memberships_get_content_meta( wampum_get_top_parent_id( $post_id ), '_wc_memberships_content_restricted_message', true );
+				if ( $custom_message ) {
+					return $custom_message;
+				}
+				return $message;
+			}, 10, 3 );
 
 		}
 
