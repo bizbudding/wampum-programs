@@ -21,8 +21,8 @@ final class Wampum_Content_Types {
 	/** Singleton *************************************************************/
 
 	/**
-	 * @var 	Wampum_Content_Types The one true Wampum_Content_Types
-	 * @since 	1.0.0
+	 * @var    Wampum_Content_Types The one true Wampum_Content_Types
+	 * @since  1.0.0
 	 */
 	private static $instance;
 
@@ -40,9 +40,16 @@ final class Wampum_Content_Types {
 	}
 
 	public function init() {
+		// Filters
+		add_filter( 'mai_cpt_settings_post_types', array( $this, 'mai_post_types' ) );
 		// Actions
-		add_action( 'init', 	array( $this, 'register_post_types'), 0 );
-		add_action( 'wp_head', 	array( $this, 'do_template_functions' ) );
+		add_action( 'init',    array( $this, 'register_post_types'), 0 );
+		add_action( 'wp_head', array( $this, 'do_template_functions' ) );
+	}
+
+	public function mai_post_types( $post_types ) {
+		$post_types['wampum_program'] = get_post_type_object( 'wampum_program' );
+		return $post_types;
 	}
 
 	/**
@@ -56,15 +63,15 @@ final class Wampum_Content_Types {
 
 		// Program args
 		$program_args = array(
-			'enter_title_here'		=> 'Enter ' . $this->get_singular_name('wampum_program') . ' Name',
-			'menu_icon'				=> 'dashicons-feedback',
-			'exclude_from_search'	=> true,
-			'hierarchical'			=> true,
-			'has_archive'			=> apply_filters( 'wampum_program_has_archive', false ),
-			'supports'				=> apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','page-attributes','genesis-cpt-archives-settings','genesis-layouts') ),
-			'rewrite'				=> array( 'slug' => $this->get_slug('wampum_program') ),
-			'admin_cols'			=> array(
-				'wampum_program_template'	=> array(
+			'enter_title_here'    => 'Enter ' . $this->get_singular_name('wampum_program') . ' Name',
+			'menu_icon'           => 'dashicons-feedback',
+			'exclude_from_search' => true,
+			'hierarchical'        => true,
+			'has_archive'         => apply_filters( 'wampum_program_has_archive', false ),
+			'supports'            => apply_filters( 'wampum_program_supports', array('title','editor','excerpt','thumbnail','page-attributes','genesis-cpt-archives-settings','genesis-layouts') ),
+			'rewrite'             => array( 'slug' => $this->get_slug('wampum_program') ),
+			'admin_cols'          => array(
+				'wampum_program_template' => array(
 					'title'    => 'Templates',
 					'taxonomy' => 'wampum_program_template',
 				),
@@ -77,13 +84,13 @@ final class Wampum_Content_Types {
 		 * Register the Programs post type
 		 * @var array $program_args
 		 */
-	    register_extended_post_type( 'wampum_program', $program_args, $this->get_default_names()['wampum_program'] );
+		register_extended_post_type( 'wampum_program', $program_args, $this->get_default_names()['wampum_program'] );
 
 		// Template args
 		$template_args = array(
 			array(
-				'public'	=> false,
-				'show_ui'	=> true,
+				'public'  => false,
+				'show_ui' => true,
 			),
 		);
 
@@ -94,8 +101,8 @@ final class Wampum_Content_Types {
 		 * @var array $template_args
 		 */
 		register_extended_taxonomy( 'wampum_program_template', 'wampum_program', $template_args, array(
-		    'singular' => 'Template',
-		    'plural'   => 'Templates',
+			'singular' => 'Template',
+			'plural'   => 'Templates',
 		) );
 
 	}
@@ -130,11 +137,11 @@ final class Wampum_Content_Types {
 			// Convert term slug dashes to underscores for function name
 			$slug_with_underscores = str_replace( '-', '_', $term_slug );
 			// Build function name
-		    $function = 'wampum_do_template_' . str_replace( '-', '_', $slug_with_underscores );
-		    // Hook function in, if it exists
-		    if ( function_exists( $function ) ) {
-		        add_action( 'wampum_after_content', $function );
-		    }
+			$function = 'wampum_do_template_' . str_replace( '-', '_', $slug_with_underscores );
+			// Hook function in, if it exists
+			if ( function_exists( $function ) ) {
+				add_action( 'wampum_after_content', $function );
+			}
 		}
 	}
 
@@ -194,9 +201,9 @@ final class Wampum_Content_Types {
 	public function get_default_names() {
 		$content_names = array(
 			'wampum_program' => array(
-			   'singular' => _x( 'Program', 'wampum' ),
-			   'plural'   => _x( 'Programs', 'wampum' ),
-			   'slug'	  => _x( 'programs', 'wampum' ),
+				'singular' => _x( 'Program', 'wampum' ),
+				'plural'   => _x( 'Programs', 'wampum' ),
+				'slug'     => _x( 'programs', 'wampum' ),
 			),
 		);
 		return apply_filters( 'wampum_content_default_names', $content_names );
