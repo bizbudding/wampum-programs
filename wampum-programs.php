@@ -16,7 +16,7 @@
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
  *
- * Version:            1.5.4
+ * Version:            1.5.5
  *
  * GitHub Plugin URI:  https://github.com/bizbudding/wampum-programs
  * GitHub Branch       master
@@ -134,7 +134,7 @@ final class Wampum_Programs_Setup {
 
 		// Plugin version.
 		if ( ! defined( 'WAMPUM_VERSION' ) ) {
-			define( 'WAMPUM_VERSION', '1.5.4' );
+			define( 'WAMPUM_VERSION', '1.5.5' );
 		}
 
 		// Plugin Folder Path.
