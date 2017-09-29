@@ -1,3 +1,7 @@
+#### 1.5.5
+* Added: Support for Mai CPT settings in Customizer.
+* Added: Internal github updater.
+
 #### 1.5.4
 * Change access_redirect() method to not redirect unless Woo Membership settings say so.
 * Show the parent program restricted message on all child program pages.
