@@ -8,7 +8,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:        Wampum - Programs
- * Description: 	   A program membership CPT with extensible terms-for-templates templating system
+ * Description:        A program membership CPT with extensible terms-for-templates templating system
  * Plugin URI:         https://github.com/bizbudding/wampum-programs
  * Author:             Mike Hemberger
  * Author URI:         https://bizbudding.com
@@ -19,7 +19,7 @@
  * Version:            1.5.4
  *
  * GitHub Plugin URI:  https://github.com/bizbudding/wampum-programs
- * GitHub Branch:	   master
+ * GitHub Branch       master
  */
 
 // Exit if accessed directly.
@@ -33,8 +33,6 @@ if ( ! class_exists( 'Wampum_Programs_Setup' ) ) :
  * @since 1.0.0
  */
 final class Wampum_Programs_Setup {
-	/** Singleton *************************************************************/
-
 	/**
 	 * @var Wampum_Programs_Setup The one true Wampum_Programs_Setup
 	 * @since 1.0.0
@@ -91,9 +89,9 @@ final class Wampum_Programs_Setup {
 			self::$instance->includes();
 			self::$instance->setup();
 			// Instantiate Classes
-			self::$instance->content	= Wampum_Content_Types::instance();
-			self::$instance->membership	= Wampum_Membership::instance();
-			self::$instance->templates	= Wampum_Template_Loader::instance();
+			self::$instance->content    = Wampum_Content_Types::instance();
+			self::$instance->membership = Wampum_Membership::instance();
+			self::$instance->templates  = Wampum_Template_Loader::instance();
 		}
 		return self::$instance;
 	}
@@ -178,6 +176,7 @@ final class Wampum_Programs_Setup {
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-gamajo-template-loader.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-cpts.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-taxos.php';
+		require_once WAMPUM_INCLUDES_DIR . 'lib/plugin-update-checker/plugin-update-checker.php';
 		// Classes
 		require_once WAMPUM_INCLUDES_DIR . 'classes/class-content-types.php';
 		require_once WAMPUM_INCLUDES_DIR . 'classes/class-membership.php';
@@ -199,6 +198,9 @@ final class Wampum_Programs_Setup {
 
 		register_activation_hook( __FILE__,   array( $this, 'activate' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
+
+		// Setup updater.
+		add_action( 'after_setup_theme', array( $this, 'updater' ) );
 
 		// If front end
 		if ( ! is_admin() ) {
@@ -234,16 +236,32 @@ final class Wampum_Programs_Setup {
 	}
 
 	/**
+	 * Include github updater.
+	 *
+	 * @since  1.5.5
+	 *
+	 * @return void
+	 */
+	public function updater() {
+		if ( ! class_exists( 'Puc_v4_Factory' ) ) {
+			return;
+		}
+		// Setup the updater
+		$updater = Puc_v4_Factory::buildUpdateChecker( 'https://github.com/bizbudding/wampum-programs/', __FILE__, 'wampum-programs' );
+		$updater->setAuthentication( '3221386f577b42d7089c35e0b4efffcaf3570ffd' );
+	}
+
+	/**
 	 * Register stylesheets for later use
 	 *
 	 * Use via wp_enqueue_style('wampum'); in a template
 	 *
 	 * @since  1.0.0
 	 *
-	 * @return null
+	 * @return void
 	 */
 	public function register_stylesheets() {
-	    wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum-programs.min.css', array(), WAMPUM_VERSION );
+		wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum-programs.min.css', array(), WAMPUM_VERSION );
 	}
 
 	/**
