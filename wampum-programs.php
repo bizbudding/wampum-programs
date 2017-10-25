@@ -206,9 +206,19 @@ final class Wampum_Programs_Setup {
 		if ( ! is_admin() ) {
 			// Register stylesheet
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_stylesheets' ) );
-			// Setup front end hooks
-			add_filter( 'the_content', 	array( $this, 'before_content' ) );
-			add_filter( 'the_content', 	array( $this, 'after_content' ) );
+			// Make sure Genesis is running.
+			add_action( 'after_setup_theme', function() {
+				// If using Genesis theme.
+				if ( 'genesis' == basename( TEMPLATEPATH ) ) {
+					// Setup front end hooks.
+					add_action( 'genesis_entry_content', array( $this, 'before_content_genesis' ), 8 );
+					add_action( 'genesis_entry_content', array( $this, 'after_content_genesis' ), 30 );
+				} else {
+					// Setup front end hooks.
+					add_filter( 'the_content', array( $this, 'before_content' ) );
+					add_filter( 'the_content', array( $this, 'after_content' ) );
+				}
+			});
 		}
 	}
 
@@ -276,6 +286,12 @@ final class Wampum_Programs_Setup {
 	 * @param $content The the_content field of the post object
 	 * @return string the content with any additional data attached
 	 */
+	function before_content_genesis() {
+		if ( ! is_singular('wampum_program') ) {
+			return $content;
+		}
+		do_action( 'wampum_before_content' );
+	}
 	function before_content( $content ) {
 		if ( ! is_singular('wampum_program') ) {
 			return $content;
@@ -301,6 +317,12 @@ final class Wampum_Programs_Setup {
 	 * @param $content The the_content field of the post object
 	 * @return string the content with any additional data attached
 	 */
+	function after_content_genesis() {
+		if ( ! is_singular('wampum_program') ) {
+			return $content;
+		}
+		do_action( 'wampum_after_content' );
+	}
 	function after_content( $content ) {
 		if ( ! is_singular('wampum_program') ) {
 			return $content;
