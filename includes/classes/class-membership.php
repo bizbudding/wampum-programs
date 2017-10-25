@@ -38,8 +38,8 @@ final class Wampum_Membership {
 		// Filters
 		add_filter( 'auth_cookie_expiration', array( $this, 'stay_logged_in' ) );
 		// Hooks
-		add_action( 'plugins_loaded', 	      array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
-		add_action( 'template_redirect', 	  array( $this, 'access_redirect' ) );
+		add_action( 'plugins_loaded',         array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
+		add_action( 'template_redirect',      array( $this, 'access_redirect' ) );
 	}
 
 	/**

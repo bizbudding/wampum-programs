@@ -49,7 +49,7 @@ function wampum_is_child( $post_id = '' ) {
 		$post_id = get_the_ID();
 	}
 	$post = $post_id ? get_post($post_id) : get_post();
-	if ( $post->post_parent > 0 )	{
+	if ( $post->post_parent > 0 ) {
 		return true;
 	}
 	return false;
@@ -72,10 +72,10 @@ function wampum_get_top_parent_id( $post_id = '' ) {
 		$post_id = get_the_ID();
 	}
 	$post = $post_id ? get_post($post_id) : get_post();
-	if ( $post->post_parent > 0 )	{
-		$ancestors	= get_post_ancestors($post->ID);
-		$root		= count($ancestors)-1;
-		$parent_id	= $ancestors[$root];
+	if ( $post->post_parent > 0 ) {
+		$ancestors = get_post_ancestors($post->ID);
+		$root      = count($ancestors)-1;
+		$parent_id = $ancestors[$root];
 	} else {
 		$parent_id = $post->ID;
 	}
@@ -119,31 +119,31 @@ function wampum_get_children( $post_id = '', $return = 'all') {
 		}
 		$post_id = get_the_ID();
 	}
-    $post_type = get_post_type($post_id);
-    $args = array(
-		'post_type'					=> $post_type,
-		'post_parent'				=> $post_id,
-		'post_status'				=> 'publish',
-		'posts_per_page'			=> -1,
-		'fields'					=> $return,
-		'orderby'					=> 'menu_order',
-		'order'						=> 'ASC',
-    );
-    $posts = new WP_Query( $args );
-    $children = array();
-    if ( $posts->have_posts() ) {
-        while ( $posts->have_posts() ) : $posts->the_post();
-        	global $post;
-        	if ( is_object($post) ) {
-        		$post_id = $post->ID;
-        	} else {
-        		$post_id = $post;
-        	}
+	$post_type = get_post_type($post_id);
+	$args = array(
+		'post_type'      => $post_type,
+		'post_parent'    => $post_id,
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'fields'         => $return,
+		'orderby'        => 'menu_order',
+		'order'          => 'ASC',
+	);
+	$posts = new WP_Query( $args );
+	$children = array();
+	if ( $posts->have_posts() ) {
+		while ( $posts->have_posts() ) : $posts->the_post();
+			global $post;
+			if ( is_object($post) ) {
+				$post_id = $post->ID;
+			} else {
+				$post_id = $post;
+			}
 			$children[] = $post;
-        endwhile;
-    }
-    wp_reset_postdata();
-    return $children;
+		endwhile;
+	}
+	wp_reset_postdata();
+	return $children;
 }
 
 /**
@@ -167,32 +167,32 @@ function wampum_get_user_program_ids() {
  * @return array
  */
 function wampum_get_user_programs( $return = 'all') {
-    $args = array(
-		'post_type'					=> 'wampum_program',
-		'post_parent'				=> 0,
-		'post_status'				=> 'publish',
-		'posts_per_page'			=> -1,
-		'fields'					=> $return,
-		'orderby'					=> 'title',
-		'order'						=> 'ASC',
-    );
-    $posts = new WP_Query( $args );
-    $programs = array();
-    if ( $posts->have_posts() ) {
-        while ( $posts->have_posts() ) : $posts->the_post();
-	    	global $post;
-	    	if ( is_object($post) ) {
-	    		$post_id = $post->ID;
-	    	} else {
-	    		$post_id = $post;
-	    	}
+	$args = array(
+		'post_type'      => 'wampum_program',
+		'post_parent'    => 0,
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'fields'         => $return,
+		'orderby'        => 'title',
+		'order'          => 'ASC',
+	);
+	$posts = new WP_Query( $args );
+	$programs = array();
+	if ( $posts->have_posts() ) {
+		while ( $posts->have_posts() ) : $posts->the_post();
+			global $post;
+			if ( is_object($post) ) {
+				$post_id = $post->ID;
+			} else {
+				$post_id = $post;
+			}
 			if ( current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
 				$programs[] = $post;
 			}
-        endwhile;
-    }
-    wp_reset_postdata();
-    return $programs;
+		endwhile;
+	}
+	wp_reset_postdata();
+	return $programs;
 }
 
 
@@ -248,33 +248,33 @@ function wampum_get_prev_next_links( $post_id = '' ) {
  * @return array
  */
 function wampum_get_sibling_ids( $post_id = '' ) {
-    if ( ! is_singular() ) {
-    	return;
-    }
+	if ( ! is_singular() ) {
+		return;
+	}
 
-    if ( ! $post_id ) {
-    	$post_id = get_the_ID();
-    }
+	if ( ! $post_id ) {
+		$post_id = get_the_ID();
+	}
 
-    $post = get_post($post_id);
+	$post = get_post($post_id);
 
-    // Bail if top level page, no siblings
-    if ( $post->post_parent == 0 ) {
-    	return;
-    }
+	// Bail if top level page, no siblings
+	if ( $post->post_parent == 0 ) {
+		return;
+	}
 
-    $args = array(
-		'post_type'					=> $post->post_type,
-		'post_parent'				=> $post->post_parent,
-		'posts_per_page'			=> 250,
-		'fields'					=> 'ids',
-		'order'						=> 'ASC',
-		'orderby'					=> 'menu_order',
-		'no_found_rows'				=> true,
-		'update_post_meta_cache'	=> false,
-		'update_post_term_cache'	=> false,
+	$args = array(
+		'post_type'              => $post->post_type,
+		'post_parent'            => $post->post_parent,
+		'posts_per_page'         => 250,
+		'fields'                 => 'ids',
+		'order'                  => 'ASC',
+		'orderby'                => 'menu_order',
+		'no_found_rows'          => true,
+		'update_post_meta_cache' => false,
+		'update_post_term_cache' => false,
 	);
-    $siblings = new WP_Query( $args );
+	$siblings = new WP_Query( $args );
 
 	$sibling_ids = '';
 
@@ -283,16 +283,16 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	if ( $siblings->have_posts() ) {
 		$i = 1;
 		$count = $siblings->found_posts;
-	    while ( $siblings->have_posts() ) : $siblings->the_post();
-	    	if ( $i == 1 ) {
-	    		$first_id = get_the_ID();
-	    	}
-	    	if ( $i == $count ) {
-	    		$last_id = get_the_ID();
-	    	}
-	    	$sibling_ids[] = get_the_ID();
-	    	$i++;
-	    endwhile;
+		while ( $siblings->have_posts() ) : $siblings->the_post();
+			if ( $i == 1 ) {
+				$first_id = get_the_ID();
+			}
+			if ( $i == $count ) {
+				$last_id = get_the_ID();
+			}
+			$sibling_ids[] = get_the_ID();
+			$i++;
+		endwhile;
 
 	}
 	wp_reset_postdata();
@@ -320,9 +320,9 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 		$next = array_key_exists( $current+1, $sibling_ids ) ? $sibling_ids[$current+1] : '';
 	}
 
-    return array(
-    	'previous' => $previous,
-    	'next'     => $next,
+	return array(
+		'previous' => $previous,
+		'next'     => $next,
 	);
 }
 
@@ -342,8 +342,8 @@ function wampum_get_first_child_link( $post_id ) {
 	if ( ! $id ) {
 		return $output;
 	}
-	$next_text	= apply_filters( 'wampum_next_post_text', get_the_title( $id ) );
-	$next		= '<div class="pagination-next alignright"><a href="' . get_permalink( $id ) . '">' . $next_text . '</a></div>';
+	$next_text = apply_filters( 'wampum_next_post_text', get_the_title( $id ) );
+	$next      = '<div class="pagination-next alignright"><a href="' . get_permalink( $id ) . '">' . $next_text . '</a></div>';
 
 	$output .= '<div class="wampum-pagination">';
 	$output .= $next;
@@ -363,25 +363,25 @@ function wampum_get_first_child_link( $post_id ) {
  * @return integer
  */
 function wampum_get_first_child_id( $post_id = '' ) {
-    $args = array(
-		'post_type'					=> 'wampum_program',
-		'post_parent'				=> $post_id,
-		'post_status'				=> 'publish',
-		'posts_per_page'			=> -1,
-		'fields'					=> 'ids',
-		'orderby'					=> 'menu_order',
-		'order'						=> 'ASC',
-    );
-    $posts = new WP_Query( $args );
-    $id = '';
-    if ( $posts->have_posts() ) {
-        while ( $posts->have_posts() ) : $posts->the_post();
-     		$id = get_the_ID();
-     		break;
-        endwhile;
-    }
+	$args = array(
+		'post_type'      => 'wampum_program',
+		'post_parent'    => $post_id,
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+		'orderby'        => 'menu_order',
+		'order'          => 'ASC',
+	);
+	$posts = new WP_Query( $args );
+	$id = '';
+	if ( $posts->have_posts() ) {
+		while ( $posts->have_posts() ) : $posts->the_post();
+			$id = get_the_ID();
+			break;
+		endwhile;
+	}
 	wp_reset_postdata();
-    return $id;
+	return $id;
 }
 
 /**
@@ -389,7 +389,7 @@ function wampum_get_first_child_id( $post_id = '' ) {
  *
  * Check if a user can view a piece of content on the site
  *
- * @see 	woocommerce-memberships/includes/class-wc-memberships-shortcodes.php
+ * @see     woocommerce-memberships/includes/class-wc-memberships-shortcodes.php
  *
  * @param   int  $post_id The post ID to check access to
  *
@@ -466,9 +466,9 @@ function wampum_get_slug( $post_type ) {
  * Taken from Genesis genesis_truncate_phrase()
  * Example: wampum_get_truncated_content(140);
  *
- * @param 	string  $text           		A string to be shortened.
- * @param 	int     $max_characters 		The maximum number of characters to return.
- * @return 	string  Truncated string. 		Empty string if `$max_characters` is falsy.
+ * @param   string  $text                  A string to be shortened.
+ * @param   int     $max_characters        The maximum number of characters to return.
+ * @return  string  Truncated string.      Empty string if `$max_characters` is falsy.
  */
 function wampum_get_truncated_content( $text, $max_characters ) {
 
@@ -507,9 +507,9 @@ function wampum_get_truncated_content( $text, $max_characters ) {
  *
  * @since  1.0.0
  *
- * @param  string  		 $slug
- * @param  string  		 $name
- * @param  boolean 		 $load
+ * @param  string        $slug
+ * @param  string        $name
+ * @param  boolean       $load
  * @param  string|array  $data  optional array of data to pass into template
  *
  * $data param MUST be called $data, not any other variable name
@@ -518,8 +518,8 @@ function wampum_get_truncated_content( $text, $max_characters ) {
  * @return mixed
  */
 function wampum_get_template_part( $slug, $name = null, $load = true, $data = '' ) {
-    if ( is_array($data) ) {
-	    Wampum_Programs()->templates->set_template_data( $data );
+	if ( is_array( $data ) ) {
+		Wampum_Programs()->templates->set_template_data( $data );
 	}
-    Wampum_Programs()->templates->get_template_part( $slug, $name, $load );
+	Wampum_Programs()->templates->get_template_part( $slug, $name, $load );
 }

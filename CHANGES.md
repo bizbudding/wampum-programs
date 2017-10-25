@@ -1,3 +1,6 @@
+#### 1.5.6
+* Changed: Use Genesis hooks if G is active for wampum_before_content and wampum_after_content hooks.
+
 #### 1.5.5
 * Added: Support for Mai CPT settings in Customizer.
 * Added: Internal github updater.
