@@ -1,3 +1,6 @@
+#### 1.5.6.1
+* Fixed: Undefined variable in early bail out of content hooks with Genesis.
+
 #### 1.5.6
 * Changed: Use Genesis hooks if G is active for wampum_before_content and wampum_after_content hooks.
 
