@@ -1,3 +1,6 @@
+#### 1.5.7
+* Fixed: Run My Account Programs list excerpt through do_shortcode.
+
 #### 1.5.6.1
 * Fixed: Undefined variable in early bail out of content hooks with Genesis.
 
