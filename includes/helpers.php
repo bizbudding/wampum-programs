@@ -276,7 +276,7 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	);
 	$siblings = new WP_Query( $args );
 
-	$sibling_ids = '';
+	$sibling_ids = array();
 
 	$first_id = $last_id = '';
 
@@ -297,8 +297,8 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	}
 	wp_reset_postdata();
 
-	// Bail if we got nothing
-	if ( ! is_array($sibling_ids) ) {
+	// Bail if we got nothing.
+	if ( empty( $sibling_ids ) ) {
 		return;
 	}
 
