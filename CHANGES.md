@@ -1,3 +1,6 @@
+#### 1.5.8
+* Fixed: Error "[] operator not supported for strings" in program adjacent entry pagination.
+
 #### 1.5.7
 * Fixed: Run My Account Programs list excerpt through do_shortcode.
 
