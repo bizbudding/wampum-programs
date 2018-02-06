@@ -82,7 +82,6 @@ final class Wampum_Membership {
 		if ( ! is_singular('wampum_program') ) {
 			return;
 		}
-
 		// Bail if super user
 		if ( is_user_logged_in() && current_user_can( 'wc_memberships_access_all_restricted_content' ) ) {
 			return;
@@ -90,13 +89,20 @@ final class Wampum_Membership {
 
 		$parent_program_id = wampum_get_top_parent_id();
 
-		// Bail if the program is not restricted at all
+		// Bail if viewing parent program, let Woo Memb do its thing.
+		if ( get_the_ID() == $parent_program_id ) {
+			return;
+		}
+
+		// Bail if the program is not restricted at all.
 		if ( ! wc_memberships_is_post_content_restricted( $parent_program_id ) ) {
 			return;
 		}
 
-		// Bail if user already has access
+		// Bail if user already has access.
 		if ( current_user_can( 'wc_memberships_view_restricted_post_content', $parent_program_id ) ) {
+			return;
+		} elseif ( current_user_can( 'wc_memberships_view_delayed_post_content', $parent_program_id ) ) {
 			return;
 		}
 
@@ -115,7 +121,7 @@ final class Wampum_Membership {
 			exit;
 
 		}
-    	// If resctriction mode is set to "Hide completely"
+		// If resctriction mode is set to "Hide completely"
 		elseif ( 'hide' === $restriction_mode ) {
 
 			// Redirect home
@@ -123,20 +129,31 @@ final class Wampum_Membership {
 			exit;
 
 		}
-    	// If resctriction mode is set to "Hide content"
+		// If resctriction mode is set to "Hide content".
 		elseif ( 'hide_content' ) {
 
-			// Show the parent program restricted message on all child program pages
-			add_filter( 'wc_memberships_content_restricted_message', function( $message, $post_id, $products ) {
-				if ( ! function_exists( 'wc_memberships_get_content_meta' ) ) {
-					return $message;
+			// Remove the post content.
+			remove_action( 'genesis_entry_content', 'genesis_do_post_content' );
+
+			$content = '';
+			if ( ! current_user_can( 'wc_memberships_view_restricted_post_content', $parent_program_id ) ) {
+				$content = WC_Memberships_User_Messages::get_message_html( 'content_restricted', array( 'post_id' => $parent_program_id ) );
+			} elseif ( ! current_user_can( 'wc_memberships_view_delayed_post_content', $parent_program_id ) ) {
+				$content = WC_Memberships_User_Messages::get_message_html( 'content_delayed', array( 'post_id' => $parent_program_id ) );
+			}
+
+			// Output the content.
+			add_action( 'genesis_entry_content', function() use ( $content ) {
+				$html = '';
+				if ( wc_memberships()->get_restrictions_instance()->showing_excerpts() ) {
+					$html .= get_the_excerpt( get_the_ID() );
 				}
-				$custom_message = wc_memberships_get_content_meta( wampum_get_top_parent_id( $post_id ), '_wc_memberships_content_restricted_message', true );
-				if ( $custom_message ) {
-					return $custom_message;
+				$html .= $content;
+				if ( true === (bool) apply_filters( 'wc_memberships_message_process_shortcodes', true, 'hide_content', array() ) ) {
+					$html = do_shortcode( $html );
 				}
-				return $message;
-			}, 10, 3 );
+				echo $html;
+			});
 
 		}
 

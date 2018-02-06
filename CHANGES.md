@@ -1,3 +1,8 @@
+# Changelog
+
+#### 1.6.0 (2/6/18)
+* Changed: Hide content on child program pages via Genesis hooks and Woo Memberships static methods since Woo Memberships deprecated some filters.
+
 #### 1.5.8
 * Fixed: Error "[] operator not supported for strings" in program adjacent entry pagination.
 
