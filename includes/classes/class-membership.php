@@ -79,10 +79,17 @@ final class Wampum_Membership {
 	 */
 	public function access_redirect() {
 
-		if ( ! is_singular('wampum_program') ) {
+		// Bail if not a single Program.
+		if ( ! is_singular( 'wampum_program' ) ) {
 			return;
 		}
-		// Bail if super user
+
+		// Bail if Woo Memberships is not active.
+		if ( ! class_exists( 'WC_Memberships' ) ) {
+			return;
+		}
+
+		// Bail if super user.
 		if ( is_user_logged_in() && current_user_can( 'wc_memberships_access_all_restricted_content' ) ) {
 			return;
 		}

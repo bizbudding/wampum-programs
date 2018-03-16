@@ -16,7 +16,7 @@
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
  *
- * Version:            1.6.0
+ * Version:            1.6.1
  *
  * GitHub Plugin URI:  https://github.com/bizbudding/wampum-programs
  * GitHub Branch       master
@@ -134,7 +134,7 @@ final class Wampum_Programs_Setup {
 
 		// Plugin version.
 		if ( ! defined( 'WAMPUM_VERSION' ) ) {
-			define( 'WAMPUM_VERSION', '1.6.0' );
+			define( 'WAMPUM_VERSION', '1.6.1' );
 		}
 
 		// Plugin Folder Path.
@@ -174,8 +174,6 @@ final class Wampum_Programs_Setup {
 	private function includes() {
 		// Vendor
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-gamajo-template-loader.php';
-		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-cpts.php';
-		require_once WAMPUM_INCLUDES_DIR . 'lib/extended-taxos.php';
 		require_once WAMPUM_INCLUDES_DIR . 'lib/plugin-update-checker/plugin-update-checker.php';
 		// Classes
 		require_once WAMPUM_INCLUDES_DIR . 'classes/class-content-types.php';

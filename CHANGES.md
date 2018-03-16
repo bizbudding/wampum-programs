@@ -1,5 +1,9 @@
 # Changelog
 
+#### 1.6.1 (3/16/18)
+* Changed: Removed Extended Post Types/Taxos classes.
+* Fixed: Error on program pages when Woo Memberships was not active.
+
 #### 1.6.0 (2/6/18)
 * Changed: Hide content on child program pages via Genesis hooks and Woo Memberships static methods since Woo Memberships deprecated some filters.
 
