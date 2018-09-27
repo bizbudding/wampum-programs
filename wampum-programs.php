@@ -197,10 +197,7 @@ final class Wampum_Programs_Setup {
 		register_activation_hook( __FILE__,   array( $this, 'activate' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
-		// Setup updater.
-		add_action( 'after_setup_theme', array( $this, 'updater' ) );
-
-		// If front end
+		// If front end.
 		if ( ! is_admin() ) {
 			// Register stylesheet
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_stylesheets' ) );
@@ -217,6 +214,11 @@ final class Wampum_Programs_Setup {
 					add_filter( 'the_content', array( $this, 'after_content' ) );
 				}
 			});
+		}
+		// Backend.
+		else {
+			// Setup updater.
+			add_action( 'after_setup_theme', array( $this, 'updater' ) );
 		}
 	}
 
