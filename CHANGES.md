@@ -1,5 +1,9 @@
 # Changelog
 
+#### 1.6.2 (9/27/18)
+* Changed: Updater now only fires on backend, and doesn't use any GitHub tokens for security.
+* Fixed: Issue with wampum_get_user_programs() function return My Account page and non-wampum_program posts.
+
 #### 1.6.1 (3/16/18)
 * Changed: Removed Extended Post Types/Taxos classes.
 * Fixed: Error on program pages when Woo Memberships was not active.

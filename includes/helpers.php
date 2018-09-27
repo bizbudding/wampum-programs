@@ -160,13 +160,16 @@ function wampum_get_user_program_ids() {
 /**
  * Get an array of programs the current user has access to
  *
- * @since  1.4.0
+ * @version  1.1.0
  *
- * @param  string   $return   (optional) data to return for each term
- *                            use one of 'term_id', 'name', etc (defaults to entire term object)
- * @return array
+ * @since    1.4.0
+ *
+ * @param    string   $return   (optional) data to return for each term
+ *                              use one of 'term_id', 'name', etc (defaults to entire term object)
+ * @return   array
  */
-function wampum_get_user_programs( $return = 'all') {
+function wampum_get_user_programs( $return = 'all' ) {
+
 	$args = array(
 		'post_type'      => 'wampum_program',
 		'post_parent'    => 0,
@@ -175,26 +178,31 @@ function wampum_get_user_programs( $return = 'all') {
 		'fields'         => $return,
 		'orderby'        => 'title',
 		'order'          => 'ASC',
+		'suppress_filters' => true,
 	);
-	$posts = new WP_Query( $args );
+
+	$programs_query = new WP_Query( $args );
+
+	$posts = $programs_query->get_posts();
 	$programs = array();
-	if ( $posts->have_posts() ) {
-		while ( $posts->have_posts() ) : $posts->the_post();
-			global $post;
-			if ( is_object($post) ) {
-				$post_id = $post->ID;
-			} else {
-				$post_id = $post;
-			}
-			if ( current_user_can( 'wc_memberships_view_restricted_post_content', $post_id ) ) {
-				$programs[] = $post;
-			}
-		endwhile;
+
+	foreach( (array) $posts as $program ) {
+
+		if ( is_a( $program, 'WP_Post' ) ) {
+			$program_id = $program->ID;
+		} else {
+			$program_id = $program;
+		}
+
+		if ( current_user_can( 'wc_memberships_view_restricted_post_content', $program_id ) ) {
+			$programs[] = $program;
+		}
 	}
+
 	wp_reset_postdata();
+
 	return $programs;
 }
-
 
 /**
  * Get previous and next links with HTML

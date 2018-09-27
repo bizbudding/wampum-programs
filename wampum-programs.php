@@ -16,7 +16,7 @@
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
  *
- * Version:            1.6.1
+ * Version:            1.6.2
  *
  * GitHub Plugin URI:  https://github.com/bizbudding/wampum-programs
  * GitHub Branch       master
@@ -134,7 +134,7 @@ final class Wampum_Programs_Setup {
 
 		// Plugin version.
 		if ( ! defined( 'WAMPUM_VERSION' ) ) {
-			define( 'WAMPUM_VERSION', '1.6.1' );
+			define( 'WAMPUM_VERSION', '1.6.2' );
 		}
 
 		// Plugin Folder Path.
@@ -174,7 +174,6 @@ final class Wampum_Programs_Setup {
 	private function includes() {
 		// Vendor
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-gamajo-template-loader.php';
-		require_once WAMPUM_INCLUDES_DIR . 'lib/plugin-update-checker/plugin-update-checker.php';
 		// Classes
 		require_once WAMPUM_INCLUDES_DIR . 'classes/class-content-types.php';
 		require_once WAMPUM_INCLUDES_DIR . 'classes/class-membership.php';
@@ -198,9 +197,9 @@ final class Wampum_Programs_Setup {
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
 		// Setup updater.
-		add_action( 'after_setup_theme', array( $this, 'updater' ) );
+		add_action( 'plugins_loaded', array( $this, 'updater' ) );
 
-		// If front end
+		// If front end.
 		if ( ! is_admin() ) {
 			// Register stylesheet
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_stylesheets' ) );
@@ -244,19 +243,20 @@ final class Wampum_Programs_Setup {
 	}
 
 	/**
-	 * Include github updater.
+	 * Setup the updater.
 	 *
-	 * @since  1.5.5
+	 * @uses    https://github.com/YahnisElsts/plugin-update-checker/
 	 *
-	 * @return void
+	 * @return  void
 	 */
 	public function updater() {
-		if ( ! class_exists( 'Puc_v4_Factory' ) ) {
+		if ( ! is_admin() ) {
 			return;
 		}
-		// Setup the updater
+		if ( ! class_exists( 'Puc_v4_Factory' ) ) {
+			require_once WAMPUM_INCLUDES_DIR . 'lib/plugin-update-checker/plugin-update-checker.php'; // 4.4
+		}
 		$updater = Puc_v4_Factory::buildUpdateChecker( 'https://github.com/bizbudding/wampum-programs/', __FILE__, 'wampum-programs' );
-		$updater->setAuthentication( '3221386f577b42d7089c35e0b4efffcaf3570ffd' );
 	}
 
 	/**
