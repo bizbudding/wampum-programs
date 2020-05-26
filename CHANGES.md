@@ -1,5 +1,8 @@
 # Changelog
 
+#### 1.6.3 (4/26/20)
+* Fixed: List table title CSS.
+
 #### 1.6.2 (9/27/18)
 * Changed: Updater now only fires on backend, and doesn't use any GitHub tokens for security.
 * Fixed: Issue with wampum_get_user_programs() function return My Account page and non-wampum_program posts.
