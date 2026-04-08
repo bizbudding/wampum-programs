@@ -94,7 +94,7 @@ final class Wampum_Membership {
 		$parent_program_id = wampum_get_top_parent_id();
 
 		// Bail if viewing parent program, let Woo Memb do its thing.
-		if ( get_the_ID() == $parent_program_id ) {
+		if ( get_the_ID() === $parent_program_id ) {
 			return;
 		}
 
@@ -118,7 +118,7 @@ final class Wampum_Membership {
 			// Redirect to Content Restricted page
 			$redirect_page_id = get_option( 'wc_memberships_redirect_page_id' );
 			$redirect_url     = add_query_arg(
-				array( 'r' => $parent_program_id ),
+				[ 'r' => $parent_program_id ],
 				$redirect_page_id ? get_permalink( $redirect_page_id ) : home_url()
 			);
 			wp_redirect( $redirect_url );
@@ -141,9 +141,9 @@ final class Wampum_Membership {
 
 			$content = '';
 			if ( ! current_user_can( 'wc_memberships_view_restricted_post_content', $parent_program_id ) ) {
-				$content = WC_Memberships_User_Messages::get_message_html( 'content_restricted', array( 'post_id' => $parent_program_id ) );
+				$content = WC_Memberships_User_Messages::get_message_html( 'content_restricted', [ 'post_id' => $parent_program_id ] );
 			} elseif ( ! current_user_can( 'wc_memberships_view_delayed_post_content', $parent_program_id ) ) {
-				$content = WC_Memberships_User_Messages::get_message_html( 'content_delayed', array( 'post_id' => $parent_program_id ) );
+				$content = WC_Memberships_User_Messages::get_message_html( 'content_delayed', [ 'post_id' => $parent_program_id ] );
 			}
 
 			// Output the content.
@@ -153,7 +153,7 @@ final class Wampum_Membership {
 					$html .= get_the_excerpt( get_the_ID() );
 				}
 				$html .= $content;
-				if ( true === (bool) apply_filters( 'wc_memberships_message_process_shortcodes', true, 'hide_content', array() ) ) {
+				if ( true === (bool) apply_filters( 'wc_memberships_message_process_shortcodes', true, 'hide_content', [] ) ) {
 					$html = do_shortcode( $html );
 				}
 				echo $html;

@@ -16,10 +16,13 @@
  * License:            GPL-2.0+
  * License URI:        http://www.gnu.org/licenses/gpl-2.0.txt
  *
- * Version:            1.6.3
+ * Version:            1.7.0
+ *
+ * Requires PHP:       8.0
+ * Requires at least:  6.0
  *
  * GitHub Plugin URI:  https://github.com/bizbudding/wampum-programs
- * GitHub Branch       master
+ * GitHub Branch:      master
  */
 
 // Exit if accessed directly.
@@ -134,7 +137,7 @@ final class Wampum_Programs_Setup {
 
 		// Plugin version.
 		if ( ! defined( 'WAMPUM_VERSION' ) ) {
-			define( 'WAMPUM_VERSION', '1.6.3' );
+			define( 'WAMPUM_VERSION', '1.7.0' );
 		}
 
 		// Plugin Folder Path.
@@ -193,27 +196,25 @@ final class Wampum_Programs_Setup {
 	 */
 	public function setup() {
 
-		register_activation_hook( __FILE__,   array( $this, 'activate' ) );
-		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
+		register_activation_hook( __FILE__,   [ $this, 'activate' ] );
+		register_deactivation_hook( __FILE__, [ $this, 'deactivate' ] );
 
 		// Setup updater.
-		add_action( 'plugins_loaded', array( $this, 'updater' ) );
+		add_action( 'plugins_loaded', [ $this, 'updater' ] );
 
 		// If front end.
 		if ( ! is_admin() ) {
-			// Register stylesheet
-			add_action( 'wp_enqueue_scripts', array( $this, 'register_stylesheets' ) );
+			// Register stylesheet.
+			add_action( 'wp_enqueue_scripts', [ $this, 'register_stylesheets' ] );
 			// Make sure Genesis is running.
 			add_action( 'after_setup_theme', function() {
 				// If using Genesis theme.
-				if ( 'genesis' == basename( TEMPLATEPATH ) ) {
-					// Setup front end hooks.
-					add_action( 'genesis_entry_content', array( $this, 'before_content_genesis' ), 8 );
-					add_action( 'genesis_entry_content', array( $this, 'after_content_genesis' ), 30 );
+				if ( 'genesis' === basename( TEMPLATEPATH ) ) {
+					add_action( 'genesis_entry_content', [ $this, 'before_content_genesis' ], 8 );
+					add_action( 'genesis_entry_content', [ $this, 'after_content_genesis' ], 30 );
 				} else {
-					// Setup front end hooks.
-					add_filter( 'the_content', array( $this, 'before_content' ) );
-					add_filter( 'the_content', array( $this, 'after_content' ) );
+					add_filter( 'the_content', [ $this, 'before_content' ] );
+					add_filter( 'the_content', [ $this, 'after_content' ] );
 				}
 			});
 		}
@@ -269,7 +270,7 @@ final class Wampum_Programs_Setup {
 	 * @return void
 	 */
 	public function register_stylesheets() {
-		wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum-programs.min.css', array(), WAMPUM_VERSION );
+		wp_register_style( 'wampum', WAMPUM_PLUGIN_URL . 'css/wampum-programs.min.css', [], WAMPUM_VERSION );
 	}
 
 	/**
@@ -284,13 +285,13 @@ final class Wampum_Programs_Setup {
 	 * @param $content The the_content field of the post object
 	 * @return string the content with any additional data attached
 	 */
-	function before_content_genesis() {
+	public function before_content_genesis(): void {
 		if ( ! is_singular('wampum_program') ) {
 			return;
 		}
 		do_action( 'wampum_before_content' );
 	}
-	function before_content( $content ) {
+	public function before_content( $content ): string {
 		if ( ! is_singular('wampum_program') ) {
 			return $content;
 		}
@@ -315,13 +316,13 @@ final class Wampum_Programs_Setup {
 	 * @param $content The the_content field of the post object
 	 * @return string the content with any additional data attached
 	 */
-	function after_content_genesis() {
+	public function after_content_genesis(): void {
 		if ( ! is_singular('wampum_program') ) {
 			return;
 		}
 		do_action( 'wampum_after_content' );
 	}
-	function after_content( $content ) {
+	public function after_content( $content ): string {
 		if ( ! is_singular('wampum_program') ) {
 			return $content;
 		}

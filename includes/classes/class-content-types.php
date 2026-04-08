@@ -66,11 +66,11 @@ final class Wampum_Content_Types {
 		$labels = $labels['wampum_program'];
 
 		register_post_type( 'wampum_program',
-			apply_filters( 'wampum_program_args', array(
+			apply_filters( 'wampum_program_args', [
 				'exclude_from_search' => true,
 				'has_archive'         => apply_filters( 'wampum_program_has_archive', false ),
 				'hierarchical'        => true,
-				'labels'              => array(
+				'labels'              => [
 					'name'               => $labels['plural'],
 					'singular_name'      => $labels['singular'],
 					'menu_name'          => $labels['plural'],
@@ -85,7 +85,7 @@ final class Wampum_Content_Types {
 					'parent_item_colon'  => sprintf( __( 'Parent %s:', 'wampum-programs' ), $labels['singular'] ),
 					'not_found'          => sprintf( __( 'No %s found.', 'wampum-programs' ), $labels['singular'] ),
 					'not_found_in_trash' => sprintf( __( 'No %s found in Trash.', 'wampum-programs' ), $labels['singular'] ),
-				),
+				],
 				'menu_icon'          => 'dashicons-feedback',
 				'public'             => true,
 				'publicly_queryable' => true,
@@ -93,22 +93,21 @@ final class Wampum_Content_Types {
 				'show_in_nav_menus'  => true,
 				'show_in_rest'       => true,
 				'show_ui'            => true,
-				'rewrite'            => array( 'slug' => $labels['slug'], 'with_front' => false ),
-				'supports'           => apply_filters( 'wampum_program_supports', array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'genesis-cpt-archives-settings', 'genesis-layouts' ) ),
-				// 'taxonomies'         => array( 'wampum_program_template' ),
-			)
-		));
+				'rewrite'            => [ 'slug' => $labels['slug'], 'with_front' => false ],
+				'supports'           => apply_filters( 'wampum_program_supports', [ 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'genesis-cpt-archives-settings', 'genesis-layouts' ] ),
+			] )
+		);
 
 		/***********************
 		 *  Custom Taxonomies  *
 		 ***********************/
 
 		register_taxonomy( 'wampum_program_template', 'wampum_program',
-			apply_filters( 'wampum_program_template_args', array(
+			apply_filters( 'wampum_program_template_args', [
 				'exclude_from_search' => true,
 				'has_archive'         => false,
 				'hierarchical'        => true,
-				'labels' => array(
+				'labels' => [
 					'name'                       => _x( 'Templates'                           , 'wampum programs template general name', 'wampum-programs' ),
 					'singular_name'              => _x( 'Template'                            , 'wampum programs template singular name' , 'wampum-programs' ),
 					'search_items'               => __( 'Search Templates'                    , 'wampum-programs' ),
@@ -125,7 +124,7 @@ final class Wampum_Content_Types {
 					'menu_name'                  => __( 'Templates'                           , 'wampum-programs' ),
 					'parent_item'                => null,
 					'parent_item_colon'          => null,
-				),
+				],
 				'public'            => false,
 				'rewrite'           => false,
 				'show_admin_column' => true,
@@ -134,8 +133,8 @@ final class Wampum_Content_Types {
 				'show_in_rest'      => true,
 				'show_tagcloud'     => false,
 				'show_ui'           => true,
-			)
-		));
+			] )
+		);
 	}
 
 	/**
@@ -238,12 +237,12 @@ final class Wampum_Content_Types {
 	 * @return array
 	 */
 	public function get_default_names() {
-		return apply_filters( 'wampum_content_default_names', array(
-			'wampum_program' => array(
+		return apply_filters( 'wampum_content_default_names', [
+			'wampum_program' => [
 				'singular' => _x( 'Program', 'wampum' ),
 				'plural'   => _x( 'Programs', 'wampum' ),
 				'slug'     => _x( 'programs', 'wampum' ),
-			)
-		) );
+			],
+		] );
 	}
 }

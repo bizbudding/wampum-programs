@@ -30,7 +30,7 @@ add_shortcode( 'wampum_child_pages', function( $atts ) {
     global $post;
 
     // Shortcode attributes
-    $atts = shortcode_atts( array(
+    $atts = shortcode_atts( [
         'center'            => true,
         'columns'           => 3,
         'excerpt_length'    => false,
@@ -45,17 +45,17 @@ add_shortcode( 'wampum_child_pages', function( $atts ) {
         'show_excerpt'      => false,
         'show_image'        => true,
         'show_title'        => true,
-    ), $atts, 'child-pages' );
+    ], $atts, 'child-pages' );
 
-    // WP_Query args
-    $args = array(
+    // WP_Query args.
+    $args = [
         'order'          => $atts['order'],
         'orderby'        => $atts['orderby'],
         'post_parent'    => intval($atts['post_parent']),
         'post_type'      => $atts['post_type'],
         'post_status'    => $atts['post_status'],
         'posts_per_page' => intval($atts['posts_per_page']),
-    );
+    ];
 
     $post_type = new WP_Query( $args );
 

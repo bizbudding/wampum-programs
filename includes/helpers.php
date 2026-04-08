@@ -26,7 +26,7 @@ function wampum_is_top_level( $post_id = '' ) {
 		$post_id = get_the_ID();
 	}
 	$post = get_post( (int)$post_id );
-	if ( $post && $post->post_parent == 0 ) {
+	if ( $post && $post->post_parent === 0 ) {
 		return true;
 	}
 	return false;
@@ -120,7 +120,7 @@ function wampum_get_children( $post_id = '', $return = 'all') {
 		$post_id = get_the_ID();
 	}
 	$post_type = get_post_type($post_id);
-	$args = array(
+	$args = [
 		'post_type'      => $post_type,
 		'post_parent'    => $post_id,
 		'post_status'    => 'publish',
@@ -128,9 +128,9 @@ function wampum_get_children( $post_id = '', $return = 'all') {
 		'fields'         => $return,
 		'orderby'        => 'menu_order',
 		'order'          => 'ASC',
-	);
+	];
 	$posts = new WP_Query( $args );
-	$children = array();
+	$children = [];
 	if ( $posts->have_posts() ) {
 		while ( $posts->have_posts() ) : $posts->the_post();
 			global $post;
@@ -170,7 +170,7 @@ function wampum_get_user_program_ids() {
  */
 function wampum_get_user_programs( $return = 'all' ) {
 
-	$args = array(
+	$args = [
 		'post_type'      => 'wampum_program',
 		'post_parent'    => 0,
 		'post_status'    => 'publish',
@@ -179,12 +179,12 @@ function wampum_get_user_programs( $return = 'all' ) {
 		'orderby'        => 'title',
 		'order'          => 'ASC',
 		'suppress_filters' => true,
-	);
+	];
 
 	$programs_query = new WP_Query( $args );
 
 	$posts = $programs_query->get_posts();
-	$programs = array();
+	$programs = [];
 
 	foreach( (array) $posts as $program ) {
 
@@ -267,11 +267,11 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	$post = get_post($post_id);
 
 	// Bail if top level page, no siblings
-	if ( $post->post_parent == 0 ) {
+	if ( $post->post_parent === 0 ) {
 		return;
 	}
 
-	$args = array(
+	$args = [
 		'post_type'              => $post->post_type,
 		'post_parent'            => $post->post_parent,
 		'posts_per_page'         => 250,
@@ -281,10 +281,10 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 		'no_found_rows'          => true,
 		'update_post_meta_cache' => false,
 		'update_post_term_cache' => false,
-	);
+	];
 	$siblings = new WP_Query( $args );
 
-	$sibling_ids = array();
+	$sibling_ids = [];
 
 	$first_id = $last_id = '';
 
@@ -292,10 +292,10 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 		$i = 1;
 		$count = $siblings->found_posts;
 		while ( $siblings->have_posts() ) : $siblings->the_post();
-			if ( $i == 1 ) {
+			if ( $i === 1 ) {
 				$first_id = get_the_ID();
 			}
-			if ( $i == $count ) {
+			if ( $i === $count ) {
 				$last_id = get_the_ID();
 			}
 			$sibling_ids[] = get_the_ID();
@@ -313,7 +313,7 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	$current = array_search($post->ID, $sibling_ids);
 
 	// Make sure we're not on the first item in the array
-	if ( $first_id == $post_id ) {
+	if ( $first_id === $post_id ) {
 		$previous = '';
 	} else {
 		// Get the previous if we have it in the array
@@ -321,17 +321,17 @@ function wampum_get_sibling_ids( $post_id = '' ) {
 	}
 
 	// Make sure we're not on the last item in the array
-	if ( $last_id == $post_id ) {
+	if ( $last_id === $post_id ) {
 		$next = '';
 	} else {
 		// Get the next if we have it in the array
 		$next = array_key_exists( $current+1, $sibling_ids ) ? $sibling_ids[$current+1] : '';
 	}
 
-	return array(
+	return [
 		'previous' => $previous,
 		'next'     => $next,
-	);
+	];
 }
 
 /**
@@ -371,7 +371,7 @@ function wampum_get_first_child_link( $post_id ) {
  * @return integer
  */
 function wampum_get_first_child_id( $post_id = '' ) {
-	$args = array(
+	$args = [
 		'post_type'      => 'wampum_program',
 		'post_parent'    => $post_id,
 		'post_status'    => 'publish',
@@ -379,7 +379,7 @@ function wampum_get_first_child_id( $post_id = '' ) {
 		'fields'         => 'ids',
 		'orderby'        => 'menu_order',
 		'order'          => 'ASC',
-	);
+	];
 	$posts = new WP_Query( $args );
 	$id = '';
 	if ( $posts->have_posts() ) {
