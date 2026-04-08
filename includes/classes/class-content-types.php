@@ -36,15 +36,12 @@ final class Wampum_Content_Types {
 		return self::$instance;
 	}
 
-	public function __construct() {
-	}
+	public function __construct() {}
 
 	public function init() {
-		// Filters
-		add_filter( 'mai_cpt_settings_post_types', array( $this, 'mai_post_types' ) );
-		// Actions
-		add_action( 'init',                        array( $this, 'register_post_types'), 0 );
-		add_action( 'wp_head',                     array( $this, 'do_template_functions' ) );
+		add_filter( 'mai_cpt_settings_post_types', [ $this, 'mai_post_types' ] );
+		add_action( 'init',                        [ $this, 'register_post_types'], 0 );
+		add_action( 'wp_head',                     [ $this, 'do_template_functions' ] );
 	}
 
 	public function mai_post_types( $post_types ) {
@@ -94,6 +91,7 @@ final class Wampum_Content_Types {
 				'publicly_queryable' => true,
 				'show_in_menu'       => true,
 				'show_in_nav_menus'  => true,
+				'show_in_rest'       => true,
 				'show_ui'            => true,
 				'rewrite'            => array( 'slug' => $labels['slug'], 'with_front' => false ),
 				'supports'           => apply_filters( 'wampum_program_supports', array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'genesis-cpt-archives-settings', 'genesis-layouts' ) ),
@@ -133,11 +131,11 @@ final class Wampum_Content_Types {
 				'show_admin_column' => true,
 				'show_in_menu'      => true,
 				'show_in_nav_menus' => false,
+				'show_in_rest'      => true,
 				'show_tagcloud'     => false,
 				'show_ui'           => true,
 			)
 		));
-
 	}
 
 	/**
@@ -155,23 +153,31 @@ final class Wampum_Content_Types {
 		if ( ! is_singular('wampum_program') ) {
 			return;
 		}
-		// Get array of term slugs
-		$terms = get_terms( array(
-			'taxonomy'   => 'wampum_program_template',
-			'fields'     => 'id=>slug',
-			'hide_empty' => false,
-		) );
-		// Bail if no terms
+
+		// Get array of term slugs.
+		$terms = get_terms(
+			[
+
+				'taxonomy'   => 'wampum_program_template',
+				'fields'     => 'id=>slug',
+				'hide_empty' => false,
+			]
+		);
+
+		// Bail if no terms.
 		if ( ! $terms || is_wp_error($terms) ) {
 			return;
 		}
-		// Create a function and output if it exists
+
+		// Create a function and output if it exists.
 		foreach ( $terms as $term_slug ) {
-			// Convert term slug dashes to underscores for function name
+			// Convert term slug dashes to underscores for function name.
 			$slug_with_underscores = str_replace( '-', '_', $term_slug );
-			// Build function name
+
+			// Build function name.
 			$function = 'wampum_do_template_' . str_replace( '-', '_', $slug_with_underscores );
-			// Hook function in, if it exists
+
+			// Hook function in, if it exists.
 			if ( function_exists( $function ) ) {
 				add_action( 'wampum_after_content', $function );
 			}
@@ -240,5 +246,4 @@ final class Wampum_Content_Types {
 			)
 		) );
 	}
-
 }

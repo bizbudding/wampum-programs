@@ -76,5 +76,4 @@ final class Wampum_Template_Loader extends Gamajo_Template_Loader {
 		}
 		return self::$instance;
 	}
-
 }

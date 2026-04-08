@@ -1,7 +1,7 @@
 <?php
 
 // Enqueue our pre-registered stylesheet
-wp_enqueue_style('wampum');
+wp_enqueue_style( 'wampum' );
 
 echo '<ul class="wampum-programs-list wtable" style="margin-left:0;">';
 
@@ -11,7 +11,7 @@ echo '<ul class="wampum-programs-list wtable" style="margin-left:0;">';
 
 	foreach ( $data as $program ) {
 
-		$image_size = apply_filters('wampum_account_programs_image_size', 'thumbnail');
+		$image_size = apply_filters( 'wampum_account_programs_image_size', 'thumbnail' );
 
 		$image = '';
 		if ( has_post_thumbnail( $program->ID ) ) {

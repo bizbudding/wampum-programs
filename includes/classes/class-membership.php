@@ -35,11 +35,9 @@ final class Wampum_Membership {
 	}
 
 	public function init() {
-		// Filters
-		add_filter( 'auth_cookie_expiration', array( $this, 'stay_logged_in' ) );
-		// Hooks
-		add_action( 'plugins_loaded',         array( $this, 'woo_subscriptions_remove_deprecation_handlers' ), 0 );
-		add_action( 'template_redirect',      array( $this, 'access_redirect' ) );
+		add_filter( 'auth_cookie_expiration',[ $this, 'stay_logged_in' ] );
+		add_action( 'plugins_loaded',        [ $this, 'remove_deprecation_handlers' ], 0 );
+		add_action( 'template_redirect',     [ $this, 'access_redirect' ] );
 	}
 
 	/**
@@ -66,7 +64,7 @@ final class Wampum_Membership {
 	 *
 	 * @return void
 	 */
-	public function woo_subscriptions_remove_deprecation_handlers() {
+	public function remove_deprecation_handlers() {
 		add_filter( 'woocommerce_subscriptions_load_deprecation_handlers', '__return_false' );
 	}
 
@@ -78,7 +76,6 @@ final class Wampum_Membership {
 	 * @return void
 	 */
 	public function access_redirect() {
-
 		// Bail if not a single Program.
 		if ( ! is_singular( 'wampum_program' ) ) {
 			return;
@@ -161,9 +158,6 @@ final class Wampum_Membership {
 				}
 				echo $html;
 			});
-
 		}
-
 	}
-
 }
