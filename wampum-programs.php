@@ -28,6 +28,9 @@
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// Must be at the top of the file.
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
 if ( ! class_exists( 'Wampum_Programs_Setup' ) ) :
 
 /**
@@ -175,6 +178,8 @@ final class Wampum_Programs_Setup {
 	 * @return void
 	 */
 	private function includes() {
+		// Include vendor libraries.
+		require_once __DIR__ . '/vendor/autoload.php';
 		// Vendor
 		require_once WAMPUM_INCLUDES_DIR . 'lib/class-gamajo-template-loader.php';
 		// Classes
@@ -254,10 +259,16 @@ final class Wampum_Programs_Setup {
 		if ( ! is_admin() ) {
 			return;
 		}
-		if ( ! class_exists( 'Puc_v4_Factory' ) ) {
-			require_once WAMPUM_INCLUDES_DIR . 'lib/plugin-update-checker/plugin-update-checker.php'; // 4.4
+		// Bail if plugin updater is not loaded.
+		if ( ! class_exists( 'YahnisElsts\PluginUpdateChecker\v5\PucFactory' ) ) {
+			return;
 		}
-		$updater = Puc_v4_Factory::buildUpdateChecker( 'https://github.com/bizbudding/wampum-programs/', __FILE__, 'wampum-programs' );
+		// Setup the updater.
+		$updater = PucFactory::buildUpdateChecker( 'https://github.com/bizbudding/wampum-programs/', __FILE__, 'wampum-programs' );
+		// Maybe set github api token.
+		if ( defined( 'MAI_GITHUB_API_TOKEN' ) ) {
+			$updater->setAuthentication( MAI_GITHUB_API_TOKEN );
+		}
 	}
 
 	/**
