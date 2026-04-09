@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0 (4/9/26)
+* Changed: PHP 8.4 compatibility.
+* Changed: Updated code style and added REST API support.
+* Changed: Upgraded plugin-update-checker from v4.4 to v5.6.
+
 #### 1.6.3 (4/26/20)
 * Fixed: List table title CSS.
 
